@@ -5,5 +5,6 @@ namespace rewind_plugin
     {
         void rewindStore(NativeByteArrayWriter writer);
         void rewindRestore(NativeByteArrayReader reader);
+        int RequiredBufferSizeBytes { get; }
     }
 }

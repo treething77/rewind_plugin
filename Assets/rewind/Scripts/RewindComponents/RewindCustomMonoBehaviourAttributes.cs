@@ -1,4 +1,5 @@
 using System.Reflection;
+using System.Runtime.InteropServices;
 using UnityEngine;
 
 namespace rewind_plugin
@@ -6,11 +7,17 @@ namespace rewind_plugin
     public class RewindCustomMonoBehaviourAttributes : MonoBehaviour, IRewindHandler
     {
         private FieldInfo[] rewindFields;
+        private int requiredBufferSize;
         
-        private void Start()
+        private void Awake()
         {
             //get all the fields on this object that have the Rewind attribute
             rewindFields = RewindAttributeHelper.GetRewindFields(this);
+
+            foreach (var rewindField in rewindFields)
+            {
+                requiredBufferSize += Marshal.SizeOf(rewindField.FieldType);
+            }
         }
 
         public virtual void rewindStore(NativeByteArrayWriter writer)
@@ -44,6 +51,8 @@ namespace rewind_plugin
                 }
             }
         }
+
+        public int RequiredBufferSizeBytes => requiredBufferSize;
     }
 
 }
