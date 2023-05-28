@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
-namespace rewind_plugin
+namespace ccl.rewind_plugin
 {
     public class PlaybackControls : MonoBehaviour
     {

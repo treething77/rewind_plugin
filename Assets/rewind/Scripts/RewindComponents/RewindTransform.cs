@@ -1,9 +1,41 @@
 using System;
 using UnityEngine;
 
-namespace rewind_plugin
+namespace ccl.rewind_plugin
 {
-    public class RewindTransform : MonoBehaviour, IRewindHandler
+    public abstract class RewindComponentBase : MonoBehaviour, IRewindHandler, ISerializationCallbackReceiver
+    {
+                
+        //[HideInInspector] 
+        [SerializeField] private uint id; 
+        
+        public void OnBeforeSerialize()
+        {
+            // If we don't have an ID yet then generate one
+            if (id == 0)
+                id = ComponentIDGenerator.generateID(this);
+        }
+
+        public void OnAfterDeserialize()
+        {
+            //make sure the id is unique before we register it
+            while (ComponentIDGenerator.isRegistered(id))
+            {
+                id = ComponentIDGenerator.generateID(this);
+            }
+            ComponentIDGenerator.register(this);
+        }
+        
+        public uint ID => id;
+        
+        //Required to be implemented by sub-classes
+        public abstract void rewindStore(NativeByteArrayWriter writer);
+        public abstract void rewindRestore(NativeByteArrayReader reader);
+        public abstract int RequiredBufferSizeBytes { get; }
+        public abstract uint HandlerTypeID  { get; }
+    }
+    
+    public class RewindTransform : RewindComponentBase
     {
         private Transform _transform;
 
@@ -13,18 +45,19 @@ namespace rewind_plugin
             _transform = transform;
         }
 
-        public void rewindStore(NativeByteArrayWriter writer) {
+        public override void rewindStore(NativeByteArrayWriter writer) {
             writer.writeV3(_transform.position);
             writer.writeQuaternion(_transform.rotation);
             if (recordScale) writer.writeV3(_transform.localScale);
         }
 
-        public void rewindRestore(NativeByteArrayReader reader) {
+        public override void rewindRestore(NativeByteArrayReader reader) {
             _transform.SetPositionAndRotation(reader.readV3(), reader.readQuaternion());
             if (recordScale) _transform.localScale = reader.readV3();
         }
 
-        public int RequiredBufferSizeBytes => (4 * 3) + (4 * 4) + (recordScale ? (4 * 3) : 0);
+        public override int RequiredBufferSizeBytes => (4 * 3) + (4 * 4) + (recordScale ? (4 * 3) : 0);
+        public override uint HandlerTypeID => 1;
     }
 
 }

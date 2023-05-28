@@ -1,16 +1,54 @@
+using System;
+using System.Collections.Generic;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using UnityEngine;
+using Random = System.Random;
 
-namespace rewind_plugin
+namespace ccl.rewind_plugin
 {
-    public class RewindCustomMonoBehaviourAttributes : MonoBehaviour, IRewindHandler
+    public static class ComponentIDGenerator
     {
+        public static uint generateID(IRewindHandler rewindHandler) 
+        {
+            //GetInstanceID does not persist between runtime and editor, so we can't use it to 
+            //reliably match components with GameObjects
+          //  var id = (ulong)rewindHandler.gameObject.GetInstanceID();
+          //  id <<= 32;//top 32 bits are the GameObject ID
+
+            uint id = (uint) UnityEngine.Random.Range(0, 2 << 24) << 8;
+  
+            id |= (uint) rewindHandler.HandlerTypeID; 
+  
+            return id;
+        }
+
+        static List<RewindComponentBase> rewindComponents = new List<RewindComponentBase>();
+
+        public static void register(RewindComponentBase rewindComponentBase)
+        {
+            rewindComponents.Add(rewindComponentBase);
+        }
+
+        public static bool isRegistered(uint id)
+        {
+            foreach (var rewindComponent in rewindComponents)
+            {
+                if (rewindComponent.ID == id) return true;
+            }
+
+            return false;
+        }
+    }
+    
+    public class RewindCustomMonoBehaviourAttributes : RewindComponentBase
+    {
+        //[HideInInspector] [SerializeField] private ComponentIdentity identity; 
+
         private FieldInfo[] rewindFields;
         private int requiredBufferSize;
         
-        private void Awake()
-        {
+        private void Awake() {
             //get all the fields on this object that have the Rewind attribute
             rewindFields = RewindAttributeHelper.GetRewindFields(this);
 
@@ -18,10 +56,12 @@ namespace rewind_plugin
             {
                 requiredBufferSize += Marshal.SizeOf(rewindField.FieldType);
             }
+            
+            //TODO: register here too?
         }
 
-        public virtual void rewindStore(NativeByteArrayWriter writer)
-        {
+
+        public override void rewindStore(NativeByteArrayWriter writer) {
             foreach (FieldInfo rewindField in rewindFields)
             {
                 //Call a different method in writer depending on the type of the field
@@ -36,8 +76,7 @@ namespace rewind_plugin
             }
         }
         
-        public virtual void rewindRestore(NativeByteArrayReader reader)
-        {
+        public override void rewindRestore(NativeByteArrayReader reader) {
             foreach (FieldInfo rewindField in rewindFields)
             {
                 //Call a different method in reader depending on the type of the field
@@ -52,7 +91,8 @@ namespace rewind_plugin
             }
         }
 
-        public int RequiredBufferSizeBytes => requiredBufferSize;
+        public override int RequiredBufferSizeBytes => requiredBufferSize;
+        public override uint HandlerTypeID => 2;
     }
 
 }

@@ -1,7 +1,7 @@
 using System;
 using System.Reflection;
 
-namespace rewind_plugin
+namespace ccl.rewind_plugin
 {
     public static class RewindAttributeHelper
     {

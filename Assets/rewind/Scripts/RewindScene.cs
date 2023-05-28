@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace rewind_plugin
+namespace ccl.rewind_plugin
 {
     public class RewindScene
     {
@@ -13,6 +13,10 @@ namespace rewind_plugin
             RewindHandlers.Add(rewindHandler);
         }
 
+        /// <summary>
+        /// Helpful method to add all the childs of a parent object as rewind handlers
+        /// </summary>
+        /// <param name="parentObj"></param>
         public void addAllChildren(GameObject parentObj)
         {
             foreach (var c in parentObj.GetComponentsInChildren<IRewindHandler>())

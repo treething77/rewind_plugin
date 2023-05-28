@@ -1,7 +1,7 @@
 using Unity.Collections.LowLevel.Unsafe;
 using UnityEngine;
 
-namespace rewind_plugin
+namespace ccl.rewind_plugin
 {
     public class NativeByteArrayReader
     {

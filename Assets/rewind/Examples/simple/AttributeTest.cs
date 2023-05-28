@@ -1,7 +1,7 @@
-using rewind_plugin;
+using ccl.rewind_plugin;
 using UnityEngine;
 
-namespace rewind_plugin_demos
+namespace ccl.rewind_plugin_demos
 {
     public class AttributeTest : RewindCustomMonoBehaviourAttributes
     {

@@ -1,7 +1,7 @@
 using UnityEditor;
 using UnityEngine;
 
-namespace rewind_plugin
+namespace ccl.rewind_plugin
 {
     [CustomPropertyDrawer(typeof(RewindAttribute))]
     public class RewindAttributeDrawer : PropertyDrawer
