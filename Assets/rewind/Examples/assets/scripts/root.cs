@@ -63,7 +63,7 @@ public class root : MonoBehaviour
         
         c.Move(actualMove - gravity*Time.deltaTime);
 
-        if (dMove.magnitude < 0.5f)
+        if (dMove.magnitude < 0.7f)
         {
             //choose new target
             ChooseTarget();
@@ -73,9 +73,11 @@ public class root : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        transform1.LookAt(moveTarget.transform);
+        Vector3 lookAt = moveTarget.transform.position;
+        lookAt.y = transform1.position.y;
+        transform1.LookAt(lookAt);
         
-        float moveT = (moveTarget.transform.position - moveStartPt).magnitude / (transform1.position - moveStartPt).magnitude;
+        float moveT = (transform1.position - moveStartPt).magnitude / (moveTarget.transform.position - moveStartPt).magnitude;
         float moveBlend = Mathf.Lerp(moveBlendStart, moveBlendEnd, moveT);
         a.SetFloat(Blend, moveBlend);
     }
