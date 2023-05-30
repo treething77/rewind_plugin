@@ -3,13 +3,16 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MoveTarget : MonoBehaviour
+namespace ccl.rewind_plugin_demos
 {
-    public static List<MoveTarget> targetList = new List<MoveTarget>();
-    
-    private void Awake()
+    public class MoveTarget : MonoBehaviour
     {
-        targetList.Add(this);
-    }
+        public static List<MoveTarget> targetList = new List<MoveTarget>();
 
+        private void Awake()
+        {
+            targetList.Add(this);
+        }
+
+    }
 }

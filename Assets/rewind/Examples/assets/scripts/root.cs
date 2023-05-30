@@ -4,81 +4,84 @@ using System.Collections.Generic;
 using UnityEngine;
 using Random = System.Random;
 
-public class root : MonoBehaviour
+namespace ccl.rewind_plugin_demos
 {
-    Transform transform1;
-
-    private Vector3 prevP;
-    private Vector3 motion;
-
-    private Vector3 moveStartPt;
-    private MoveTarget moveTarget;
-    private float moveBlendStart;
-    private float moveBlendEnd;
-
-    private Animator a;
-    CharacterController c;
-    private static readonly int Blend = Animator.StringToHash("Blend");
-
-    void Start()
+    public class root : MonoBehaviour
     {
-        transform1 = transform;
-        prevP = transform1.position;
-        
-        //pick a target to move towards
-        ChooseTarget();
-        
-        a = GetComponent<Animator>();
-        c = GetComponent<CharacterController>();
+        Transform transform1;
 
-    }
+        private Vector3 prevP;
+        private Vector3 motion;
 
-    private void ChooseTarget()
-    {
-        MoveTarget newTarget = null;
-        do
+        private Vector3 moveStartPt;
+        private MoveTarget moveTarget;
+        private float moveBlendStart;
+        private float moveBlendEnd;
+
+        private Animator a;
+        CharacterController c;
+        private static readonly int Blend = Animator.StringToHash("Blend");
+
+        void Start()
         {
-            int moveTargetIndex = UnityEngine.Random.Range(0, MoveTarget.targetList.Count);
-            newTarget = MoveTarget.targetList[moveTargetIndex];
-        } while (newTarget == moveTarget);
+            transform1 = transform;
+            prevP = transform1.position;
 
-        moveTarget = newTarget;
-
-        moveStartPt = transform.position;
-        moveBlendStart = UnityEngine.Random.Range(0.0f, 1.0f);
-        moveBlendEnd = UnityEngine.Random.Range(0.0f, 1.0f);
-    }
-
-    private void OnAnimatorMove()
-    {
-        Vector3 dMove = moveTarget.transform.position - transform1.position;        
-        dMove.y = 0.0f;
-
-        var gravity = Vector3.up*5.0f;
-        
-        var animMove = a.deltaPosition;
-        animMove.y = 0.0f;
-
-        Vector3 actualMove = dMove.normalized * animMove.magnitude;
-        
-        c.Move(actualMove - gravity*Time.deltaTime);
-
-        if (dMove.magnitude < 0.7f)
-        {
-            //choose new target
+            //pick a target to move towards
             ChooseTarget();
-        }
-    }
 
-    // Update is called once per frame
-    void Update()
-    {
-        Vector3 lookAt = moveTarget.transform.position;
-        lookAt.y = transform1.position.y;
-        transform1.LookAt(lookAt);
-        
-        float moveT = (transform1.position - moveStartPt).magnitude / (moveTarget.transform.position - moveStartPt).magnitude;
-        float moveBlend = Mathf.Lerp(moveBlendStart, moveBlendEnd, moveT);
-        a.SetFloat(Blend, moveBlend);
+            a = GetComponent<Animator>();
+            c = GetComponent<CharacterController>();
+
+        }
+
+        private void ChooseTarget()
+        {
+            MoveTarget newTarget = null;
+            do
+            {
+                int moveTargetIndex = UnityEngine.Random.Range(0, MoveTarget.targetList.Count);
+                newTarget = MoveTarget.targetList[moveTargetIndex];
+            } while (newTarget == moveTarget);
+
+            moveTarget = newTarget;
+
+            moveStartPt = transform.position;
+            moveBlendStart = UnityEngine.Random.Range(0.0f, 1.0f);
+            moveBlendEnd = UnityEngine.Random.Range(0.0f, 1.0f);
+        }
+
+        private void OnAnimatorMove()
+        {
+            Vector3 dMove = moveTarget.transform.position - transform1.position;
+            dMove.y = 0.0f;
+
+            var gravity = Vector3.up * 5.0f;
+
+            var animMove = a.deltaPosition;
+            animMove.y = 0.0f;
+
+            Vector3 actualMove = dMove.normalized * animMove.magnitude;
+
+            c.Move(actualMove - gravity * Time.deltaTime);
+
+            if (dMove.magnitude < 0.7f)
+            {
+                //choose new target
+                ChooseTarget();
+            }
+        }
+
+        // Update is called once per frame
+        void Update()
+        {
+            Vector3 lookAt = moveTarget.transform.position;
+            lookAt.y = transform1.position.y;
+            transform1.LookAt(lookAt);
+
+            float moveT = (transform1.position - moveStartPt).magnitude / (moveTarget.transform.position - moveStartPt).magnitude;
+            float moveBlend = Mathf.Lerp(moveBlendStart, moveBlendEnd, moveT);
+            a.SetFloat(Blend, moveBlend);
+        }
     }
 }

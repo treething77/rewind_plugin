@@ -3,10 +3,13 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class menu_return : MonoBehaviour
+namespace ccl.rewind_plugin_demos
 {
-    public void menuReturn()
+    public class menu_return : MonoBehaviour
     {
-        SceneManager.LoadScene("Assets/rewind/Examples/scenes/menu.unity");
+        public void menuReturn()
+        {
+            SceneManager.LoadScene("Assets/rewind/Examples/scenes/menu.unity");
+        }
     }
 }
