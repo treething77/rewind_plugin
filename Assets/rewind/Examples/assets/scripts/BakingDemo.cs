@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace ccl.rewind_plugin_demos
 {
-    public class SimpleDemo : MonoBehaviour
+    public class BakingDemo : MonoBehaviour
     {
         public GameObject stackParent;
 

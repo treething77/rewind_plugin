@@ -15,6 +15,8 @@ namespace ccl.rewind_plugin
 
         private RewindHandlerStorage[] handlerStorage;
         private int rewindFramesCount;
+
+        private bool supportsRewind;
         
         //Map of ID to RewindHandlerStorage
         private Dictionary<int, RewindHandlerStorage> rewindHandlerStorage;
@@ -32,6 +34,15 @@ namespace ccl.rewind_plugin
             foreach (var rewindHandler in rewindScene.RewindHandlers)
             {
                 bufferSizeBytes += rewindHandler.RequiredBufferSizeBytes;
+                
+                //add space for bookkeeping data
+                bufferSizeBytes += 4;//sentinel
+                bufferSizeBytes += 8;//ID
+            }
+
+            if (supportsRewind)
+            {
+                bufferSizeBytes *= 2;
             }
             
             nativeStorage = new NativeByteArray(bufferSizeBytes);

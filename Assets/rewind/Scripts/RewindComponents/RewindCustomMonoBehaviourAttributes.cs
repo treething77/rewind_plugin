@@ -9,16 +9,21 @@ namespace ccl.rewind_plugin
 {
     public static class ComponentIDGenerator
     {
+        private static Random _idRandom;
+        
         public static uint generateID(IRewindHandler rewindHandler) 
         {
             //GetInstanceID does not persist between runtime and editor, so we can't use it to 
             //reliably match components with GameObjects
-          //  var id = (ulong)rewindHandler.gameObject.GetInstanceID();
-          //  id <<= 32;//top 32 bits are the GameObject ID
 
-            uint id = (uint) UnityEngine.Random.Range(0, 2 << 24) << 8;
+            if (_idRandom == null)
+            {
+                _idRandom = new Random();
+            }
+          
+            uint id = (uint) _idRandom.Next(0, 2 << 24) << 8;
   
-            id |= (uint) rewindHandler.HandlerTypeID; 
+            id |= rewindHandler.HandlerTypeID; 
   
             return id;
         }
