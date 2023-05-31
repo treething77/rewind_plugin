@@ -57,5 +57,10 @@ namespace ccl.rewind_plugin
         {
             return readValue<Color>();
         }
+        
+        public uint readUInt()
+        {
+            return readValue<uint>();
+        }
     }
 }

@@ -69,5 +69,17 @@ namespace ccl.rewind_plugin
         {
             writeSimpleValueImpl(value);
         }
+
+        public void writeUInt(uint value)
+        {
+            writeSimpleValueImpl(value);
+        }
+
+        public void setWriteHead(int writeOffset)
+        {
+            _writeHead = writeOffset;
+            
+            //TODO: validate its within the buffer
+        }
     }
 }

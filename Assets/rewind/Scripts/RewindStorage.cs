@@ -15,13 +15,16 @@ namespace ccl.rewind_plugin
             handlerStorageOffset = _handlerStorageOffset;
             handlerFrameSizeBytes = _handlerFrameSizeBytes;
         }
+
+        public int HandlerStorageOffset => handlerStorageOffset;
+        public int HandlerFrameSizeBytes => handlerFrameSizeBytes;
     }
     
     public class RewindStorage
     {
         private NativeByteArray nativeStorage;
 
-        private RewindHandlerStorage[] handlerStorage;
+      //  private RewindHandlerStorage[] handlerStorage;
         private int rewindFramesCount;
 
         private bool supportsRewind;
@@ -79,6 +82,8 @@ namespace ccl.rewind_plugin
             
         }
 
+        public int RecordedFrameCount => rewindFramesCount;
+
         public RewindHandlerStorage getHandlerStorage(uint rewindHandlerID)
         {
             RewindHandlerStorage storage = null;
@@ -94,12 +99,22 @@ namespace ccl.rewind_plugin
             RewindHandlerStorage handlerStorage = getHandlerStorage(rewindHandler.ID);
             
             //set the write head to the correct location
+            nativeStorage.writer.setWriteHead(handlerStorage.HandlerStorageOffset + (handlerStorage.HandlerFrameSizeBytes * rewindFramesCount));
             
             //store ID
-            
+            nativeStorage.writer.writeUInt(rewindHandler.ID);
+          
             rewindHandler.rewindStore(nativeStorage.writer);
-            
-            //store sentinel
+        }
+
+        public void writeFrameStart()
+        {
+  
+        }
+
+        public void writeFrameEnd()
+        {
+            rewindFramesCount++;
         }
     }
 }
