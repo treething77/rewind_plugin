@@ -24,6 +24,8 @@ namespace ccl.rewind_plugin_demos
 
         private RewindStorage rewindStorage;
 
+        private int recordFPS = 30;
+
         private void Awake()
         {
             _transform = transform;
@@ -37,7 +39,8 @@ namespace ccl.rewind_plugin_demos
             rewindScene = new RewindScene();
             rewindScene.addRewindObject(transformTest);
             
-            rewindStorage = new RewindStorage(rewindScene);
+            //3 seconds at max 30fps
+            rewindStorage = new RewindStorage(rewindScene, recordFPS * 3, false);
 
             StartCoroutine(SimpleTestCoroutine());
         }
@@ -45,7 +48,7 @@ namespace ccl.rewind_plugin_demos
         private IEnumerator SimpleTestCoroutine()
         {
             //start recording (create recorder component, add to object)
-            recorderComponent.startRecording(rewindScene, rewindStorage);
+            recorderComponent.startRecording(rewindScene, rewindStorage, recordFPS);
             
             //spin and move for 3 seconds
             float timer = 0.0f;

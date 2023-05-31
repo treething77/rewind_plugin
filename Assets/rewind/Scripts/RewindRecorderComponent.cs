@@ -8,20 +8,25 @@ namespace ccl.rewind_plugin
     public class RewindRecorderComponent : MonoBehaviour
     {
         private RewindRecorder _recorder;
+        private bool _isRecording;
         
-        public void startRecording(RewindScene rewindScene, RewindStorage rewindStorage)
+        public void startRecording(RewindScene rewindScene, RewindStorage rewindStorage, int recordFPS)
         {
-            _recorder = new RewindRecorder(rewindScene, rewindStorage);
+            _recorder = new RewindRecorder(rewindScene, rewindStorage, recordFPS);
+            _isRecording = true;
         }
 
         public void Update()
         {
-            _recorder.updateRecording();
+            if (_isRecording)
+            {
+                _recorder.updateRecording();
+            }
         }
 
         public void stopRecording()
         {
-            throw new System.NotImplementedException();
+            _isRecording = false;
         }
     }
 }

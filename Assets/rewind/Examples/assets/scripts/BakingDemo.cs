@@ -16,7 +16,7 @@ namespace ccl.rewind_plugin_demos
             rewindScene = new RewindScene();
             rewindScene.addAllChildren(stackParent);
 
-            rewindStorage = new RewindStorage(rewindScene);
+            rewindStorage = new RewindStorage(rewindScene, 90, false);
 
             //start with the simulation paused
             Time.timeScale = 0.0f;
