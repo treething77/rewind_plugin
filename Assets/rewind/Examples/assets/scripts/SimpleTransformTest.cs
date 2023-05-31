@@ -72,7 +72,7 @@ namespace ccl.rewind_plugin_demos
             recorderComponent.stopRecording();
 
             //start playback
-            playbackComponent.startPlayback();
+            playbackComponent.startPlayback(rewindScene, rewindStorage);
         }
     }
 }

@@ -9,15 +9,22 @@ namespace ccl.rewind_plugin
     public class RewindPlaybackComponent : MonoBehaviour
     {
         private RewindPlayback _playback;
+        private bool _isPlaying;
 
-        public void startPlayback()
+        public void startPlayback(RewindScene rewindScene, RewindStorage rewindStorage)
         {
-            _playback = new RewindPlayback();
+            _playback = new RewindPlayback(rewindScene, rewindStorage);
+            _isPlaying = true;
+
+            _playback.startPlayback();
         }
 
         private void Update()
         {
-            _playback.playbackUpdate();
+            if (_isPlaying)
+            {
+                _playback.playbackUpdate();
+            }
         }
     }
 }

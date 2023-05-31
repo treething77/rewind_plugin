@@ -109,7 +109,9 @@ namespace ccl.rewind_plugin
 
         public void writeFrameStart()
         {
-  
+            need a section dedicated to frame info
+                write frame time
+
         }
 
         public void writeFrameEnd()
