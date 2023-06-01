@@ -33,6 +33,7 @@ namespace ccl.rewind_plugin
         public abstract void rewindRestore(NativeByteArrayReader reader);
         public abstract int RequiredBufferSizeBytes { get; }
         public abstract uint HandlerTypeID  { get; }
+        public abstract void rewindRestoreInterpolated(NativeByteArrayReader frameReaderA, NativeByteArrayReader frameReaderB, float frameT);
     }
     
     public class RewindTransform : RewindComponentBase
@@ -56,8 +57,22 @@ namespace ccl.rewind_plugin
             if (recordScale) _transform.localScale = reader.readV3();
         }
 
+        public override void rewindRestoreInterpolated(NativeByteArrayReader frameReaderA, NativeByteArrayReader frameReaderB, float frameT)
+        {
+            Vector3 position = Vector3.Lerp(frameReaderA.readV3(), frameReaderB.readV3(), frameT);
+            Quaternion rotation = Quaternion.Lerp(frameReaderA.readQuaternion(), frameReaderB.readQuaternion(), frameT);
+            _transform.SetPositionAndRotation(position, rotation);
+
+            if (recordScale)
+            {
+                Vector3 scale = Vector3.Lerp(frameReaderA.readV3(), frameReaderB.readV3(), frameT);
+                _transform.localScale = scale;
+            }
+        }
+        
         public override int RequiredBufferSizeBytes => (4 * 3) + (4 * 4) + (recordScale ? (4 * 3) : 0);
         public override uint HandlerTypeID => 1;
+
     }
 
 }

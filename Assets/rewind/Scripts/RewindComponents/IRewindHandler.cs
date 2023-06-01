@@ -10,5 +10,6 @@ namespace ccl.rewind_plugin
         
         int RequiredBufferSizeBytes { get; }
         uint HandlerTypeID { get; }
+        void rewindRestoreInterpolated(NativeByteArrayReader frameReaderA, NativeByteArrayReader frameReaderB, float frameT);
     }
 }

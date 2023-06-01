@@ -110,8 +110,8 @@ namespace NativeByteArrayTests
             nativeByteArray_small = new NativeByteArray(16);
             nativeByteArray_large = new NativeByteArray(1000*1000);
             
-            nativeArraySmallWriter = nativeByteArray_small.writer;
-            nativeArraySmallReader = nativeByteArray_small.reader;
+            nativeArraySmallWriter = new NativeByteArrayWriter(nativeByteArray_small);
+            nativeArraySmallReader = new NativeByteArrayReader(nativeByteArray_small);
         }
 
         [TearDown]

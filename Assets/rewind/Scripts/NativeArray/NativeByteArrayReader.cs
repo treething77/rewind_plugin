@@ -27,6 +27,11 @@ namespace ccl.rewind_plugin
                 return value;
             }
         }
+
+        public unsafe T* getDataPtr<T>() where T : unmanaged
+        {
+            return (T*)((byte*)_nativeArray.GetUnsafeReadPtr() + _readHead);
+        }
         
         public float readFloat()
         {
@@ -61,6 +66,11 @@ namespace ccl.rewind_plugin
         public uint readUInt()
         {
             return readValue<uint>();
+        }
+
+        public void setReadHead(int readOffsetBytes)
+        {
+            _readHead = readOffsetBytes;
         }
     }
 }

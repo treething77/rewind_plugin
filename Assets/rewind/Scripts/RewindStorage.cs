@@ -24,6 +24,11 @@ namespace ccl.rewind_plugin
     {
         private readonly NativeByteArray nativeStorage;
 
+        private readonly NativeByteArrayWriter storageWriter;
+        
+        private readonly NativeByteArrayReader frameReaderA;
+        private readonly NativeByteArrayReader frameReaderB;
+
         private int rewindFramesCount;
         private bool supportsRewind;
         
@@ -95,20 +100,23 @@ namespace ccl.rewind_plugin
             }
            
             nativeStorage = new NativeByteArray(bufferSizeBytes);
-            NativeByteArrayWriter writer = nativeStorage.writer;
+            storageWriter = new NativeByteArrayWriter(nativeStorage);
+
+            frameReaderA = new NativeByteArrayReader(nativeStorage);
+            frameReaderB = new NativeByteArrayReader(nativeStorage);
             
             //write out the basic storage info
-            writer.writeInt(maxFrameCount);
-            writer.writeInt(rewindScene.RewindHandlers.Count);
+            storageWriter.writeInt(maxFrameCount);
+            storageWriter.writeInt(rewindScene.RewindHandlers.Count);
             
             //write out the handler info (ids, offsets)
-            writer.setWriteHead(_handlerDataOffset);
+            storageWriter.setWriteHead(_handlerDataOffset);
             foreach (var rewindHandler in rewindScene.RewindHandlers)
             {
                 RewindHandlerStorage handlerStorage = getHandlerStorage(rewindHandler.ID);
                 
-                writer.writeUInt(rewindHandler.ID);
-                writer.writeInt(handlerStorage.HandlerStorageOffset);
+                storageWriter.writeUInt(rewindHandler.ID);
+                storageWriter.writeInt(handlerStorage.HandlerStorageOffset);
             }
         }
 
@@ -129,28 +137,117 @@ namespace ccl.rewind_plugin
             RewindHandlerStorage handlerStorage = getHandlerStorage(rewindHandler.ID);
             
             //set the write head to the correct location
-            nativeStorage.writer.setWriteHead(handlerStorage.HandlerStorageOffset + (handlerStorage.HandlerFrameSizeBytes * rewindFramesCount));
+            storageWriter.setWriteHead(handlerStorage.HandlerStorageOffset + (handlerStorage.HandlerFrameSizeBytes * rewindFramesCount));
             
             //store ID
             //do we really need to store the ID here? we could just use the offset to determine the ID
-            nativeStorage.writer.writeUInt(rewindHandler.ID);
+            storageWriter.writeUInt(rewindHandler.ID);
           
-            rewindHandler.rewindStore(nativeStorage.writer);
+            rewindHandler.rewindStore(storageWriter);
         }
 
         public void writeFrameStart(float frameTimeRelativeToStart)
         {
             // write frame time
             int currentFrameTimeOffset = _frameDataOffset + (4 * rewindFramesCount);
-            nativeStorage.writer.setWriteHead(currentFrameTimeOffset);
+            storageWriter.setWriteHead(currentFrameTimeOffset);
             
             //frame time is the current time? time from start of recording?
-            nativeStorage.writer.writeFloat(frameTimeRelativeToStart);
+            storageWriter.writeFloat(frameTimeRelativeToStart);
         }
 
         public void writeFrameEnd()
         {
             rewindFramesCount++;
+        }
+
+        public (int frameA,int frameB,float frameT) findPlaybackFrames(float playbackTimeRelative)
+        {
+            //if only 1 frame then use it for both
+            //   i.e. we always interpolate between 2 frames
+            if (rewindFramesCount == 1)
+            {
+                return (0, 0, 0.0f);
+            }
+        
+            int frameA = 0;
+            int frameB = 0;
+            float frameT = 0;
+
+            frameReaderA.setReadHead(_frameDataOffset);
+
+            unsafe
+            {
+                float* pTimes = frameReaderA.getDataPtr<float>();
+                
+                //special cases, before start time or after end time
+                if (playbackTimeRelative < pTimes[0])
+                {
+                    return (0, 0, 0.0f);
+                }
+                if (playbackTimeRelative > pTimes[rewindFramesCount - 1])
+                {
+                    return (rewindFramesCount - 1, rewindFramesCount - 1, 0.0f);
+                }
+                
+                //the list is sorted so perform a binary search to find the frames before and after the specified time
+                int low = 0;
+                int high = rewindFramesCount - 1;
+                
+                while (low <= high)
+                {
+                    int mid = (low + high) / 2;
+                    float midVal = pTimes[mid];
+                    if (midVal < playbackTimeRelative)
+                    {
+                        low = mid + 1;
+                    }
+                    else if (midVal > playbackTimeRelative)
+                    {
+                        high = mid - 1;
+                    }
+                    else
+                    {
+                        //exact match
+                        frameA = mid;
+                        frameB = mid;
+                        frameT = 0.0f;
+                        return (frameA, frameB, frameT);
+                    }
+                }
+
+                frameA = low;
+                frameB = high;
+                
+                //frameT should be the normalized value between the two frame times
+                //  i.e. 0.0f = frameA, 1.0f = frameB
+                //  so we need to calculate the normalized value between the two frame times
+                //  and then subtract the frameA time from it
+                frameT = (playbackTimeRelative - pTimes[frameA]) / (pTimes[frameB] - pTimes[frameA]);
+                Debug.Assert(frameT >= 0.0f);
+                Debug.Assert(frameT <= 1.0f);
+            }
+
+            return (frameA, frameB, frameT);
+        }
+
+        public void restoreHandlerInterpolated(IRewindHandler rewindHandler, int frameA, int frameB, float frameT)
+        {
+            RewindHandlerStorage handlerStorage = getHandlerStorage(rewindHandler.ID);
+            
+            //set the read head to the correct location
+            frameReaderA.setReadHead(handlerStorage.HandlerStorageOffset + (handlerStorage.HandlerFrameSizeBytes * frameA));
+            frameReaderB.setReadHead(handlerStorage.HandlerStorageOffset + (handlerStorage.HandlerFrameSizeBytes * frameB));
+
+            uint handlerIDA = frameReaderA.readUInt();
+            uint handlerIDB = frameReaderB.readUInt();
+            
+            //sanity check
+            Debug.Assert(handlerIDA == handlerIDB);
+            Debug.Assert(handlerIDA == rewindHandler.ID);
+            
+            //read the data from the 2 frames
+            rewindHandler.rewindRestoreInterpolated(frameReaderA, frameReaderB, frameT);
         }
     }
 }

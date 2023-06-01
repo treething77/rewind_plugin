@@ -81,6 +81,11 @@ namespace ccl.rewind_plugin
             }
         }
         
+        public override void rewindRestoreInterpolated(NativeByteArrayReader frameReaderA, NativeByteArrayReader frameReaderB, float frameT)
+        {
+            throw new NotImplementedException();
+        }
+        
         public override void rewindRestore(NativeByteArrayReader reader) {
             foreach (FieldInfo rewindField in rewindFields)
             {
@@ -98,6 +103,7 @@ namespace ccl.rewind_plugin
 
         public override int RequiredBufferSizeBytes => requiredBufferSize;
         public override uint HandlerTypeID => 2;
+
     }
 
 }

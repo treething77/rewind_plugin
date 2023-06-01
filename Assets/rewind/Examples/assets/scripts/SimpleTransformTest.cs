@@ -1,9 +1,6 @@
-using System;
 using System.Collections;
 using ccl.rewind_plugin;
-using UnityEditor.Timeline;
 using UnityEngine;
-using UnityEngine.Animations;
 
 namespace ccl.rewind_plugin_demos
 {
@@ -12,6 +9,8 @@ namespace ccl.rewind_plugin_demos
         private const float TestTime = 3.0f;
         private const float SpinSpeed = 2.0f;
         private const float ScaleSpeed = 1.0f;
+
+        public TMPro.TMP_Text statusText;
 
         public RewindTransform transformTest;
 
@@ -47,6 +46,7 @@ namespace ccl.rewind_plugin_demos
         
         private IEnumerator SimpleTestCoroutine()
         {
+            statusText.text = "RECORDING";
             //start recording (create recorder component, add to object)
             recorderComponent.startRecording(rewindScene, rewindStorage, recordFPS);
             
@@ -71,6 +71,8 @@ namespace ccl.rewind_plugin_demos
             //stop recording
             recorderComponent.stopRecording();
 
+            statusText.text = "PLAYBACK";
+            
             //start playback
             playbackComponent.startPlayback(rewindScene, rewindStorage);
         }
