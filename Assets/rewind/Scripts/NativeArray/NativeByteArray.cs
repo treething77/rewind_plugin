@@ -39,5 +39,12 @@ namespace ccl.rewind_plugin
         {
             return _nativeBuffer.GetUnsafeReadOnlyPtr();
         }
+
+        public byte[] getManagedArray()
+        {
+            byte[] managedArray = new byte[Length];
+            _nativeBuffer.CopyTo(managedArray);
+            return managedArray;
+        }
     }
 }

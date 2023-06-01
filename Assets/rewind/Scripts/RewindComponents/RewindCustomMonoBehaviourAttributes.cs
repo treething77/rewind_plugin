@@ -24,7 +24,8 @@ namespace ccl.rewind_plugin
             uint id = (uint) _idRandom.Next(0, 2 << 24) << 8;
   
             id |= rewindHandler.HandlerTypeID; 
-  
+            Debug.Log($"returning id {id}");
+
             return id;
         }
 
@@ -37,6 +38,7 @@ namespace ccl.rewind_plugin
 
         public static bool isRegistered(uint id)
         {
+            Debug.Log($"testing id {id}");
             foreach (var rewindComponent in rewindComponents)
             {
                 if (rewindComponent.ID == id) return true;

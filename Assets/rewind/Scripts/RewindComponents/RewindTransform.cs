@@ -16,13 +16,28 @@ namespace ccl.rewind_plugin
                 id = ComponentIDGenerator.generateID(this);
         }
 
+        private bool _ignoreNextDeserialization;
+        
         public void OnAfterDeserialize()
         {
             //make sure the id is unique before we register it
-            while (ComponentIDGenerator.isRegistered(id))
+            int c = 0;
+            
+            //this can get us into an infinite loop in the editor because modifying the id causes the
+            //object to be serialized/deserialized again
+            
+            //
+            if (!_ignoreNextDeserialization)
             {
-                id = ComponentIDGenerator.generateID(this);
+                while (ComponentIDGenerator.isRegistered(id) && c < 10)
+                {
+                    c++;
+                    _ignoreNextDeserialization = true;
+                    id = ComponentIDGenerator.generateID(this);
+                    _ignoreNextDeserialization = false;
+                }
             }
+
             ComponentIDGenerator.register(this);
         }
         

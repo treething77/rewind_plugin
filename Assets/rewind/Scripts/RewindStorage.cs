@@ -1,11 +1,12 @@
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 
 namespace ccl.rewind_plugin
 {
     public class RewindHandlerStorage
     {
-        readonly uint handlerId;
+        readonly uint handlerId;//TODO: remove this, not needed
         readonly int handlerStorageOffset;
         readonly int handlerFrameSizeBytes;
 
@@ -37,9 +38,14 @@ namespace ccl.rewind_plugin
 
         private int _frameDataOffset;
         private int _handlerDataOffset;
-        
+        private readonly int _maxFrameCount;
+
+        public bool isFull => rewindFramesCount == _maxFrameCount;
+
         public RewindStorage(RewindScene rewindScene, int maxFrameCount, bool supportsRewind)
         {
+            _maxFrameCount = maxFrameCount;
+            
             // Storage size calculation:
             // -sum of the required space for all rewind handlers
             // -plus any required space for bookkeeping of rewind handlers
@@ -248,6 +254,19 @@ namespace ccl.rewind_plugin
             
             //read the data from the 2 frames
             rewindHandler.rewindRestoreInterpolated(frameReaderA, frameReaderB, frameT);
+        }
+
+        public void writeToFile(string fileName)
+        {
+            using (FileStream fileStream = new FileStream(fileName, FileMode.Create))
+            {
+                //write the header
+                fileStream.WriteByte(1);//v1
+                
+                //write the data
+                byte[] managedArray = nativeStorage.getManagedArray();
+                fileStream.Write(managedArray);
+            }
         }
     }
 }

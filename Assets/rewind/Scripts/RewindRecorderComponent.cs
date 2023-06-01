@@ -9,6 +9,8 @@ namespace ccl.rewind_plugin
     {
         private RewindRecorder _recorder;
         private bool _isRecording;
+
+        public bool isRecording => _isRecording;
         
         public void startRecording(RewindScene rewindScene, RewindStorage rewindStorage, int recordFPS)
         {

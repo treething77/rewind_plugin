@@ -6,7 +6,7 @@ namespace ccl.rewind_plugin
     /// This is a basic implementation of a recorder that records at a specified framerate for
     /// all objects in the RewindScene.
     /// </summary>
-    internal class RewindRecorder
+    public class RewindRecorder
     {
         private readonly RewindScene _rewindScene;
         private readonly RewindStorage _rewindStorage;
@@ -24,8 +24,8 @@ namespace ccl.rewind_plugin
 
         public void updateRecording()
         {
-            //Always record if nothing recorded yet
-            bool recordSnapshot = _rewindStorage.RecordedFrameCount == 0;
+            //Always record if nothing recorded yet or if 0 is specified as the fps
+            bool recordSnapshot = _rewindStorage.RecordedFrameCount == 0 || (_recordFPS == 0);
             if (!recordSnapshot)
             {
                 float recordTimeInterval = 1.0f / _recordFPS;
