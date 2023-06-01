@@ -27,9 +27,15 @@ namespace ccl.rewind_plugin
             // rewindRestore needs to take 2 readers, which have different read heads
         }
 
-        public void startPlayback()
+        public bool startPlayback()
         {
             //get starting time
+
+            return true;
+        }
+
+        public void stopPlayback()
+        {
         }
     }
 }

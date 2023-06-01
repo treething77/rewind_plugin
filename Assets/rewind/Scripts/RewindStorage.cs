@@ -22,15 +22,16 @@ namespace ccl.rewind_plugin
     
     public class RewindStorage
     {
-        private NativeByteArray nativeStorage;
+        private readonly NativeByteArray nativeStorage;
 
-      //  private RewindHandlerStorage[] handlerStorage;
         private int rewindFramesCount;
-
         private bool supportsRewind;
         
         //Map of ID to RewindHandlerStorage
         private Dictionary<uint, RewindHandlerStorage> rewindHandlerStorageMap = new Dictionary<uint, RewindHandlerStorage>();
+
+        private int _frameDataOffset;
+        private int _handlerDataOffset;
         
         public RewindStorage(RewindScene rewindScene, int maxFrameCount, bool supportsRewind)
         {
@@ -40,7 +41,35 @@ namespace ccl.rewind_plugin
             // -and then double it to account for certain usage scenarios
             //   -reverse playback of 1 or more objects
             
+            //Each rewind handler will be assigned 1 portion of this buffer
+            //that will be a contiguous memory area for that handler to use
+            // <|--component A--|--component B --| -- etc >
+            //vs an interleaved approach
+            // <|A1|B1|A2|B2|A3|B3>
+            //This allows us to easily support:
+            // -storing different objects at different rates
+            // -playback/rewind of individual objects
+            // -playback/rewind of all objects
+            
             int bufferSizeBytes = 0;
+            
+            //Allocate the storage for the recording info
+            //frame count
+            bufferSizeBytes += 4;
+            //handler count
+            bufferSizeBytes += 4;
+
+            _frameDataOffset = bufferSizeBytes;
+            //Allocate the storage for the frame info
+            //timestamps
+            bufferSizeBytes += 4 * maxFrameCount;
+
+            _handlerDataOffset = bufferSizeBytes;
+            //Allocate the storage for the handler storage info
+            //ids
+            bufferSizeBytes += 8 * rewindScene.RewindHandlers.Count;
+            //offsets
+            bufferSizeBytes += 4 * rewindScene.RewindHandlers.Count;
             
             foreach (var rewindHandler in rewindScene.RewindHandlers)
             {
@@ -49,7 +78,6 @@ namespace ccl.rewind_plugin
                 int handlerFrameSizeBytes = rewindHandler.RequiredBufferSizeBytes;
                 
                 //add space for bookkeeping data
-                handlerFrameSizeBytes += 4;//sentinel
                 handlerFrameSizeBytes += 8;//ID
 
                 int handlerStorageSizeBytes = handlerFrameSizeBytes * maxFrameCount;
@@ -67,19 +95,21 @@ namespace ccl.rewind_plugin
             }
            
             nativeStorage = new NativeByteArray(bufferSizeBytes);
+            NativeByteArrayWriter writer = nativeStorage.writer;
             
-            //Each rewind handler will be assigned 1 portion of this buffer
-            //that will be a contiguous memory area for that handler to use
-            // <|--component A--|--component B --| -- etc >
-            //vs an interleaved approach
-            // <|A1|B1|A2|B2|A3|B3>
-            //This allows us to easily support:
-            // -storing different objects at different rates
-            // -playback/rewind of individual objects
+            //write out the basic storage info
+            writer.writeInt(maxFrameCount);
+            writer.writeInt(rewindScene.RewindHandlers.Count);
             
-            //Need some kind of structure per component that allows us to look up
-            //by ID, and then to go frame by frame, or index into specific frames
-            
+            //write out the handler info (ids, offsets)
+            writer.setWriteHead(_handlerDataOffset);
+            foreach (var rewindHandler in rewindScene.RewindHandlers)
+            {
+                RewindHandlerStorage handlerStorage = getHandlerStorage(rewindHandler.ID);
+                
+                writer.writeUInt(rewindHandler.ID);
+                writer.writeInt(handlerStorage.HandlerStorageOffset);
+            }
         }
 
         public int RecordedFrameCount => rewindFramesCount;
@@ -102,16 +132,20 @@ namespace ccl.rewind_plugin
             nativeStorage.writer.setWriteHead(handlerStorage.HandlerStorageOffset + (handlerStorage.HandlerFrameSizeBytes * rewindFramesCount));
             
             //store ID
+            //do we really need to store the ID here? we could just use the offset to determine the ID
             nativeStorage.writer.writeUInt(rewindHandler.ID);
           
             rewindHandler.rewindStore(nativeStorage.writer);
         }
 
-        public void writeFrameStart()
+        public void writeFrameStart(float frameTimeRelativeToStart)
         {
-            need a section dedicated to frame info
-                write frame time
-
+            // write frame time
+            int currentFrameTimeOffset = _frameDataOffset + (4 * rewindFramesCount);
+            nativeStorage.writer.setWriteHead(currentFrameTimeOffset);
+            
+            //frame time is the current time? time from start of recording?
+            nativeStorage.writer.writeFloat(frameTimeRelativeToStart);
         }
 
         public void writeFrameEnd()

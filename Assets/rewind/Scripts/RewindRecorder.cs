@@ -13,6 +13,7 @@ namespace ccl.rewind_plugin
         private readonly int _recordFPS;
         
         private float timeSinceFrameRecorded = 0.0f;
+        private float _recordingStartTime;
 
         public RewindRecorder(RewindScene rewindScene, RewindStorage rewindStorage, int recordFPS)
         {
@@ -51,7 +52,8 @@ namespace ccl.rewind_plugin
                 //   after all the goal is we don't have to update all components every frame, and otherwise how 
                 //   do we know which ones were updated when for the replay?
                 // For now just worry about the basic case. Other cases will maybe require custom recorders.
-                _rewindStorage.writeFrameStart();
+                float currentRelativeTime = Time.time - _recordingStartTime;
+                _rewindStorage.writeFrameStart(currentRelativeTime);
 
                 //foreach object in scene
                 foreach (IRewindHandler rewindHandler in _rewindScene.RewindHandlers)
@@ -71,6 +73,11 @@ namespace ccl.rewind_plugin
 
                 _rewindStorage.writeFrameEnd();
             }
+        }
+
+        public void startRecording()
+        {
+            _recordingStartTime = Time.time;
         }
     }
 }

@@ -14,14 +14,13 @@ namespace ccl.rewind_plugin
         {
             _recorder = new RewindRecorder(rewindScene, rewindStorage, recordFPS);
             _isRecording = true;
+            _recorder.startRecording();
         }
 
         public void Update()
         {
             if (_isRecording)
-            {
                 _recorder.updateRecording();
-            }
         }
 
         public void stopRecording()

@@ -10,21 +10,23 @@ namespace ccl.rewind_plugin
     {
         private RewindPlayback _playback;
         private bool _isPlaying;
-
+  
         public void startPlayback(RewindScene rewindScene, RewindStorage rewindStorage)
         {
             _playback = new RewindPlayback(rewindScene, rewindStorage);
-            _isPlaying = true;
-
-            _playback.startPlayback();
+            _isPlaying = _playback.startPlayback();
         }
 
+        public void stopPlayback()
+        {
+            _isPlaying = false;
+            _playback.stopPlayback();
+        }
+        
         private void Update()
         {
             if (_isPlaying)
-            {
                 _playback.playbackUpdate();
-            }
         }
     }
 }
