@@ -10,7 +10,7 @@ namespace ccl.rewind_plugin
     {
         private Transform[] _transforms;
         
-        private void Start()
+        private void Awake()
         {
             //Get all transforms in the hierarchy
             _transforms = GetComponentsInChildren<Transform>();
