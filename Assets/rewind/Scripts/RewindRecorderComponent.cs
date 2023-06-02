@@ -14,7 +14,7 @@ namespace ccl.rewind_plugin
         
         public void startRecording(RewindScene rewindScene, RewindStorage rewindStorage, int recordFPS)
         {
-            _recorder = new RewindRecorder(rewindScene, rewindStorage, recordFPS);
+            _recorder = new RewindRecorder(rewindScene, rewindStorage, recordFPS, false);
             _isRecording = true;
             _recorder.startRecording();
         }

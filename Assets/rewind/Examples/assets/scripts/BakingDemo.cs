@@ -27,7 +27,7 @@ namespace ccl.rewind_plugin_demos
 
             rewindStorage = new RewindStorage(rewindScene, 150, false);
    
-            _recorder = new RewindRecorder(rewindScene, rewindStorage, 30);
+            _recorder = new RewindRecorder(rewindScene, rewindStorage, 30, false);
         }
 
         private void Update()

@@ -22,12 +22,12 @@ namespace ccl.rewind_plugin_demos
             rewindScene = new RewindScene();
             rewindScene.addAllChildren(stackParent);
 
-            rewindStorage = new RewindStorage(rewindScene, 300, false);
+            rewindStorage = new RewindStorage(rewindScene, 150, false);
    
-            _recorder = new RewindRecorder(rewindScene, rewindStorage, 30);
+            _recorder = new RewindRecorder(rewindScene, rewindStorage, 30, true);
             _playback = new RewindPlayback(rewindScene, rewindStorage);
-
-            statusText.text = "Recording";
+            
+            _recorder.startRecording();
         }
 
         private void Update()
@@ -38,19 +38,23 @@ namespace ccl.rewind_plugin_demos
             }
             else
             {
-                //if the recording is full then stop
-                if (!rewindStorage.isFull)
-                {
-                    _recorder.updateRecording();
-                }
-                else
-                {
-                    statusText.text = "Playback";
-                    playback = true;
-                    playbackPreparer.startPlayback();
-                    _playback.startPlayback();
-                }
+                _recorder.updateRecording();
+                statusText.text = $"Record - {rewindStorage.RecordedFrameCount} - {rewindStorage.FrameWriteIndex}";
             }
+        }
+
+        private void OnGUI()
+        {
+            GUILayout.BeginArea(new Rect(Screen.width - 200.0f, 0.0f, 200.0f, Screen.height));
+            if (GUILayout.Button("Start Replay"))
+            {
+                statusText.text = "Replay";
+                playback = true;
+                playbackPreparer.startPlayback();
+                _playback.startPlayback();
+            }
+
+            GUILayout.EndArea();
         }
     }
 }

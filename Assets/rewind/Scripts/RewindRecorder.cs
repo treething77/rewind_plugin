@@ -11,19 +11,27 @@ namespace ccl.rewind_plugin
         private readonly RewindScene _rewindScene;
         private readonly RewindStorage _rewindStorage;
         private readonly int _recordFPS;
+        private readonly bool _continuous;
         
         private float timeSinceFrameRecorded = 0.0f;
         private float _recordingStartTime;
 
-        public RewindRecorder(RewindScene rewindScene, RewindStorage rewindStorage, int recordFPS)
+        public RewindRecorder(RewindScene rewindScene, RewindStorage rewindStorage, int recordFPS, bool continuousRecording)
         {
             _rewindScene = rewindScene;
             _rewindStorage = rewindStorage;
             _recordFPS = recordFPS;
+            _continuous = continuousRecording;
         }
 
         public void updateRecording()
         {
+            if (!_continuous)
+            {
+                //check if we are full and don't allow any more recording
+                if (_rewindStorage.isFull) return;
+            }
+            
             //Always record if nothing recorded yet or if 0 is specified as the fps
             bool recordSnapshot = _rewindStorage.RecordedFrameCount == 0 || (_recordFPS == 0);
             if (!recordSnapshot)
