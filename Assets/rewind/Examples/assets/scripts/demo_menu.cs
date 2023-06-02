@@ -7,14 +7,19 @@ namespace ccl.rewind_plugin_demos
 {
     public class demo_menu : MonoBehaviour
     {
-        public void loadSports()
+        public void loadSportsReplay()
         {
-            SceneManager.LoadScene("Assets/rewind/Examples/scenes/sports/sports.unity");
+            SceneManager.LoadScene("Assets/rewind/Examples/scenes/sports-replay/sports-replay.unity");
+        }
+        
+        public void loadSportsRewind()
+        {
+            SceneManager.LoadScene("Assets/rewind/Examples/scenes/sports-rewind/sports-rewind.unity");
         }
 
-        public void loadRewind()
+        public void loadRecall()
         {
-            SceneManager.LoadScene("Assets/rewind/Examples/scenes/rewind/rewind.unity");
+            SceneManager.LoadScene("Assets/rewind/Examples/scenes/recall/recall.unity");
         }
 
         public void loadPlayBake()

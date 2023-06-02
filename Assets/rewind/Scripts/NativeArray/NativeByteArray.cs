@@ -6,6 +6,7 @@ namespace ccl.rewind_plugin
     public class NativeByteArray
     {
         private NativeArray<byte> _nativeBuffer;
+        public bool isDisposed;
 
         //private NativeByteArrayWriter _writer;
         //private NativeByteArrayReader _reader;
@@ -28,6 +29,7 @@ namespace ccl.rewind_plugin
         public void Dispose()
         {
             _nativeBuffer.Dispose();
+            isDisposed = true;
         }
         
         public unsafe void* GetUnsafeWritePtr()

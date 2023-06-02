@@ -15,12 +15,15 @@ EditorBuildSettings:
     path: Assets/rewind/Examples/scenes/baking/baking.unity
     guid: 7c3e1e2ee0ebcd94cb6a6a838827e107
   - enabled: 1
-    path: Assets/rewind/Examples/scenes/rewind/rewind.unity
+    path: Assets/rewind/Examples/scenes/recall/recall.unity
     guid: eb5b6a89f5c91e249a5e7bbdaf6dafb2
   - enabled: 1
     path: Assets/rewind/Examples/scenes/simple/simple.unity
     guid: c11389b6b3ae6af49b3dd604df6e7285
   - enabled: 1
-    path: Assets/rewind/Examples/scenes/sports/sports.unity
-    guid: 87fc737419c6a1b44ad95220e94b83ee
+    path: Assets/rewind/Examples/scenes/sports-replay/sports-replay.unity
+    guid: 5675c0a78c4491c4eb181114a96bdc83
+  - enabled: 1
+    path: Assets/rewind/Examples/scenes/sports-rewind/sports-rewind.unity
+    guid: c5a2a6629df7324408d6f9680866229b
   m_configObjects: {}

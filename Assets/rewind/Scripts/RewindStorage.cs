@@ -126,6 +126,23 @@ namespace ccl.rewind_plugin
             }
         }
 
+        // Destructor
+        ~RewindStorage()
+        {
+            if (!nativeStorage.isDisposed)
+            {
+                nativeStorage.Dispose();
+            }
+        }
+
+        public void Dispose()
+        {
+            if (!nativeStorage.isDisposed)
+            {
+                nativeStorage.Dispose();
+            }
+        }
+        
         public int RecordedFrameCount => rewindFramesCount;
 
         public RewindHandlerStorage getHandlerStorage(uint rewindHandlerID)
