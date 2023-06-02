@@ -9,13 +9,14 @@ namespace ccl.rewind_plugin_demos
     {
         public GameObject stackParent;
 
+        public RewindPlaybackPreparer playbackPreparer;
+        
         private RewindScene rewindScene;
-
         private RewindStorage rewindStorage;
-
         private RewindPlayback rewindPlayback;
-      //  private RewindRecorder _recorder;
 
+        private float playbackTimer;
+        
         void Start()
         {
             rewindScene = new RewindScene();
@@ -24,9 +25,7 @@ namespace ccl.rewind_plugin_demos
             rewindStorage = new RewindStorage(rewindScene, 150, false);
 
             rewindPlayback = new RewindPlayback(rewindScene, rewindStorage);
-            
-          //  _recorder = new RewindRecorder(rewindScene, rewindStorage, 30);
-         
+
             //start with the simulation paused
             Time.timeScale = 0.0f;
         }
@@ -35,7 +34,15 @@ namespace ccl.rewind_plugin_demos
         {
             if (Time.timeScale > 0.0f)
             {
-                rewindPlayback.playbackUpdate();   
+                rewindPlayback.playbackUpdate();
+                playbackTimer += Time.deltaTime;
+
+                //TODO: better end condition
+                if (playbackTimer > 5.0f)
+                {
+                    rewindPlayback.stopPlayback();
+                    playbackPreparer.stopPlayback();
+                }
             }
         }
 
@@ -51,6 +58,7 @@ namespace ccl.rewind_plugin_demos
 
                 rewindStorage.loadFromFile(path);
 
+                playbackPreparer.startPlayback();
                 rewindPlayback.startPlayback();
             }
 

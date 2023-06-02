@@ -9,13 +9,14 @@ namespace ccl.rewind_plugin_demos
         private const float TestTime = 3.0f;
         private const float SpinSpeed = 2.0f;
         private const float ScaleSpeed = 1.0f;
+        private const float BounceSpeed = 4.0f;
 
         public TMPro.TMP_Text statusText;
 
         public RewindTransform transformTest;
 
-        public RewindRecorderComponent recorderComponent;
-        public RewindPlaybackComponent playbackComponent;
+        private RewindRecorderComponent recorderComponent;
+        private RewindPlaybackComponent playbackComponent;
         
         private Transform _transform;
 
@@ -54,6 +55,8 @@ namespace ccl.rewind_plugin_demos
             //spin and move for 3 seconds
             float timer = 0.0f;
 
+            Vector3 startPos = _transform.position;
+
             while (timer < TestTime)
             {
                 timer += Time.deltaTime;
@@ -62,10 +65,16 @@ namespace ccl.rewind_plugin_demos
 
                 _transform.localScale = new Vector3(scale, scale, scale);
 
-                float rot = Mathf.Cos(timer * SpinSpeed);
+                float rot = Mathf.Cos(timer * ScaleSpeed);
                 
                 _transform.localRotation = Quaternion.Euler(0.0f, rot * 100.0f, 0.0f);
 
+
+                float posTimeScale = Mathf.Sin(timer * BounceSpeed);
+                posTimeScale *= posTimeScale;
+                Vector3 pos = Vector3.Lerp(startPos, startPos + Vector3.one, posTimeScale);
+                _transform.position = pos;
+                
                 yield return null;
             }
 
