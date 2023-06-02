@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace ccl.rewind_plugin
 {
-    internal class RewindPlayback
+    public class RewindPlayback
     {
         private readonly RewindScene _rewindScene;
         private readonly RewindStorage _rewindStorage;

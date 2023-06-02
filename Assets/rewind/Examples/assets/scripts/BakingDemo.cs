@@ -1,5 +1,6 @@
 using System;
 using ccl.rewind_plugin;
+using UnityEditor;
 using UnityEngine;
 
 namespace ccl.rewind_plugin_demos
@@ -46,16 +47,24 @@ namespace ccl.rewind_plugin_demos
                 Time.timeScale = 1.0f;
                 _recorder.startRecording();
             }
-
+            
+            #if UNITY_EDITOR
             if (rewindStorage.isFull)
             {
                 if (GUILayout.Button("Write Bake To File"))
                 {
                     //Write the recording to a file
-                    rewindStorage.writeToFile("baked_rewind_data");
+                    //write to the correct location in the Assets folder
+                    
+                    //get the Assets folder location
+                    string path = Application.dataPath;
+                    path += "/rewind/Examples/assets/bakes/baked_rewind_data";
+
+                    rewindStorage.writeToFile(path);
                 }
             }
-            
+            #endif            
+
             GUILayout.EndArea();
         }
     }

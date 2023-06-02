@@ -268,5 +268,25 @@ namespace ccl.rewind_plugin
                 fileStream.Write(managedArray);
             }
         }
+
+        public void loadFromFile(string fileName)
+        {
+            using (FileStream fileStream = new FileStream(fileName, FileMode.Open))
+            {
+                //write the header
+                int version = fileStream.ReadByte();
+                
+                //read the data
+                byte[] managedArray = nativeStorage.getManagedArray();
+                fileStream.Read(managedArray);
+            }
+            
+            //read the frame count
+            frameReaderA.setReadHead(0);
+            rewindFramesCount = frameReaderA.readInt();
+
+            int handlerCount = frameReaderA.readInt();
+
+        }
     }
 }

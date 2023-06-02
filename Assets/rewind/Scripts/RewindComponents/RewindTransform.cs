@@ -16,18 +16,18 @@ namespace ccl.rewind_plugin
                 id = ComponentIDGenerator.generateID(this);
         }
 
-        private bool _ignoreNextDeserialization;
+//        private bool _ignoreNextDeserialization;
         
         public void OnAfterDeserialize()
         {
             //make sure the id is unique before we register it
-            int c = 0;
+    //        int c = 0;
             
             //this can get us into an infinite loop in the editor because modifying the id causes the
             //object to be serialized/deserialized again
             
             //
-            if (!_ignoreNextDeserialization)
+         /*   if (!_ignoreNextDeserialization)
             {
                 while (ComponentIDGenerator.isRegistered(id) && c < 10)
                 {
@@ -37,12 +37,16 @@ namespace ccl.rewind_plugin
                     _ignoreNextDeserialization = false;
                 }
             }
-
-            ComponentIDGenerator.register(this);
+*/
+  //          ComponentIDGenerator.register(this);
         }
         
-        public uint ID => id;
-        
+        public uint ID
+        {
+            get => id;
+            set => id = value;
+        }
+
         //Required to be implemented by sub-classes
         public abstract void rewindStore(NativeByteArrayWriter writer);
         public abstract void rewindRestore(NativeByteArrayReader reader);

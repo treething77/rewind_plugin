@@ -25,12 +25,6 @@ namespace ccl.rewind_plugin_demos
 
         private int recordFPS = 30;
 
-        internal static unsafe float ConvertIntToFloat(int f)
-        {
-            var fp = &f;
-            var i = (float*)fp;
-            return *i;
-        }
         
         private void Awake()
         {

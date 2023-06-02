@@ -2,20 +2,21 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Runtime.InteropServices;
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 using UnityEngine;
 using Random = System.Random;
 
 namespace ccl.rewind_plugin
 {
+    //TODO: move to its own file
     public static class ComponentIDGenerator
     {
         private static Random _idRandom;
         
         public static uint generateID(IRewindHandler rewindHandler) 
         {
-            //GetInstanceID does not persist between runtime and editor, so we can't use it to 
-            //reliably match components with GameObjects
-
             if (_idRandom == null)
             {
                 _idRandom = new Random();
@@ -24,11 +25,11 @@ namespace ccl.rewind_plugin
             uint id = (uint) _idRandom.Next(0, 2 << 24) << 8;
   
             id |= rewindHandler.HandlerTypeID; 
-            Debug.Log($"returning id {id}");
+            Debug.Log($"Generated id {id}");
 
             return id;
         }
-
+/*
         static List<RewindComponentBase> rewindComponents = new List<RewindComponentBase>();
 
         public static void register(RewindComponentBase rewindComponentBase)
@@ -36,9 +37,31 @@ namespace ccl.rewind_plugin
             rewindComponents.Add(rewindComponentBase);
         }
 
+        public static void registerHierarchy(Transform rewindParent)
+        {
+            RewindComponentBase[] rewindComponentBases = rewindParent.GetComponentsInChildren<RewindComponentBase>(true);
+            foreach (RewindComponentBase rewindComponentBase in rewindComponentBases)
+            {
+                register(rewindComponentBase);
+            }
+        }
+
+        public static void unregister(RewindComponentBase rewindComponentBase)
+        {
+            rewindComponents.Remove(rewindComponentBase);
+        }
+
+        public static void unregisterHierarchy(Transform rewindParent)
+        {
+            RewindComponentBase[] rewindComponentBases = rewindParent.GetComponentsInChildren<RewindComponentBase>(true);
+            foreach (RewindComponentBase rewindComponentBase in rewindComponentBases)
+            {
+                unregister(rewindComponentBase);
+            }
+        }
+        
         public static bool isRegistered(uint id)
         {
-            Debug.Log($"testing id {id}");
             foreach (var rewindComponent in rewindComponents)
             {
                 if (rewindComponent.ID == id) return true;
@@ -46,6 +69,7 @@ namespace ccl.rewind_plugin
 
             return false;
         }
+        */
     }
     
     public class RewindCustomMonoBehaviourAttributes : RewindComponentBase
