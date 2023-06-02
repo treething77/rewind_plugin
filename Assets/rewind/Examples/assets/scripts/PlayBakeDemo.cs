@@ -16,6 +16,7 @@ namespace ccl.rewind_plugin_demos
         private RewindPlayback rewindPlayback;
 
         private float playbackTimer;
+        private bool playingBack;
         
         void Start()
         {
@@ -26,13 +27,21 @@ namespace ccl.rewind_plugin_demos
 
             rewindPlayback = new RewindPlayback(rewindScene, rewindStorage);
 
-            //start with the simulation paused
-            Time.timeScale = 0.0f;
+            //Load the bake and apply the starting frame to get the settled starting position
+            string path = Application.dataPath;
+            path += "/rewind/Examples/assets/bakes/baked_rewind_data";
+
+            rewindStorage.loadFromFile(path);
+
+            playbackPreparer.startPlayback();
+            rewindPlayback.startPlayback();
+            
+            rewindPlayback.playbackUpdate();
         }
 
         private void Update()
         {
-            if (Time.timeScale > 0.0f)
+            if (playingBack)
             {
                 rewindPlayback.playbackUpdate();
                 playbackTimer += Time.deltaTime;
@@ -42,6 +51,7 @@ namespace ccl.rewind_plugin_demos
                 {
                     rewindPlayback.stopPlayback();
                     playbackPreparer.stopPlayback();
+                    playingBack = false;
                 }
             }
         }
@@ -51,14 +61,9 @@ namespace ccl.rewind_plugin_demos
             GUILayout.BeginArea(new Rect(Screen.width-200.0f, 0.0f, 200.0f, Screen.height));
             if (GUILayout.Button("Play Baked Sim"))
             {
-                Time.timeScale = 1.0f;
-                
-                string path = Application.dataPath;
-                path += "/rewind/Examples/assets/bakes/baked_rewind_data";
+                playingBack = true;
 
-                rewindStorage.loadFromFile(path);
-
-                playbackPreparer.startPlayback();
+                //call again to reset the start time so we get correct relative times
                 rewindPlayback.startPlayback();
             }
 

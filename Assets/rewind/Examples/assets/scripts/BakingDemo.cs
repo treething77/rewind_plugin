@@ -8,11 +8,17 @@ namespace ccl.rewind_plugin_demos
     public class BakingDemo : MonoBehaviour
     {
         public GameObject stackParent;
+        public Rigidbody bomb;
 
         private RewindScene rewindScene;
 
         private RewindStorage rewindStorage;
         private RewindRecorder _recorder;
+
+        private bool recording;
+        private float explosionTimer;
+
+        private const float ExplosionWaitTime = 0.5f;
 
         void Start()
         {
@@ -22,15 +28,23 @@ namespace ccl.rewind_plugin_demos
             rewindStorage = new RewindStorage(rewindScene, 150, false);
    
             _recorder = new RewindRecorder(rewindScene, rewindStorage, 30);
-         
-            //start with the simulation paused
-            Time.timeScale = 0.0f;
         }
 
         private void Update()
         {
-            if (Time.timeScale > 0.0f)
+            if (recording)
             {
+                if (explosionTimer < ExplosionWaitTime)
+                {
+                    explosionTimer += Time.deltaTime;
+                    if (explosionTimer >= ExplosionWaitTime)
+                    {
+                        //set off the "bomb"
+                        bomb.velocity = Vector3.up * 20.0f;
+                        bomb.AddExplosionForce(100.0f, bomb.transform.position, 1.0f);
+                    }
+                }
+
                 //if the recording is full then stop
                 if (!rewindStorage.isFull)
                 {
@@ -42,9 +56,9 @@ namespace ccl.rewind_plugin_demos
         private void OnGUI()
         {
             GUILayout.BeginArea(new Rect(Screen.width-200.0f, 0.0f, 200.0f, Screen.height));
-            if (GUILayout.Button("Start Sim & Record"))
+            if (GUILayout.Button("Start & Record"))
             {
-                Time.timeScale = 1.0f;
+                recording = true;
                 _recorder.startRecording();
             }
             
