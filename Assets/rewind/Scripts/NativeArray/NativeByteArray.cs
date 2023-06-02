@@ -46,5 +46,10 @@ namespace ccl.rewind_plugin
             _nativeBuffer.CopyTo(managedArray);
             return managedArray;
         }
+
+        public void setManagedArray(byte[] managedArray)
+        {
+            _nativeBuffer.CopyFrom(managedArray);
+        }
     }
 }
