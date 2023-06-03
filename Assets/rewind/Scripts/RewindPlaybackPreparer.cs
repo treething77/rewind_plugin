@@ -19,28 +19,54 @@ namespace ccl.rewind_plugin
 
             HashSet<GameObject> rewindObjects = allRewindHandlers.Select(rewindComponentBase => rewindComponentBase.gameObject).ToHashSet();
             
+            //TODO: this is too nested and could use some caching
             foreach (var rewindObject in rewindObjects)
             {
-                //disable components that we don't want active during playback
-                foreach (Component component in rewindObject.GetComponentsInChildren<Component>())
+                //get all rewind components on this GameObject and ask them to filter the other components 
+                //that are parented to that GameObject
+                RewindComponentBase[] rewindComponents = rewindObject.GetComponentsInChildren<RewindComponentBase>();
+                Component[] generalComponents = rewindObject.GetComponentsInChildren<Component>();
+                
+            //    foreach (RewindComponentBase rewindComponent in rewindComponents)
                 {
-                    //if it wasn't already enabled then ignore it
-                    if (component is Rigidbody)
+                    //disable components that we don't want active during playback
+                    foreach (Component component in generalComponents)
                     {
-                        Rigidbody rigidBody = component as Rigidbody;
-                        if (!rigidBody.isKinematic)
+                        if (component is RewindComponentBase)
                         {
-                            rigidBody.isKinematic = true;
-                            nonKinematicRigidBodies.Add(rigidBody);
+                            //For rewind components disable them unless they say otherwise. They may have other 
+                            //logic in Update etc that we don't want running during a replay, or they may take
+                            //care of that themselves by querying the playback state.
+                            RewindComponentBase rewindComponentBase = (RewindComponentBase)component;
+                            if (rewindComponentBase.enabled && !rewindComponentBase.ShouldStayEnabledDuringReplay)
+                            {
+                                rewindComponentBase.enabled = false;
+                                nonPlaybackEnabledBehaviors.Add(rewindComponentBase);
+                            }
                         }
-                    }
-                    else if (component is Behaviour)
-                    {
-                        Behaviour behavior = component as Behaviour;
-                        if (behavior.enabled)
+                        else if (component is Rigidbody)
                         {
-                            behavior.enabled = false;
-                            nonPlaybackEnabledBehaviors.Add(behavior);
+                            Rigidbody rigidBody = component as Rigidbody;
+                            //We can't disable rigid bodies but we can make them kinematic
+                            if (!rigidBody.isKinematic)
+                            {
+                                rigidBody.isKinematic = true;
+                                nonKinematicRigidBodies.Add(rigidBody);
+                            }
+                        }
+                        else if (component is Behaviour)
+                        {
+                            //Disable if all rewind components agree it should be disabled
+                            if (rewindComponents.All(x => x.shouldDisableComponent(component)))
+                            {
+                                Behaviour behavior = component as Behaviour;
+                                //if it wasn't already enabled then ignore it
+                                if (behavior.enabled)
+                                {
+                                    behavior.enabled = false;
+                                    nonPlaybackEnabledBehaviors.Add(behavior);
+                                }
+                            }
                         }
                     }
                 }

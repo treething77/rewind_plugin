@@ -316,6 +316,8 @@ namespace ccl.rewind_plugin
             
             //read the data from the 2 frames
             rewindHandler.rewindRestoreInterpolated(frameReaderA, frameReaderB, frameT);
+            
+            rewindHandler.postRestored();
         }
 
         public void writeToFile(string fileName)

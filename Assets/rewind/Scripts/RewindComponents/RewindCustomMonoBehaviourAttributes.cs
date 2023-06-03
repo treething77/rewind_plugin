@@ -104,29 +104,66 @@ namespace ccl.rewind_plugin
                 {
                     writer.writeV3((Vector3)rewindField.GetValue(this));
                 }
+                else if (rewindField.FieldType == typeof(Quaternion))
+                {
+                    writer.writeQuaternion((Quaternion)rewindField.GetValue(this));
+                }
+                else if (rewindField.FieldType == typeof(int))
+                {
+                    writer.writeInt((int)rewindField.GetValue(this));
+                }
+                else if (rewindField.FieldType == typeof(Color))
+                {
+                    writer.writeColor((Color)rewindField.GetValue(this));
+                }
+                else if (rewindField.FieldType == typeof(bool))
+                {
+                    writer.writeBool((bool)rewindField.GetValue(this));
+                }
             }
         }
         
         public override void rewindRestoreInterpolated(NativeByteArrayReader frameReaderA, NativeByteArrayReader frameReaderB, float frameT)
         {
-            throw new NotImplementedException();
-        }
-        
-        public override void rewindRestore(NativeByteArrayReader reader) {
             foreach (FieldInfo rewindField in rewindFields)
             {
                 //Call a different method in reader depending on the type of the field
                 if (rewindField.FieldType == typeof(float))
                 {
-                    rewindField.SetValue(this, reader.readFloat());
+                    float v = Mathf.Lerp(frameReaderA.readFloat(), frameReaderB.readFloat(), frameT);
+                    rewindField.SetValue(this, v);
                 }
                 else if (rewindField.FieldType == typeof(Vector3))
                 {
-                    rewindField.SetValue(this, reader.readV3());
+                    Vector3 v = Vector3.Lerp(frameReaderA.readV3(), frameReaderB.readV3(), frameT);
+                    rewindField.SetValue(this, v);
+                }
+                else if (rewindField.FieldType == typeof(Quaternion))
+                {
+                    Quaternion v = Quaternion.Lerp(frameReaderA.readQuaternion(), frameReaderB.readQuaternion(), frameT);
+                    rewindField.SetValue(this, v);
+                }
+                else if (rewindField.FieldType == typeof(Color))
+                {
+                    Color v = Color.Lerp(frameReaderA.readColor(), frameReaderB.readColor(), frameT);
+                    rewindField.SetValue(this, v);
+                }
+                else if (rewindField.FieldType == typeof(bool))
+                {
+                    //we dont interpolate booleans
+                    frameReaderA.readBool();
+                    bool v = frameReaderB.readBool();
+                    rewindField.SetValue(this, v);
+                }
+                else if (rewindField.FieldType == typeof(int))
+                {
+                    int vA = frameReaderA.readInt();
+                    int vB = frameReaderB.readInt();
+                    rewindField.SetValue(this, RewindUtilities.LerpInt(vA, vB, frameT));
                 }
             }
         }
-
+ 
         public override int RequiredBufferSizeBytes => requiredBufferSize;
         public override uint HandlerTypeID => 2;
 

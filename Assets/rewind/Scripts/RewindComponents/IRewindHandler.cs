@@ -6,10 +6,12 @@ namespace ccl.rewind_plugin
         uint ID { get; set; }
 
         void rewindStore(NativeByteArrayWriter writer);
-        void rewindRestore(NativeByteArrayReader reader);
+   //     void rewindRestore(NativeByteArrayReader reader);
         
         int RequiredBufferSizeBytes { get; }
         uint HandlerTypeID { get; }
         void rewindRestoreInterpolated(NativeByteArrayReader frameReaderA, NativeByteArrayReader frameReaderB, float frameT);
+
+        void postRestored();//callback when values have been restored
     }
 }

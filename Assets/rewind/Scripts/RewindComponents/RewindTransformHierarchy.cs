@@ -33,19 +33,6 @@ namespace ccl.rewind_plugin
 #if USE_BURST_FOR_REWIND_COMPONENTS
         [BurstCompile]
 #endif
-        public override void rewindRestore(NativeByteArrayReader reader)
-        {
-            foreach (Transform t in _transforms)
-            {
-                t.localPosition = reader.readV3();    
-                t.localRotation = reader.readQuaternion();    
-                t.localScale =    reader.readV3();    
-            }
-        }
-
-#if USE_BURST_FOR_REWIND_COMPONENTS
-        [BurstCompile]
-#endif
         public override void rewindRestoreInterpolated(NativeByteArrayReader frameReaderA, NativeByteArrayReader frameReaderB, float frameT)
         {
             foreach (Transform t in _transforms)

@@ -16,10 +16,13 @@ namespace ccl.rewind_plugin_demos
             base.rewindStore(writer);
         }
 
-        public override void rewindRestore(NativeByteArrayReader reader)
+        public override void rewindRestoreInterpolated(NativeByteArrayReader frameReaderA, NativeByteArrayReader frameReaderB, float frameT)
         {
-            mesh.material.color = reader.readColor();
-            base.rewindRestore(reader);
+            Color cA = frameReaderA.readColor();
+            Color cB = frameReaderB.readColor();
+            mesh.material.color = Color.Lerp(cA, cB, frameT);
+            
+            base.rewindRestoreInterpolated(frameReaderA, frameReaderB, frameT);
         }
     }
 

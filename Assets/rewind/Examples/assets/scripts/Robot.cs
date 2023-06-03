@@ -1,25 +1,36 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using ccl.rewind_plugin;
 using UnityEngine;
 using Random = System.Random;
 
 namespace ccl.rewind_plugin_demos
 {
-    public class root : MonoBehaviour
+    public class Robot : RewindCustomMonoBehaviourAttributes
     {
-        Transform transform1;
+        private Transform transform1;
 
         private Vector3 prevP;
         private Vector3 motion;
 
-        private Vector3 moveStartPt;
+        [RewindAttribute]
+        public Vector3 moveStartPt;
+        
+        [RewindAttribute]
+        public Vector3 moveTargetPt;
+
         private MoveTarget moveTarget;
-        private float moveBlendStart;
-        private float moveBlendEnd;
+        
+        [RewindAttribute]
+        public float moveBlendStart;
+        
+        [RewindAttribute]
+        public float moveBlendEnd;
 
         private Animator a;
         CharacterController c;
+        
         private static readonly int Blend = Animator.StringToHash("Blend");
 
         void Start()
@@ -35,6 +46,10 @@ namespace ccl.rewind_plugin_demos
 
         }
 
+        public override void postRestored()
+        {
+        }
+        
         private void ChooseTarget()
         {
             MoveTarget newTarget = null;
@@ -45,7 +60,8 @@ namespace ccl.rewind_plugin_demos
             } while (newTarget == moveTarget);
 
             moveTarget = newTarget;
-
+            moveTargetPt = newTarget.transform.position;
+            
             moveStartPt = transform.position;
             moveBlendStart = UnityEngine.Random.Range(0.0f, 1.0f);
             moveBlendEnd = UnityEngine.Random.Range(0.0f, 1.0f);

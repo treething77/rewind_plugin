@@ -16,6 +16,8 @@ namespace ccl.rewind_plugin
                 id = ComponentIDGenerator.generateID(this);
         }
 
+        public virtual bool ShouldStayEnabledDuringReplay => false;
+
 //        private bool _ignoreNextDeserialization;
         
         public void OnAfterDeserialize()
@@ -49,10 +51,18 @@ namespace ccl.rewind_plugin
 
         //Required to be implemented by sub-classes
         public abstract void rewindStore(NativeByteArrayWriter writer);
-        public abstract void rewindRestore(NativeByteArrayReader reader);
+     //   public abstract void rewindRestore(NativeByteArrayReader reader);
         public abstract int RequiredBufferSizeBytes { get; }
         public abstract uint HandlerTypeID  { get; }
         public abstract void rewindRestoreInterpolated(NativeByteArrayReader frameReaderA, NativeByteArrayReader frameReaderB, float frameT);
+        public virtual void postRestored()
+        {
+        }
+
+        public virtual bool shouldDisableComponent(Component component)
+        {
+            return true;//by default disable all other components
+        }
     }
     
     public class RewindTransform : RewindComponentBase
@@ -71,10 +81,10 @@ namespace ccl.rewind_plugin
             if (recordScale) writer.writeV3(_transform.localScale);
         }
 
-        public override void rewindRestore(NativeByteArrayReader reader) {
+        /*public override void rewindRestore(NativeByteArrayReader reader) {
             _transform.SetPositionAndRotation(reader.readV3(), reader.readQuaternion());
             if (recordScale) _transform.localScale = reader.readV3();
-        }
+        }*/
 
         public override void rewindRestoreInterpolated(NativeByteArrayReader frameReaderA, NativeByteArrayReader frameReaderB, float frameT)
         {

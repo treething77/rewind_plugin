@@ -64,6 +64,11 @@ namespace ccl.rewind_plugin
         {
             writeSimpleValueImpl(value);
         }
+        
+        public void writeBool(bool value)
+        {
+            writeSimpleValueImpl(value);
+        }
 
         public void writeColor(Color value)
         {

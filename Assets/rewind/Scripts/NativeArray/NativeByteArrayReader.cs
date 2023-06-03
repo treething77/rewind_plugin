@@ -43,6 +43,11 @@ namespace ccl.rewind_plugin
             return readValue<int>();
         }
 
+        public bool readBool()
+        {
+            return readValue<bool>();
+        }
+        
         public byte readByte()
         {
             return readValue<byte>();
