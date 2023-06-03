@@ -208,7 +208,6 @@ namespace ccl.rewind_plugin
             unsafe
             {
                 float* pTimes = frameReaderA.getDataPtr<float>();
-                
                 //Have to handle the continuous recording case
                 //One way to do that would be to remap the indices
                 
@@ -216,20 +215,20 @@ namespace ccl.rewind_plugin
                 // [0, rewindFrameCount-1]
                 // 0 -> rewindFrameWriteIndex
                 // rewindFrameCount-1 -> (rewindFrameWriteIndex + rewindFrameCount-1) % maxFrameCount
+                int startTimeIndex = remapIndex(0);
+                float replayStartTime = pTimes[startTimeIndex];
+
+                int endTimeIndex = remapIndex(rewindFramesCount - 1);
+
+                //special cases, before start time or after end time
+                if (playbackTimeRelative < (pTimes[startTimeIndex]-replayStartTime))
                 {
-                    int startTimeIndex = remapIndex(0);
-                    int endTimeIndex = remapIndex(rewindFramesCount - 1);
+                    return (0, 0, 0.0f);
+                }
 
-                    //special cases, before start time or after end time
-                    if (playbackTimeRelative < pTimes[startTimeIndex])
-                    {
-                        return (0, 0, 0.0f);
-                    }
-
-                    if (playbackTimeRelative > pTimes[endTimeIndex])
-                    {
-                        return (rewindFramesCount - 1, rewindFramesCount - 1, 0.0f);
-                    }
+                if (playbackTimeRelative > (pTimes[endTimeIndex]-replayStartTime))
+                {
+                    return (rewindFramesCount - 1, rewindFramesCount - 1, 1.0f);
                 }
 
                 //do a linear search
@@ -242,7 +241,7 @@ namespace ccl.rewind_plugin
                     
                     int midTimeIndex = remapIndex(mid);
 
-                    float midVal = pTimes[midTimeIndex];
+                    float midVal = pTimes[midTimeIndex] - replayStartTime;
                     if (midVal < playbackTimeRelative)
                     {
                         low = mid + 1;
@@ -267,12 +266,15 @@ namespace ccl.rewind_plugin
                 //frameT should be the normalized value between the two frame times
                 //  i.e. 0.0f = frameA, 1.0f = frameB
                 //  so we need to calculate the normalized value between the two frame times
-                //  and then subtract the frameA time from it
+                //  and then subtract the frameA time from it 
                 
                 int frameATimeIndex = remapIndex(frameA);
                 int frameBTimeIndex = remapIndex(frameB);
 
-                frameT = (playbackTimeRelative - pTimes[frameATimeIndex]) / (pTimes[frameBTimeIndex] - pTimes[frameATimeIndex]);
+                float frameTimeA = pTimes[frameATimeIndex] - replayStartTime;
+                float frameTimeB = pTimes[frameBTimeIndex] - replayStartTime;
+                
+                frameT = (playbackTimeRelative - frameTimeA) / (frameTimeB - frameTimeA);
                 
                 Debug.Assert(frameT >= 0.0f);
                 Debug.Assert(frameT <= 1.0f);
@@ -289,6 +291,8 @@ namespace ccl.rewind_plugin
         /// <returns></returns>
         private int remapIndex(int frameIndex)
         {
+            //is buffer full yet?
+            if (rewindFramesCount < _maxFrameCount) return frameIndex;
             return (rewindFrameWriteIndex + frameIndex) % _maxFrameCount;   
         }
 

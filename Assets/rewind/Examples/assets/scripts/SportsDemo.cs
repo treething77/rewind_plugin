@@ -35,6 +35,15 @@ namespace ccl.rewind_plugin_demos
             if (playback)
             {
                 _playback.playbackUpdate();
+                
+                if (_playback.isPlaybackComplete)
+                {
+                    playback = false;
+                    statusText.text = "Record";
+                    //_recorder.startRecording();
+                    _playback.stopPlayback();
+                    playbackPreparer.stopPlayback();
+                }
             }
             else
             {
