@@ -40,7 +40,8 @@ namespace ccl.rewind_plugin_demos
                 {
                     playback = false;
                     statusText.text = "Record";
-                    //_recorder.startRecording();
+                    
+                    _recorder.startRecording();
                     _playback.stopPlayback();
                     playbackPreparer.stopPlayback();
                 }
