@@ -26,7 +26,10 @@ namespace ccl.rewind_plugin
         private void Update()
         {
             if (_isPlaying)
-                _playback.playbackUpdate();
+            {
+                _playback.AdvancePlaybackTime();
+                _playback.restoreFrameAtCurrentTime();
+            }
         }
     }
 }

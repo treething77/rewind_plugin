@@ -34,7 +34,8 @@ namespace ccl.rewind_plugin_demos
         {
             if (playback)
             {
-                _playback.playbackUpdate();
+                _playback.AdvancePlaybackTime();
+                _playback.restoreFrameAtCurrentTime();
                 
                 if (_playback.isPlaybackComplete)
                 {

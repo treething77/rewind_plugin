@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using ccl.rewind_plugin;
 using UnityEditor;
 using UnityEngine;
@@ -15,11 +16,13 @@ namespace ccl.rewind_plugin_demos
         private RewindStorage rewindStorage;
         private RewindPlayback rewindPlayback;
 
-        private float playbackTimer;
         private bool playingBack;
+
+        private Camera _camera;
         
         void Start()
         {
+            _camera = Camera.main;
             rewindScene = new RewindScene();
             rewindScene.addAllChildren(stackParent);
 
@@ -36,18 +39,52 @@ namespace ccl.rewind_plugin_demos
             playbackPreparer.startPlayback();
             rewindPlayback.startPlayback();
             
-            rewindPlayback.playbackUpdate();
+            rewindPlayback.restoreFrameAtCurrentTime();
+
+            _camera.transform.LookAt(Vector3.up);
+        }
+
+        private IEnumerator BoomCam()
+        {
+            yield return new WaitForSeconds(0.5f);
+
+            //Do a bullet time slowmo rotation around the stack
+            Time.timeScale = 0.15f;
+
+            float st = Time.unscaledTime;
+
+            Vector3 offset = _camera.transform.position;
+            
+            while (Time.unscaledTime < (st + 2.0f))
+            {
+
+                // Calculate the desired rotation based on the mouse input
+                Quaternion rotation = Quaternion.Euler(0f, 100.0f * Time.unscaledDeltaTime, 0f);
+
+                // Apply the rotation to the camera's position
+                offset = rotation * offset;
+
+                // Move the camera to the new position around the target point
+                _camera.transform.position = offset;
+
+                _camera.transform.LookAt(Vector3.up);
+
+                
+                yield return null;
+            }
+
+            //Speed up to accentuate the end of slowmo
+            Time.timeScale = 2.0f;
         }
 
         private void Update()
         {
             if (playingBack)
             {
-                rewindPlayback.playbackUpdate();
-                playbackTimer += Time.deltaTime;
+                rewindPlayback.AdvancePlaybackTime();
+                rewindPlayback.restoreFrameAtCurrentTime();
 
-                //TODO: better end condition
-                if (playbackTimer > 5.0f)
+                if (rewindPlayback.isPlaybackComplete)
                 {
                     rewindPlayback.stopPlayback();
                     playbackPreparer.stopPlayback();
@@ -65,6 +102,8 @@ namespace ccl.rewind_plugin_demos
 
                 //call again to reset the start time so we get correct relative times
                 rewindPlayback.startPlayback();
+                
+                StartCoroutine(BoomCam());
             }
 
             GUILayout.EndArea();

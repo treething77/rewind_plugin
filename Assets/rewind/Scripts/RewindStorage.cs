@@ -190,7 +190,7 @@ namespace ccl.rewind_plugin
             if (rewindFrameWriteIndex >= _maxFrameCount) rewindFrameWriteIndex = 0;
         }
 
-        public (int frameA,int frameB,float frameT) findPlaybackFrames(float playbackTimeRelative)
+        public (int frameA,int frameB,float frameT) findPlaybackFrames(float playbackTime)
         {
             //if only 1 frame then use it for both
             //   i.e. we always interpolate between 2 frames
@@ -216,17 +216,15 @@ namespace ccl.rewind_plugin
                 // 0 -> rewindFrameWriteIndex
                 // rewindFrameCount-1 -> (rewindFrameWriteIndex + rewindFrameCount-1) % maxFrameCount
                 int startTimeIndex = remapIndex(0);
-                float replayStartTime = pTimes[startTimeIndex];
-
                 int endTimeIndex = remapIndex(rewindFramesCount - 1);
 
                 //special cases, before start time or after end time
-                if (playbackTimeRelative < (pTimes[startTimeIndex]-replayStartTime))
+                if (playbackTime < (pTimes[startTimeIndex]))
                 {
                     return (0, 0, 0.0f);
                 }
 
-                if (playbackTimeRelative > (pTimes[endTimeIndex]-replayStartTime))
+                if (playbackTime > (pTimes[endTimeIndex]))
                 {
                     return (rewindFramesCount - 1, rewindFramesCount - 1, 1.0f);
                 }
@@ -241,12 +239,12 @@ namespace ccl.rewind_plugin
                     
                     int midTimeIndex = remapIndex(mid);
 
-                    float midVal = pTimes[midTimeIndex] - replayStartTime;
-                    if (midVal < playbackTimeRelative)
+                    float midVal = pTimes[midTimeIndex];
+                    if (midVal < playbackTime)
                     {
                         low = mid + 1;
                     }
-                    else if (midVal > playbackTimeRelative)
+                    else if (midVal > playbackTime)
                     {
                         high = mid - 1;
                     }
@@ -271,10 +269,10 @@ namespace ccl.rewind_plugin
                 int frameATimeIndex = remapIndex(frameA);
                 int frameBTimeIndex = remapIndex(frameB);
 
-                float frameTimeA = pTimes[frameATimeIndex] - replayStartTime;
-                float frameTimeB = pTimes[frameBTimeIndex] - replayStartTime;
+                float frameTimeA = pTimes[frameATimeIndex];
+                float frameTimeB = pTimes[frameBTimeIndex];
                 
-                frameT = (playbackTimeRelative - frameTimeA) / (frameTimeB - frameTimeA);
+                frameT = (playbackTime - frameTimeA) / (frameTimeB - frameTimeA);
                 
                 Debug.Assert(frameT >= 0.0f);
                 Debug.Assert(frameT <= 1.0f);
@@ -352,6 +350,17 @@ namespace ccl.rewind_plugin
             //read the frame count
             frameReaderA.setReadHead(0);
             rewindFramesCount = frameReaderA.readInt();
+        }
+
+        public float getTime(int timeFrameIndex)
+        {
+            unsafe
+            {
+                frameReaderA.setReadHead(_frameDataOffset);
+                float* pTimes = frameReaderA.getDataPtr<float>();
+                int mappedTimeIndex = remapIndex(timeFrameIndex);
+                return pTimes[mappedTimeIndex];
+            }
         }
     }
 }

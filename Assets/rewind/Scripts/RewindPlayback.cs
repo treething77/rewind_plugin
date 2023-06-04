@@ -7,10 +7,10 @@ namespace ccl.rewind_plugin
         private readonly RewindScene _rewindScene;
         private readonly RewindStorage _rewindStorage;
 
-        private float playbackStartTime;
+        private float playbackCurrentTime;
 
         private bool playbackComplete;
-        
+
         public bool isPlaybackComplete => playbackComplete;
         
         public RewindPlayback(RewindScene rewindScene, RewindStorage rewindStorage)
@@ -19,13 +19,45 @@ namespace ccl.rewind_plugin
             _rewindStorage = rewindStorage;
         }
 
-        public void playbackUpdate()
+        public float startTime
         {
-            //check time delta against starting time
-            float playbackTimeRelative = Time.time - playbackStartTime;
+            get
+            {
+                //get the times from the times array in the storage
+                return _rewindStorage.getTime(0);
+            }
+        }
 
+        public float endTime
+        {
+            get
+            {
+                return _rewindStorage.getTime(_rewindStorage.RecordedFrameCount-1);
+            }
+        }
+
+        public float currentTime
+        {
+            get
+            {
+                return playbackCurrentTime;
+            }
+        }
+        
+        public void SetPlaybackTime(float newTime)
+        {
+            playbackCurrentTime = newTime;
+        }
+
+        public void AdvancePlaybackTime()
+        {
+            playbackCurrentTime += Time.deltaTime;
+        }
+        
+        public void restoreFrameAtCurrentTime()
+        {
             //find 2 frame indices to interpolate
-            (int frameA, int frameB, float frameT) playbackFrames = _rewindStorage.findPlaybackFrames(playbackTimeRelative);
+            (int frameA, int frameB, float frameT) playbackFrames = _rewindStorage.findPlaybackFrames(playbackCurrentTime);
 
             foreach (IRewindHandler rewindHandler in _rewindScene.RewindHandlers)
             {
@@ -41,7 +73,7 @@ namespace ccl.rewind_plugin
         public bool startPlayback()
         {
             //get starting time
-            playbackStartTime = Time.time;
+            playbackCurrentTime = startTime;
             playbackComplete = false;
             return true;
         }
@@ -50,5 +82,6 @@ namespace ccl.rewind_plugin
         {
             //TODO: set playbackComplete?
         }
+
     }
 }
