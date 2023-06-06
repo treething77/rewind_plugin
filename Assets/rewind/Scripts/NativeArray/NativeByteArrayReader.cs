@@ -28,7 +28,7 @@ namespace ccl.rewind_plugin
             }
         }
 
-        public unsafe T* getDataPtr<T>() where T : unmanaged
+        public unsafe T* getReadHeadDataPtr<T>() where T : unmanaged
         {
             return (T*)((byte*)_nativeArray.GetUnsafeReadPtr() + _readHead);
         }

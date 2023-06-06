@@ -207,7 +207,7 @@ namespace ccl.rewind_plugin
 
             unsafe
             {
-                float* pTimes = frameReaderA.getDataPtr<float>();
+                float* pTimes = frameReaderA.getReadHeadDataPtr<float>();
                 //Have to handle the continuous recording case
                 //One way to do that would be to remap the indices
                 
@@ -223,43 +223,26 @@ namespace ccl.rewind_plugin
                 {
                     return (0, 0, 0.0f);
                 }
-
-                if (playbackTime > (pTimes[endTimeIndex]))
+                if (playbackTime >= (pTimes[endTimeIndex]))
                 {
                     return (rewindFramesCount - 1, rewindFramesCount - 1, 1.0f);
                 }
 
                 //do a linear search
-                int low = 0;
-                int high = rewindFramesCount - 1;
-                
-                while (low <= high)
+                //start at the beginning and work our way along until the next time is past our playbackTime
+                int frame = 1;
+                while (frame < rewindFramesCount)
                 {
-                    int mid = (low + high) / 2;
-                    
-                    int midTimeIndex = remapIndex(mid);
+                    int remappedFrame = remapIndex(frame);
+                    if (pTimes[remappedFrame] >= playbackTime)
+                    {
+                        frameB = remappedFrame;
+                        frameA = remapIndex(frame - 1);
+                        break;
+                    }
 
-                    float midVal = pTimes[midTimeIndex];
-                    if (midVal < playbackTime)
-                    {
-                        low = mid + 1;
-                    }
-                    else if (midVal > playbackTime)
-                    {
-                        high = mid - 1;
-                    }
-                    else
-                    {
-                        //exact match
-                        frameA = mid;
-                        frameB = mid;
-                        frameT = 0.0f;
-                        return (frameA, frameB, frameT);
-                    }
+                    frame++;
                 }
-
-                frameA = low;
-                frameB = high;
                 
                 //frameT should be the normalized value between the two frame times
                 //  i.e. 0.0f = frameA, 1.0f = frameB
@@ -357,7 +340,7 @@ namespace ccl.rewind_plugin
             unsafe
             {
                 frameReaderA.setReadHead(_frameDataOffset);
-                float* pTimes = frameReaderA.getDataPtr<float>();
+                float* pTimes = frameReaderA.getReadHeadDataPtr<float>();
                 int mappedTimeIndex = remapIndex(timeFrameIndex);
                 return pTimes[mappedTimeIndex];
             }

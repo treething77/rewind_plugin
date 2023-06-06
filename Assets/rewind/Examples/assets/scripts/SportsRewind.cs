@@ -55,20 +55,18 @@ namespace ccl.rewind_plugin_demos
                 }
                 case DemoState.Paused:
                 {
-                    Debug.DebugBreak();
+                    //Debug.DebugBreak();
+                    
                     float startTime = _playback.startTime;
                     float endTime = _playback.endTime;
-                    float currentTime = _playback.currentTime;
-
                     
                     playbackPreparer.startPlayback();
                     _playback.startPlayback();
                     Time.timeScale = 0.0f;
-                    
-                    startTime = _playback.startTime;
-                    endTime = _playback.endTime;
-                    currentTime = _playback.currentTime;
 
+                    //start at the end
+                    _playback.SetPlaybackTime(endTime);
+                    
                     break;
                 }
             }
