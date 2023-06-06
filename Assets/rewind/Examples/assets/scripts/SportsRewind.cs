@@ -115,6 +115,8 @@ namespace ccl.rewind_plugin_demos
                     if (GUILayout.Button("Continue"))
                     {
                         changeState(DemoState.Recording);
+                     //   Debug.DebugBreak();
+                     //   Debug.Break();
                     }
       
                     // Add a scrubber component to control the replay time

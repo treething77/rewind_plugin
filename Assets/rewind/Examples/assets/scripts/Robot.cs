@@ -14,18 +14,18 @@ namespace ccl.rewind_plugin_demos
         private Vector3 prevP;
         private Vector3 motion;
 
-        [RewindAttribute]
+        [Rewind]
         public Vector3 moveStartPt;
         
-        [RewindAttribute]
+        [Rewind]
         public Vector3 moveTargetPt;
 
-        private MoveTarget moveTarget;
+    //    private MoveTarget moveTarget;
         
-        [RewindAttribute]
+        [Rewind]
         public float moveBlendStart;
         
-        [RewindAttribute]
+        [Rewind]
         public float moveBlendEnd;
 
         private Animator a;
@@ -43,11 +43,6 @@ namespace ccl.rewind_plugin_demos
 
             a = GetComponent<Animator>();
             c = GetComponent<CharacterController>();
-
-        }
-
-        public override void postRestored()
-        {
         }
         
         private void ChooseTarget()
@@ -57,9 +52,8 @@ namespace ccl.rewind_plugin_demos
             {
                 int moveTargetIndex = UnityEngine.Random.Range(0, MoveTarget.targetList.Count);
                 newTarget = MoveTarget.targetList[moveTargetIndex];
-            } while (newTarget == moveTarget);
+            } while ((newTarget.transform.position - transform.position).magnitude < 1.0f);
 
-            moveTarget = newTarget;
             moveTargetPt = newTarget.transform.position;
             
             moveStartPt = transform.position;
@@ -69,7 +63,7 @@ namespace ccl.rewind_plugin_demos
 
         private void OnAnimatorMove()
         {
-            Vector3 dMove = moveTarget.transform.position - transform1.position;
+            Vector3 dMove = moveTargetPt - transform1.position;
             dMove.y = 0.0f;
 
             var gravity = Vector3.up * 5.0f;
@@ -79,7 +73,9 @@ namespace ccl.rewind_plugin_demos
 
             Vector3 actualMove = dMove.normalized * animMove.magnitude;
 
-            c.Move(actualMove - gravity * Time.deltaTime);
+            Vector3 moveAmount = actualMove - gravity * Time.deltaTime; 
+           // Debug.Log($"Robot move: {moveAmount}");
+            c.Move(moveAmount);
 
             if (dMove.magnitude < 0.7f)
             {
@@ -91,11 +87,13 @@ namespace ccl.rewind_plugin_demos
         // Update is called once per frame
         void Update()
         {
-            Vector3 lookAt = moveTarget.transform.position;
-            lookAt.y = transform1.position.y;
+            var position = moveTargetPt;
+            Vector3 lookAt = position;
+            var position1 = transform1.position;
+            lookAt.y = position1.y;
             transform1.LookAt(lookAt);
 
-            float moveT = (transform1.position - moveStartPt).magnitude / (moveTarget.transform.position - moveStartPt).magnitude;
+            float moveT = (position1 - moveStartPt).magnitude / (position - moveStartPt).magnitude;
             float moveBlend = Mathf.Lerp(moveBlendStart, moveBlendEnd, moveT);
             a.SetFloat(Blend, moveBlend);
         }

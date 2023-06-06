@@ -188,39 +188,9 @@ namespace ccl.rewind_plugin
                 //If the state changed then don't interpolate the time
                 if (stateA.stateHash == stateB.stateHash)
                 {
-                    // Unity has a strange idea of what "normalizedTime" means.
-                    // -the integer part is the number of times the animation has looped
-                    // -the fractional part is the actual normalized 0-1 time in the current loop
-                    // First get the actual normalized times of both states
-                    float newTimeN = stateB.stateTime % 1.0f;
-                    float lastTimeN = stateA.stateTime % 1.0f;
-                    float newStateTime = stateB.stateTime;
-
-                    float normalizedTimeDiff = newTimeN - lastTimeN;
-                    //If the difference is large enough it is a very strong indicator that we have looped
-                    //(we can't just examine the integer part for this)
-                    if (Mathf.Abs(normalizedTimeDiff) < 0.5f)
-                    {
-                        //Interpolate normally
-                        newTimeN = Mathf.Lerp(lastTimeN, newTimeN, frameT);
-                    }
-                    else
-                    {
-                        //looped - forwards or backwards?
-                        if (normalizedTimeDiff < 0.0f)
-                        {
-                            //forwards
-                            newTimeN = Mathf.Lerp(lastTimeN, newTimeN + 1.0f, frameT) % 1.0f;
-                        }
-                        else
-                        {
-                            //backwards
-                            newTimeN = Mathf.Lerp(lastTimeN + 1.0f, newTimeN, frameT) % 1.0f;
-                        }
-                    }
-
-                    //Now set the new time, making sure to restore the integer part
-                    newStateTime = Mathf.Floor(newStateTime) + newTimeN;
+                    float newTimeN = stateB.stateTime;
+                    float lastTimeN = stateA.stateTime;
+                    float newStateTime = Mathf.Lerp(lastTimeN, newTimeN, frameT);
 
                     _animator.Play(stateA.stateHash, i, newStateTime);
                 }

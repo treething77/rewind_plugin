@@ -295,10 +295,12 @@ namespace ccl.rewind_plugin
             Debug.Assert(handlerIDA == handlerIDB);
             Debug.Assert(handlerIDA == rewindHandler.ID);
             
+            rewindHandler.preRestore();
+
             //read the data from the 2 frames
             rewindHandler.rewindRestoreInterpolated(frameReaderA, frameReaderB, frameT);
             
-            rewindHandler.postRestored();
+            rewindHandler.postRestore();
         }
 
         public void writeToFile(string fileName)

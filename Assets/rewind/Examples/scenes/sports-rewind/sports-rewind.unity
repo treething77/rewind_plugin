@@ -562,7 +562,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 157765480}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 7.270876, y: 0, z: -1.5965347}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -2130,7 +2130,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 919132148462144377}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -7.270876, y: 0, z: 1.5965347}
+  m_LocalPosition: {x: -0.4, y: 0, z: -0.69}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -2214,8 +2214,8 @@ GameObject:
   - component: {fileID: 160036219}
   - component: {fileID: 160036215}
   - component: {fileID: 160036217}
-  - component: {fileID: 919132148462144378}
   - component: {fileID: 919132148462144379}
+  - component: {fileID: 919132148462144380}
   m_Layer: 0
   m_Name: robot_rewind
   m_TagString: Untagged
@@ -2223,19 +2223,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &919132148462144378
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 919132148462144377}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 977f9ca5658676243ab2962fe374e2b6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  id: 2710453763
 --- !u!114 &919132148462144379
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2250,6 +2237,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   id: 882956801
   recordScale: 1
+--- !u!114 &919132148462144380
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 919132148462144377}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 977f9ca5658676243ab2962fe374e2b6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  id: 3970735363
 --- !u!4 &1031632035438783390
 Transform:
   m_ObjectHideFlags: 0

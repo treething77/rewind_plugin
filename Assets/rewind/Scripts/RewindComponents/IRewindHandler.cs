@@ -12,6 +12,7 @@ namespace ccl.rewind_plugin
         uint HandlerTypeID { get; }
         void rewindRestoreInterpolated(NativeByteArrayReader frameReaderA, NativeByteArrayReader frameReaderB, float frameT);
 
-        void postRestored();//callback when values have been restored
+        void preRestore();//callback when values have been restored
+        void postRestore();//callback when values have been restored
     }
 }

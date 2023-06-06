@@ -55,7 +55,11 @@ namespace ccl.rewind_plugin
         public abstract int RequiredBufferSizeBytes { get; }
         public abstract uint HandlerTypeID  { get; }
         public abstract void rewindRestoreInterpolated(NativeByteArrayReader frameReaderA, NativeByteArrayReader frameReaderB, float frameT);
-        public virtual void postRestored()
+        public virtual void preRestore()
+        {
+        }
+
+        public virtual void postRestore()
         {
         }
 
@@ -68,11 +72,15 @@ namespace ccl.rewind_plugin
     public class RewindTransform : RewindComponentBase
     {
         private Transform _transform;
+        private CharacterController _controller;
 
         public bool recordScale = true;
+
+        private bool controllerEnabledState;
         
         private void Awake() {
             _transform = transform;
+            TryGetComponent(out _controller);
         }
 
         public override void rewindStore(NativeByteArrayWriter writer) {
@@ -81,11 +89,19 @@ namespace ccl.rewind_plugin
             if (recordScale) writer.writeV3(_transform.localScale);
         }
 
-        /*public override void rewindRestore(NativeByteArrayReader reader) {
-            _transform.SetPositionAndRotation(reader.readV3(), reader.readQuaternion());
-            if (recordScale) _transform.localScale = reader.readV3();
-        }*/
-
+        public override void preRestore() {
+            if (_controller != null)
+            {
+                controllerEnabledState = _controller.enabled;
+                _controller.enabled = false;
+            }
+        }
+        
+        public override void postRestore() {
+            if(_controller != null)
+               _controller.enabled = controllerEnabledState;
+        }
+        
         public override void rewindRestoreInterpolated(NativeByteArrayReader frameReaderA, NativeByteArrayReader frameReaderB, float frameT)
         {
             Vector3 position = Vector3.Lerp(frameReaderA.readV3(), frameReaderB.readV3(), frameT);
