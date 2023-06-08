@@ -219,7 +219,7 @@ namespace ccl.rewind_plugin
                 int endTimeIndex = remapIndex(rewindFramesCount - 1);
 
                 //special cases, before start time or after end time
-                if (playbackTime < (pTimes[startTimeIndex]))
+                if (playbackTime <= (pTimes[startTimeIndex]))
                 {
                     return (0, 0, 0.0f);
                 }
@@ -230,7 +230,7 @@ namespace ccl.rewind_plugin
 
                 //do a linear search
                 //start at the beginning and work our way along until the next time is past our playbackTime
-                int frame = 1;
+                int frame = 0;
                 while (frame < rewindFramesCount)
                 {
                     int remappedFrame = remapIndex(frame);
@@ -248,12 +248,8 @@ namespace ccl.rewind_plugin
                 //  i.e. 0.0f = frameA, 1.0f = frameB
                 //  so we need to calculate the normalized value between the two frame times
                 //  and then subtract the frameA time from it 
-                
-                int frameATimeIndex = remapIndex(frameA);
-                int frameBTimeIndex = remapIndex(frameB);
-
-                float frameTimeA = pTimes[frameATimeIndex];
-                float frameTimeB = pTimes[frameBTimeIndex];
+                float frameTimeA = pTimes[frameA];
+                float frameTimeB = pTimes[frameB];
                 
                 frameT = (playbackTime - frameTimeA) / (frameTimeB - frameTimeA);
                 
