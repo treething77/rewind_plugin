@@ -347,5 +347,14 @@ namespace ccl.rewind_plugin
                 return pTimes[mappedTimeIndex];
             }
         }
+
+        public void rewindFrames(int frameCountToRewind)
+        {
+            frameCountToRewind = Mathf.Min(frameCountToRewind, rewindFramesCount);
+
+            rewindFramesCount -= frameCountToRewind;
+            rewindFrameWriteIndex -= frameCountToRewind;
+            if (rewindFrameWriteIndex < 0) rewindFrameWriteIndex += _maxFrameCount;
+        }
     }
 }

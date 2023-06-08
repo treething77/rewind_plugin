@@ -49,7 +49,8 @@ namespace ccl.rewind_plugin_demos
                 {
                     _playback.stopPlayback();
                     playbackPreparer.stopPlayback();
-                    _recorder.startRecording();
+                  
+                        _recorder.startRecording();
                     Time.timeScale = 1.0f;
                     break;
                 }
@@ -112,22 +113,28 @@ namespace ccl.rewind_plugin_demos
                 }
                 case DemoState.Paused:
                 {
-                    if (GUILayout.Button("Continue"))
-                    {
-                        changeState(DemoState.Recording);
-                     //   Debug.DebugBreak();
-                     //   Debug.Break();
-                    }
-      
+                    bool shouldContinue = GUILayout.Button("Continue");
+
                     // Add a scrubber component to control the replay time
                     float newTime = GUILayout.HorizontalSlider(currentTime, startTime, endTime);
                     
-                    // Check if the scrubber value has changed
-                    if (currentTime != newTime)
+                    // Set the replay time to the scrubber value
+                    _playback.SetPlaybackTime(newTime);
+
+                    if (shouldContinue)
                     {
-                        // Set the replay time to the scrubber value
-                        _playback.SetPlaybackTime(newTime);
+                        var frameInfo = rewindStorage.findPlaybackFrames(newTime);
+
+                        int currentFrameCount = rewindStorage.RecordedFrameCount;
+                        int newUnmappedEndFrame = frameInfo.frameB;
+                        
+                        rewindStorage.rewindFrames(currentFrameCount - 1 - newUnmappedEndFrame);
+                        
+                        changeState(DemoState.Recording);
+                        
+                        _recorder.recordFrame();
                     }
+
                     break;
                 }
             }
