@@ -91,7 +91,10 @@ namespace ccl.rewind_plugin_demos
             Vector3 lookAt = position;
             var position1 = transform1.position;
             lookAt.y = position1.y;
+
+            var ogRot = transform1.rotation;
             transform1.LookAt(lookAt);
+            transform1.rotation = Quaternion.Lerp(ogRot, transform1.rotation, 0.1f);
 
             float moveT = (position1 - moveStartPt).magnitude / (position - moveStartPt).magnitude;
             float moveBlend = Mathf.Lerp(moveBlendStart, moveBlendEnd, moveT);

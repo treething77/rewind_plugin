@@ -1,6 +1,5 @@
 using ccl.rewind_plugin;
 using UnityEngine;
-using UnityEngine.XR;
 
 namespace ccl.rewind_plugin_demos
 {
@@ -8,6 +7,8 @@ namespace ccl.rewind_plugin_demos
     {
         public TMPro.TMP_Text statusText;
         public GameObject stackParent;
+        public RewindComponentBase robotCamRewind;
+        
         public RewindPlaybackPreparer playbackPreparer;
 
         private RewindScene rewindScene;
@@ -31,6 +32,7 @@ namespace ccl.rewind_plugin_demos
         {
             rewindScene = new RewindScene();
             rewindScene.addAllChildren(stackParent);
+            rewindScene.addRewindObject(robotCamRewind);
 
             rewindStorage = new RewindStorage(rewindScene, 150, false);
    

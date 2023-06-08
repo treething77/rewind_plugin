@@ -464,6 +464,8 @@ GameObject:
   - component: {fileID: 149554332}
   - component: {fileID: 149554331}
   - component: {fileID: 149554330}
+  - component: {fileID: 149554333}
+  - component: {fileID: 149554334}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -537,6 +539,36 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &149554333
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 149554329}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b0d63b0a46496e54f83c9c52a5f4bab8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  player: {fileID: 543450652111147459}
+  distance: 5
+  smoothTime: 0.25
+  minHeight: 2
+--- !u!114 &149554334
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 149554329}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 889dd329b3a8f994990fd9bb9fec69ce, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  id: 1900702977
+  recordScale: 1
 --- !u!1 &157765480
 GameObject:
   m_ObjectHideFlags: 0
@@ -1489,6 +1521,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   statusText: {fileID: 699937268}
   stackParent: {fileID: 157765480}
+  robotCamRewind: {fileID: 149554334}
   playbackPreparer: {fileID: 157765482}
 --- !u!1 &1141653440
 GameObject:
