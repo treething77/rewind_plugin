@@ -59,7 +59,7 @@ namespace ccl.rewind_plugin
             //find 2 frame indices to interpolate
             var playbackFrames = _rewindStorage.findPlaybackFrames(playbackCurrentTime);
 
-            Debug.Log($"Playback frames [{playbackFrames.frameMappedA}, {playbackFrames.frameMappedB}] * {playbackFrames.frameT} at time {playbackCurrentTime}");
+         //   Debug.Log($"Playback frames [{playbackFrames.frameMappedA}, {playbackFrames.frameMappedB}] * {playbackFrames.frameT} at time {playbackCurrentTime}");
             
             foreach (IRewindHandler rewindHandler in _rewindScene.RewindHandlers)
             {

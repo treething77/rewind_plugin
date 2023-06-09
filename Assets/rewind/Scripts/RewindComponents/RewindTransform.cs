@@ -68,6 +68,14 @@ namespace ccl.rewind_plugin
             if (component is Camera) return false;
             return true;//by default disable all other components
         }
+
+        public virtual void startPlayback()
+        {
+        }
+
+        public virtual void stopPlayback()
+        {
+        }
     }
     
     public class RewindTransform : RewindComponentBase
@@ -86,7 +94,7 @@ namespace ccl.rewind_plugin
 
         public override void rewindStore(NativeByteArrayWriter writer)
         {
-            Debug.Log("    pos.x = " + _transform.position.x);
+          //  Debug.Log("    pos.x = " + _transform.position.x);
             writer.writeV3(_transform.position);
             writer.writeQuaternion(_transform.rotation);
             if (recordScale) writer.writeV3(_transform.localScale);
@@ -111,7 +119,7 @@ namespace ccl.rewind_plugin
             Vector3 posB = frameReaderB.readV3();
             Vector3 position = Vector3.Lerp(posA, posB, frameT);
 
-            Debug.Log("posA.x=" + posA.x + " posB.x=" + posB.x + " frameT: " + frameT + " result: " + position.x);
+          //  Debug.Log("posA.x=" + posA.x + " posB.x=" + posB.x + " frameT: " + frameT + " result: " + position.x);
             
             Quaternion rotation = Quaternion.Lerp(frameReaderA.readQuaternion(), frameReaderB.readQuaternion(), frameT);
             _transform.SetPositionAndRotation(position, rotation);

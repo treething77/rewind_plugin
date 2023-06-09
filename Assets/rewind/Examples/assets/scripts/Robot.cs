@@ -1,14 +1,12 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using ccl.rewind_plugin;
 using UnityEngine;
-using Random = System.Random;
 
 namespace ccl.rewind_plugin_demos
 {
     public class Robot : RewindCustomMonoBehaviourAttributes
     {
+        public RobotLevel _level;
+        
         private Transform transform1;
 
         private Vector3 prevP;
@@ -28,10 +26,13 @@ namespace ccl.rewind_plugin_demos
         [Rewind]
         public float moveBlendEnd;
 
+        [Rewind(Lerp=false)] public int moveTargetIndex;
+        
         private Animator a;
         CharacterController c;
         
         private static readonly int Blend = Animator.StringToHash("Blend");
+        public RobotTeam Team { get; set; }
 
         void Start()
         {
@@ -44,18 +45,25 @@ namespace ccl.rewind_plugin_demos
             a = GetComponent<Animator>();
             c = GetComponent<CharacterController>();
         }
-        
+
+        private bool playbackActive;
+
+        public override void startPlayback()
+        {
+            playbackActive = true;
+        }
+
+        public override void stopPlayback()
+        {
+            playbackActive = false;
+        }
+                    
         private void ChooseTarget()
         {
-            MoveTarget newTarget = null;
-            do
-            {
-                int moveTargetIndex = UnityEngine.Random.Range(0, MoveTarget.targetList.Count);
-                newTarget = MoveTarget.targetList[moveTargetIndex];
-            } while ((newTarget.transform.position - transform.position).magnitude < 1.0f);
+            moveTargetIndex = _level.FindTarget(this);
 
-            moveTargetPt = newTarget.transform.position;
-            
+            moveTargetPt = _level.GetTargetPosition(moveTargetIndex);
+     
             moveStartPt = transform.position;
             moveBlendStart = UnityEngine.Random.Range(0.0f, 1.0f);
             moveBlendEnd = UnityEngine.Random.Range(0.0f, 1.0f);
@@ -63,6 +71,9 @@ namespace ccl.rewind_plugin_demos
 
         private void OnAnimatorMove()
         {
+      //      if (playbackActive)
+        //        return;
+            
             Vector3 dMove = moveTargetPt - transform1.position;
             dMove.y = 0.0f;
 
@@ -79,6 +90,8 @@ namespace ccl.rewind_plugin_demos
 
             if (dMove.magnitude < 0.7f)
             {
+                _level.CaptureTarget(moveTargetIndex, this);
+                
                 //choose new target
                 ChooseTarget();
             }

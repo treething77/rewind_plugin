@@ -77,15 +77,22 @@ namespace ccl.rewind_plugin
         //[HideInInspector] [SerializeField] private ComponentIdentity identity; 
 
         private FieldInfo[] rewindFields;
+        private bool[] rewindFieldLerp;
         private int requiredBufferSize;
-        
-        private void Awake() {
+
+        public void Awake() {
             //get all the fields on this object that have the Rewind attribute
             rewindFields = RewindAttributeHelper.GetRewindFields(this);
 
-            foreach (var rewindField in rewindFields)
+            rewindFieldLerp = new bool[rewindFields.Length];
+
+            for(int i=0;i<rewindFields.Length;i++)
             {
+                var rewindField = rewindFields[i];
                 requiredBufferSize += Marshal.SizeOf(rewindField.FieldType);
+
+                var rewindAttribute = rewindField.GetCustomAttribute(typeof(RewindAttribute));
+                rewindFieldLerp[i] = ((RewindAttribute)rewindAttribute).Lerp;
             }
             
             //TODO: register here too?
@@ -125,28 +132,38 @@ namespace ccl.rewind_plugin
         
         public override void rewindRestoreInterpolated(NativeByteArrayReader frameReaderA, NativeByteArrayReader frameReaderB, float frameT)
         {
-            foreach (FieldInfo rewindField in rewindFields)
+            for(int i=0;i<rewindFields.Length;i++)
             {
+                var rewindField = rewindFields[i];
+
                 //Call a different method in reader depending on the type of the field
                 if (rewindField.FieldType == typeof(float))
                 {
-                    float v = Mathf.Lerp(frameReaderA.readFloat(), frameReaderB.readFloat(), frameT);
+                    float fA = frameReaderA.readFloat();
+                    float fB = frameReaderB.readFloat();
+                    float v = rewindFieldLerp[i] ? Mathf.Lerp(fA, fB, frameT) : fB;
                     rewindField.SetValue(this, v);
                 }
                 else if (rewindField.FieldType == typeof(Vector3))
                 {
-                    Vector3 v = Vector3.Lerp(frameReaderA.readV3(), frameReaderB.readV3(), frameT);
+                    Vector3 vA = frameReaderA.readV3();
+                    Vector3 vB = frameReaderB.readV3();
+                    Vector3 v = rewindFieldLerp[i] ? Vector3.Lerp(vA, vB, frameT) : vB;
                     rewindField.SetValue(this, v);
                 }
                 else if (rewindField.FieldType == typeof(Quaternion))
                 {
-                    Quaternion v = Quaternion.Lerp(frameReaderA.readQuaternion(), frameReaderB.readQuaternion(), frameT);
-                    rewindField.SetValue(this, v);
+                    Quaternion qA = frameReaderA.readQuaternion();
+                    Quaternion qB = frameReaderB.readQuaternion();
+                    Quaternion q = rewindFieldLerp[i] ? Quaternion.Lerp(qA, qB, frameT) : qB;
+                    rewindField.SetValue(this, q);
                 }
                 else if (rewindField.FieldType == typeof(Color))
                 {
-                    Color v = Color.Lerp(frameReaderA.readColor(), frameReaderB.readColor(), frameT);
-                    rewindField.SetValue(this, v);
+                    Color cA = frameReaderA.readColor();
+                    Color cB = frameReaderB.readColor();
+                    Color c = rewindFieldLerp[i] ? Color.Lerp(cA, cB, frameT) : cB;
+                    rewindField.SetValue(this, c);
                 }
                 else if (rewindField.FieldType == typeof(bool))
                 {
@@ -157,15 +174,16 @@ namespace ccl.rewind_plugin
                 }
                 else if (rewindField.FieldType == typeof(int))
                 {
-                    int vA = frameReaderA.readInt();
-                    int vB = frameReaderB.readInt();
-                    rewindField.SetValue(this, RewindUtilities.LerpInt(vA, vB, frameT));
+                    int iA = frameReaderA.readInt();
+                    int iB = frameReaderB.readInt();
+                    int iV = rewindFieldLerp[i] ? RewindUtilities.LerpInt(iA, iB, frameT) : iB;
+                    rewindField.SetValue(this, iV);
                 }
             }
         }
  
         public override int RequiredBufferSizeBytes => requiredBufferSize;
-        public override uint HandlerTypeID => 2;
+        public override uint HandlerTypeID => 3;
 
     }
 

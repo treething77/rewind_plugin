@@ -244,7 +244,7 @@ namespace ccl.rewind_plugin
             }
         }
 
-        public override uint HandlerTypeID => 3;
+        public override uint HandlerTypeID => 4;
 
     }
 }

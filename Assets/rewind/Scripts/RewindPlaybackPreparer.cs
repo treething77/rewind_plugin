@@ -11,6 +11,7 @@ namespace ccl.rewind_plugin
         
         private List<Behaviour> nonPlaybackEnabledBehaviors = new List<Behaviour>();
         private List<Rigidbody> nonKinematicRigidBodies = new List<Rigidbody>();
+        private List<RewindComponentBase> playbackComponents = new List<RewindComponentBase>();
 
         public void startPlayback()
         {
@@ -29,6 +30,13 @@ namespace ccl.rewind_plugin
                     RewindComponentBase[] rewindComponents = rewindObject.GetComponentsInChildren<RewindComponentBase>();
                     Component[] generalComponents = rewindObject.GetComponentsInChildren<Component>();
 
+                    playbackComponents.AddRange(rewindComponents);
+
+                    foreach (var r in rewindComponents)
+                    {
+                        r.startPlayback();
+                    }
+                    
                     //    foreach (RewindComponentBase rewindComponent in rewindComponents)
                     {
                         //disable components that we don't want active during playback
@@ -86,6 +94,11 @@ namespace ccl.rewind_plugin
             foreach (Rigidbody rigidBody in nonKinematicRigidBodies)
             {
                 rigidBody.isKinematic = false;
+            }
+            
+            foreach (var r in playbackComponents)
+            {
+                r.stopPlayback();
             }
         }
     }

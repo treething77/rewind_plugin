@@ -165,7 +165,7 @@ namespace ccl.rewind_plugin
 
         public void writeHandlerFrame(IRewindHandler rewindHandler)
         {
-            Debug.Log($" Writing frame {rewindWriteHead}");
+           // Debug.Log($" Writing frame {rewindWriteHead}");
 
             RewindHandlerStorage handlerStorage = getHandlerStorage(rewindHandler.ID);
             
