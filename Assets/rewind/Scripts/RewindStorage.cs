@@ -157,6 +157,8 @@ namespace ccl.rewind_plugin
 
         public void writeHandlerFrame(IRewindHandler rewindHandler)
         {
+            Debug.Log($" Writing frame {rewindFrameWriteIndex}");
+
             RewindHandlerStorage handlerStorage = getHandlerStorage(rewindHandler.ID);
             
             //set the write head to the correct location
@@ -221,11 +223,11 @@ namespace ccl.rewind_plugin
                 //special cases, before start time or after end time
                 if (playbackTime <= (pTimes[startTimeIndex]))
                 {
-                    return (0, 0, 0.0f);
+                    return (startTimeIndex, startTimeIndex, 0.0f);
                 }
                 if (playbackTime >= (pTimes[endTimeIndex]))
                 {
-                    return (rewindFramesCount - 1, rewindFramesCount - 1, 1.0f);
+                    return (endTimeIndex, endTimeIndex, 1.0f);
                 }
 
                 //do a linear search
@@ -277,8 +279,8 @@ namespace ccl.rewind_plugin
         {
             RewindHandlerStorage handlerStorage = getHandlerStorage(rewindHandler.ID);
 
-            int frameIndexA = remapIndex(frameA);
-            int frameIndexB = remapIndex(frameB);
+            int frameIndexA = (frameA);
+            int frameIndexB = (frameB);
             
             //set the read head to the correct location
             frameReaderA.setReadHead(handlerStorage.HandlerStorageOffset + (handlerStorage.HandlerFrameSizeBytes * frameIndexA));

@@ -83,7 +83,9 @@ namespace ccl.rewind_plugin
             TryGetComponent(out _controller);
         }
 
-        public override void rewindStore(NativeByteArrayWriter writer) {
+        public override void rewindStore(NativeByteArrayWriter writer)
+        {
+            Debug.Log("    pos.x = " + _transform.position.x);
             writer.writeV3(_transform.position);
             writer.writeQuaternion(_transform.rotation);
             if (recordScale) writer.writeV3(_transform.localScale);
@@ -104,7 +106,12 @@ namespace ccl.rewind_plugin
         
         public override void rewindRestoreInterpolated(NativeByteArrayReader frameReaderA, NativeByteArrayReader frameReaderB, float frameT)
         {
-            Vector3 position = Vector3.Lerp(frameReaderA.readV3(), frameReaderB.readV3(), frameT);
+            Vector3 posA = frameReaderA.readV3();
+            Vector3 posB = frameReaderB.readV3();
+            Vector3 position = Vector3.Lerp(posA, posB, frameT);
+
+            Debug.Log("posA.x=" + posA.x + " posB.x=" + posB.x + " frameT: " + frameT + " result: " + position.x);
+            
             Quaternion rotation = Quaternion.Lerp(frameReaderA.readQuaternion(), frameReaderB.readQuaternion(), frameT);
             _transform.SetPositionAndRotation(position, rotation);
 
