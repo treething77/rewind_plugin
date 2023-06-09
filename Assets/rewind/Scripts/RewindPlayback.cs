@@ -57,16 +57,16 @@ namespace ccl.rewind_plugin
         public void restoreFrameAtCurrentTime()
         {
             //find 2 frame indices to interpolate
-            (int frameA, int frameB, float frameT) playbackFrames = _rewindStorage.findPlaybackFrames(playbackCurrentTime);
+            var playbackFrames = _rewindStorage.findPlaybackFrames(playbackCurrentTime);
 
-            Debug.Log($"Playback frames [{playbackFrames.frameA}, {playbackFrames.frameB}] * {playbackFrames.frameT} at time {playbackCurrentTime}");
+            Debug.Log($"Playback frames [{playbackFrames.frameMappedA}, {playbackFrames.frameMappedB}] * {playbackFrames.frameT} at time {playbackCurrentTime}");
             
             foreach (IRewindHandler rewindHandler in _rewindScene.RewindHandlers)
             {
-                _rewindStorage.restoreHandlerInterpolated(rewindHandler, playbackFrames.frameA, playbackFrames.frameB, playbackFrames.frameT);
+                _rewindStorage.restoreHandlerInterpolated(rewindHandler, playbackFrames.frameMappedA, playbackFrames.frameMappedB, playbackFrames.frameT);
             }
 
-            if (playbackFrames.frameA == playbackFrames.frameB && playbackFrames.frameA == (_rewindStorage.RecordedFrameCount - 1))
+            if (playbackFrames.frameMappedA == playbackFrames.frameMappedB && playbackFrames.frameMappedA > 0)
             {
                 playbackComplete = true;
             }

@@ -22,7 +22,10 @@ namespace ccl.rewind_plugin
         public void Update()
         {
             if (_isRecording)
+            {
                 _recorder.updateRecording();
+                _recorder.advanceRecordingTime();
+            }
         }
 
         public void stopRecording()

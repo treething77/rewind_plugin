@@ -49,6 +49,7 @@ namespace ccl.rewind_plugin_demos
                 if (!rewindStorage.isFull)
                 {
                     _recorder.updateRecording();
+                    _recorder.advanceRecordingTime();
                 }
             }
         }

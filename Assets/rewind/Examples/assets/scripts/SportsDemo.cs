@@ -50,6 +50,7 @@ namespace ccl.rewind_plugin_demos
             else
             {
                 _recorder.updateRecording();
+                _recorder.advanceRecordingTime();
                 statusText.text = $"Record - {rewindStorage.RecordedFrameCount} - {rewindStorage.FrameWriteIndex}";
             }
         }

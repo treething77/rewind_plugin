@@ -13,9 +13,10 @@ namespace ccl.rewind_plugin
         private readonly int _recordFPS;
         private readonly bool _continuous;
         
-        private float timeSinceFrameRecorded = 0.0f;
-        private float _recordingStartTime;
-
+        //private float timeSinceFrameRecorded = 0.0f;
+        private float _recordingTime;
+        private float _lastFrameWriteTime;
+        
         public RewindRecorder(RewindScene rewindScene, RewindStorage rewindStorage, int recordFPS, bool continuousRecording)
         {
             _rewindScene = rewindScene;
@@ -37,19 +38,11 @@ namespace ccl.rewind_plugin
             if (!recordSnapshot)
             {
                 float recordTimeInterval = 1.0f / _recordFPS;
+                float timeSinceFrameRecorded = _recordingTime - _lastFrameWriteTime;
                 if (timeSinceFrameRecorded >= recordTimeInterval)
                 {
                     recordSnapshot = true;
                 }
-            }
-
-            if (recordSnapshot)
-            {
-                timeSinceFrameRecorded = 0.0f;
-            }
-            else
-            {
-                timeSinceFrameRecorded += Time.deltaTime;
             }
 
             //stop if we run out of storage
@@ -58,6 +51,12 @@ namespace ccl.rewind_plugin
             {
                 recordFrame();
             }
+            
+        }
+
+        public void advanceRecordingTime()
+        {
+            _recordingTime += Time.deltaTime;
         }
         
         public void recordFrame()
@@ -66,8 +65,9 @@ namespace ccl.rewind_plugin
             //   after all the goal is we don't have to update all components every frame, and otherwise how 
             //   do we know which ones were updated when for the replay?
             // For now just worry about the basic case. Other cases will maybe require custom recorders.
-            float currentRelativeTime = Time.time - _recordingStartTime;
-            _rewindStorage.writeFrameStart(currentRelativeTime);
+          //  float currentRelativeTime = Time.time - _recordingStartTime;
+            _rewindStorage.writeFrameStart(_recordingTime);
+            _lastFrameWriteTime = _recordingTime;
 
             //foreach object in scene
             foreach (IRewindHandler rewindHandler in _rewindScene.RewindHandlers)
@@ -90,8 +90,15 @@ namespace ccl.rewind_plugin
 
         public void startRecording()
         {
-            _recordingStartTime = Time.time;
+            //_recordingStartTime = e;
         }
 
+        public void setRecordTime(float newPlaybackTime)
+        {
+            _recordingTime = newPlaybackTime;
+            
+            float recordTimeInterval = 1.0f / _recordFPS;
+            _lastFrameWriteTime = _recordingTime-recordTimeInterval-1.0f;
+        }
     }
 }

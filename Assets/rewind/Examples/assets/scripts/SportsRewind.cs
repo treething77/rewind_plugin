@@ -128,7 +128,7 @@ namespace ccl.rewind_plugin_demos
                         var frameInfo = rewindStorage.findPlaybackFrames(newTime);
 
                         int currentFrameCount = rewindStorage.RecordedFrameCount;
-                        int newUnmappedEndFrame = frameInfo.frameB;
+                        int newUnmappedEndFrame = frameInfo.frameUnmappedB;
                         
                         rewindStorage.rewindFrames(currentFrameCount - 1 - newUnmappedEndFrame);
                         

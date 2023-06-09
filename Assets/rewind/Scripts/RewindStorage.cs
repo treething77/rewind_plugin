@@ -18,7 +18,11 @@ namespace ccl.rewind_plugin
         public int HandlerStorageOffset => handlerStorageOffset;
         public int HandlerFrameSizeBytes => handlerFrameSizeBytes;
     }
-    
+
+    public enum RewindMappedFrame : int
+    {
+    }
+
     public class RewindStorage
     {
         private readonly NativeByteArray nativeStorage;
@@ -29,7 +33,10 @@ namespace ccl.rewind_plugin
         private readonly NativeByteArrayReader frameReaderB;
 
         private int rewindFramesCount;
-        private int rewindFrameWriteIndex;//rename this is really just the start index?
+
+        private int rewindWriteHead => (rewindReadHead + rewindFramesCount) % _maxFrameCount;
+        private int rewindReadHead;
+        
         private bool supportsRewind;
         
         //Map of ID to RewindHandlerStorage
@@ -143,7 +150,8 @@ namespace ccl.rewind_plugin
         }
         
         public int RecordedFrameCount => rewindFramesCount;
-        public int FrameWriteIndex => rewindFrameWriteIndex;
+        public int FrameReadIndex => rewindReadHead;
+        public int FrameWriteIndex => rewindWriteHead;
 
         public RewindHandlerStorage getHandlerStorage(uint rewindHandlerID)
         {
@@ -157,12 +165,12 @@ namespace ccl.rewind_plugin
 
         public void writeHandlerFrame(IRewindHandler rewindHandler)
         {
-            Debug.Log($" Writing frame {rewindFrameWriteIndex}");
+            Debug.Log($" Writing frame {rewindWriteHead}");
 
             RewindHandlerStorage handlerStorage = getHandlerStorage(rewindHandler.ID);
             
             //set the write head to the correct location
-            storageWriter.setWriteHead(handlerStorage.HandlerStorageOffset + (handlerStorage.HandlerFrameSizeBytes * rewindFrameWriteIndex));
+            storageWriter.setWriteHead(handlerStorage.HandlerStorageOffset + (handlerStorage.HandlerFrameSizeBytes * rewindWriteHead));
             
             //store ID
             //do we really need to store the ID here? we could just use the offset to determine the ID
@@ -174,7 +182,7 @@ namespace ccl.rewind_plugin
         public void writeFrameStart(float frameTimeRelativeToStart)
         {
             // write frame time
-            int currentFrameTimeOffset = _frameDataOffset + (4 * rewindFrameWriteIndex);
+            int currentFrameTimeOffset = _frameDataOffset + (4 * rewindWriteHead);
             storageWriter.setWriteHead(currentFrameTimeOffset);
             
             //frame time is the current time? time from start of recording?
@@ -183,24 +191,32 @@ namespace ccl.rewind_plugin
 
         public void writeFrameEnd()
         {
-            //Cap the number of frames recorded at the max
+            //Clamp the number of frames recorded at the max
+
+            //write head is implicit so moves when we increase frame count
             rewindFramesCount++;
-            if (rewindFramesCount > _maxFrameCount) rewindFramesCount = _maxFrameCount;
-            
-            //Move the frame write head, wrap if needed
-            rewindFrameWriteIndex++;
-            if (rewindFrameWriteIndex >= _maxFrameCount) rewindFrameWriteIndex = 0;
+            if (rewindFramesCount > _maxFrameCount)
+            {
+                rewindFramesCount = _maxFrameCount;
+                
+                //move the read head if the buffer is full
+                rewindReadHead++;
+                if (rewindReadHead >= _maxFrameCount) rewindReadHead = 0;
+            }
         }
 
-        public (int frameA,int frameB,float frameT) findPlaybackFrames(float playbackTime)
+        public (RewindMappedFrame frameMappedA, RewindMappedFrame frameMappedB,float frameT, int frameUnmappedA, int frameUnmappedB) findPlaybackFrames(float playbackTime)
         {
             //if only 1 frame then use it for both
             //   i.e. we always interpolate between 2 frames
             if (rewindFramesCount == 1)
             {
-                return (0, 0, 0.0f);
+                //TODO: if we rewound then the first frame wont necessarily be at 0
+                return (0, 0, 0.0f, 0, 0);
             }
         
+            RewindMappedFrame frameMappedA = 0;
+            RewindMappedFrame frameMappedB = 0;
             int frameA = 0;
             int frameB = 0;
             float frameT = 0;
@@ -217,17 +233,17 @@ namespace ccl.rewind_plugin
                 // [0, rewindFrameCount-1]
                 // 0 -> rewindFrameWriteIndex
                 // rewindFrameCount-1 -> (rewindFrameWriteIndex + rewindFrameCount-1) % maxFrameCount
-                int startTimeIndex = remapIndex(0);
-                int endTimeIndex = remapIndex(rewindFramesCount - 1);
+                RewindMappedFrame startTimeIndex = remapIndex(0);
+                RewindMappedFrame endTimeIndex = remapIndex(rewindFramesCount - 1);
 
                 //special cases, before start time or after end time
-                if (playbackTime <= (pTimes[startTimeIndex]))
+                if (playbackTime <= (pTimes[(int)startTimeIndex]))
                 {
-                    return (startTimeIndex, startTimeIndex, 0.0f);
+                    return (startTimeIndex, startTimeIndex, 0.0f, 0, 0);
                 }
-                if (playbackTime >= (pTimes[endTimeIndex]))
+                if (playbackTime >= (pTimes[(int)endTimeIndex]))
                 {
-                    return (endTimeIndex, endTimeIndex, 1.0f);
+                    return (endTimeIndex, endTimeIndex, 1.0f, rewindFramesCount-1, rewindFramesCount-1);
                 }
 
                 //do a linear search
@@ -235,11 +251,13 @@ namespace ccl.rewind_plugin
                 int frame = 0;
                 while (frame < rewindFramesCount)
                 {
-                    int remappedFrame = remapIndex(frame);
-                    if (pTimes[remappedFrame] >= playbackTime)
+                    RewindMappedFrame remappedFrame = remapIndex(frame);
+                    if (pTimes[(int) remappedFrame] >= playbackTime)
                     {
-                        frameB = remappedFrame;
-                        frameA = remapIndex(frame - 1);
+                        frameA = frame - 1;
+                        frameB = frame;
+                        frameMappedB = remappedFrame;
+                        frameMappedA = remapIndex(frame - 1);
                         break;
                     }
 
@@ -250,8 +268,8 @@ namespace ccl.rewind_plugin
                 //  i.e. 0.0f = frameA, 1.0f = frameB
                 //  so we need to calculate the normalized value between the two frame times
                 //  and then subtract the frameA time from it 
-                float frameTimeA = pTimes[frameA];
-                float frameTimeB = pTimes[frameB];
+                float frameTimeA = pTimes[(int)frameMappedA];
+                float frameTimeB = pTimes[(int)frameMappedB];
                 
                 frameT = (playbackTime - frameTimeA) / (frameTimeB - frameTimeA);
                 
@@ -259,7 +277,7 @@ namespace ccl.rewind_plugin
                 Debug.Assert(frameT <= 1.0f);
             }
 
-            return (frameA, frameB, frameT);
+            return (frameMappedA, frameMappedB, frameT, frameA, frameB);
         }
 
         /// <summary>
@@ -268,19 +286,21 @@ namespace ccl.rewind_plugin
         /// </summary>
         /// <param name="frameIndex"></param>
         /// <returns></returns>
-        private int remapIndex(int frameIndex)
+        private RewindMappedFrame remapIndex(int frameIndex)
         {
             //is buffer full yet?
-            if (rewindFramesCount < _maxFrameCount) return frameIndex;
-            return (rewindFrameWriteIndex + frameIndex) % _maxFrameCount;   
+            if (rewindFramesCount < _maxFrameCount) return (RewindMappedFrame)frameIndex;
+            
+            int mappedFrameIndex = (rewindReadHead + frameIndex) % _maxFrameCount;
+            return (RewindMappedFrame)mappedFrameIndex;
         }
 
-        public void restoreHandlerInterpolated(IRewindHandler rewindHandler, int frameA, int frameB, float frameT)
+        public void restoreHandlerInterpolated(IRewindHandler rewindHandler, RewindMappedFrame frameA, RewindMappedFrame frameB, float frameT)
         {
             RewindHandlerStorage handlerStorage = getHandlerStorage(rewindHandler.ID);
 
-            int frameIndexA = (frameA);
-            int frameIndexB = (frameB);
+            int frameIndexA = (int)(frameA);
+            int frameIndexB = (int)(frameB);
             
             //set the read head to the correct location
             frameReaderA.setReadHead(handlerStorage.HandlerStorageOffset + (handlerStorage.HandlerFrameSizeBytes * frameIndexA));
@@ -341,8 +361,8 @@ namespace ccl.rewind_plugin
             {
                 frameReaderA.setReadHead(_frameDataOffset);
                 float* pTimes = frameReaderA.getReadHeadDataPtr<float>();
-                int mappedTimeIndex = remapIndex(timeFrameIndex);
-                return pTimes[mappedTimeIndex];
+                RewindMappedFrame mappedTimeIndex = remapIndex(timeFrameIndex);
+                return pTimes[(int)mappedTimeIndex];
             }
         }
 
@@ -350,9 +370,36 @@ namespace ccl.rewind_plugin
         {
             frameCountToRewind = Mathf.Min(frameCountToRewind, rewindFramesCount);
 
+            Debug.Log($"Rewinding {frameCountToRewind} frames");
+            
+            //the READ head does not move (start of valid data)
+            //the WRITE head is implicit so moves when we set frame count
             rewindFramesCount -= frameCountToRewind;
-            rewindFrameWriteIndex -= frameCountToRewind;
-            if (rewindFrameWriteIndex < 0) rewindFrameWriteIndex += _maxFrameCount;
+            
+            //rewindFrameWriteIndex -= frameCountToRewind;
+            //if (rewindFrameWriteIndex < 0) rewindFrameWriteIndex += _maxFrameCount;
+        }
+
+        public float getFrameTime(int unmappedFrameIndex)
+        {
+            unsafe
+            {
+                frameReaderA.setReadHead(_frameDataOffset);
+                float* pTimes = frameReaderA.getReadHeadDataPtr<float>();
+                return pTimes[unmappedFrameIndex];
+            }
+        }
+
+        public Vector3 getFramePosition(int unmappedFrameIndex, IRewindHandler rewindHandler)
+        {
+            RewindHandlerStorage handlerStorage = getHandlerStorage(rewindHandler.ID);
+            
+            //set the read head to the correct location
+            frameReaderA.setReadHead(handlerStorage.HandlerStorageOffset + (handlerStorage.HandlerFrameSizeBytes * unmappedFrameIndex));
+            uint handlerIDA = frameReaderA.readUInt();
+
+            //assume the handler is RewindTransform and read the position
+            return frameReaderA.readV3();
         }
     }
 }

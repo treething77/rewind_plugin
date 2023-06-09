@@ -86,6 +86,7 @@ namespace ccl.rewind_plugin_demos
                 case DemoState.Recording:
                 {
                     _recorder.updateRecording();
+                    _recorder.advanceRecordingTime();
                     statusText.text = $"Record - {rewindStorage.RecordedFrameCount} - {rewindStorage.FrameWriteIndex}";
 
                     if (rewindStorage.RecordedFrameCount == 10 && rewindStorage.FrameWriteIndex == 4)
@@ -120,7 +121,7 @@ namespace ccl.rewind_plugin_demos
         private void OnGUI()
         {
             Color c = Color.grey;
-            c.a = 0.2f;
+            c.a = 0.3f;
             DrawQuad(new Rect(0,0,400,400), c);
             GUILayout.BeginArea(new Rect(0,0,400,400));
             float startTime = _playback.startTime;
@@ -149,13 +150,17 @@ namespace ccl.rewind_plugin_demos
                         var frameInfo = rewindStorage.findPlaybackFrames(newPlaybackTime);
 
                         int currentFrameCount = rewindStorage.RecordedFrameCount;
-                        int newUnmappedEndFrame = frameInfo.frameB;
+                        int newUnmappedEndFrame = frameInfo.frameUnmappedB;
                         
-                        rewindStorage.rewindFrames(currentFrameCount - 1 - newUnmappedEndFrame);
-                        
+                        rewindStorage.rewindFrames(currentFrameCount - newUnmappedEndFrame);
+
                         changeState(DemoState.Recording);
+
+                        _recorder.setRecordTime(newPlaybackTime);
+//                        _recorder.recordFrame();
+  //                      _recorder.advanceRecordingTime();
                         
-                        _recorder.recordFrame();
+                        Debug.Break();
                     }
 
                     break;
@@ -168,6 +173,44 @@ namespace ccl.rewind_plugin_demos
             GUILayout.Label("Time: " + currentTime.ToString("F2"));
 
             GUILayout.EndArea();
+           
+            c = Color.grey;
+            c.a = 0.4f;
+
+            DrawQuad(new Rect(Screen.width - 400,0,400,800), c);
+            GUILayout.BeginArea(new Rect(Screen.width - 400,0,400,800));
+            
+            GUILayout.Label("frame count: " + rewindStorage.RecordedFrameCount);
+            GUILayout.Label("read head: " + rewindStorage.FrameReadIndex);
+            GUILayout.Label("write head: " + rewindStorage.FrameWriteIndex);
+
+            //Draw a table with 3 columns
+            // frame number, time value, x position
+            GUILayout.BeginHorizontal();
+            GUILayout.Label("Frame Number");
+            GUILayout.Label("Time");
+            GUILayout.Label("X Position");
+            GUILayout.EndHorizontal();
+            
+            for (int i = 0; i < 10; i++)
+            {
+                GUILayout.BeginHorizontal();
+
+                bool isReadHead = i == rewindStorage.FrameReadIndex;
+                bool isWriteHead = i == rewindStorage.FrameWriteIndex;
+
+                string lbl = i.ToString();
+                if (isReadHead) lbl += " R";
+                if (isWriteHead) lbl += " W";
+                
+                GUILayout.Label(lbl);
+                GUILayout.Label(rewindStorage.getFrameTime(i).ToString("F3"));
+                GUILayout.Label(rewindStorage.getFramePosition(i, rewindCube).x.ToString("F1"));
+                GUILayout.EndHorizontal();
+            }
+            
+            GUILayout.EndArea();
+
         }
     }
 }
