@@ -34,14 +34,22 @@ namespace ccl.rewind_plugin
             }
 
             //Always record if nothing recorded yet or if 0 is specified as the fps
-            bool recordSnapshot = _rewindStorage.RecordedFrameCount == 0 || (_recordFPS == 0);
+            bool recordSnapshot = _rewindStorage.RecordedFrameCount == 0;
             if (!recordSnapshot)
             {
-                float recordTimeInterval = 1.0f / _recordFPS;
                 float timeSinceFrameRecorded = _recordingTime - _lastFrameWriteTime;
-                if (timeSinceFrameRecorded >= recordTimeInterval)
+                if (_recordFPS == 0)
                 {
-                    recordSnapshot = true;
+                    //there still needs to be some time change so we aren't recording while paused
+                    recordSnapshot = timeSinceFrameRecorded > 0.0f;
+                }
+                else
+                {
+                    float recordTimeInterval = 1.0f / _recordFPS;
+                    if (timeSinceFrameRecorded >= recordTimeInterval)
+                    {
+                        recordSnapshot = true;
+                    }                    
                 }
             }
 

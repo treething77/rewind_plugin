@@ -37,7 +37,7 @@ namespace ccl.rewind_plugin_demos
 
             rewindStorage = new RewindStorage(rewindScene, 10, false);
    
-            _recorder = new RewindRecorder(rewindScene, rewindStorage, 0, true);
+            _recorder = new RewindRecorder(rewindScene, rewindStorage, 10, true);
             _playback = new RewindPlayback(rewindScene, rewindStorage);
             
             _recorder.startRecording();
@@ -56,7 +56,7 @@ namespace ccl.rewind_plugin_demos
                     playbackPreparer.stopPlayback();
                   
                     _recorder.startRecording();
-                    Time.timeScale = 1.0f;
+                    //Time.timeScale = 1.0f;
                     break;
                 }
                 case DemoState.Paused:
@@ -68,7 +68,7 @@ namespace ccl.rewind_plugin_demos
                     
                     playbackPreparer.startPlayback();
                     _playback.startPlayback();
-                    Time.timeScale = 0.0f;
+                    //Time.timeScale = 0.0f;
 
                     //start at the end
                     _playback.SetPlaybackTime(endTime);
@@ -157,10 +157,8 @@ namespace ccl.rewind_plugin_demos
                         changeState(DemoState.Recording);
 
                         _recorder.setRecordTime(newPlaybackTime);
-//                        _recorder.recordFrame();
-  //                      _recorder.advanceRecordingTime();
                         
-                        Debug.Break();
+                        //Debug.Break();
                     }
 
                     break;

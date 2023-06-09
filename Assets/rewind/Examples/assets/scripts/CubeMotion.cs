@@ -9,7 +9,7 @@ namespace ccl.rewind_plugin_demos
         void Update()
         {
             var p = transform.position;
-            p.x += 1.0f;
+            p.x += 0.1f;
             transform.position = p;
         }
     }

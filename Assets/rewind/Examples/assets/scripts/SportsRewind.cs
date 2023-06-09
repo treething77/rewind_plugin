@@ -18,6 +18,7 @@ namespace ccl.rewind_plugin_demos
         private RewindPlayback _playback;
 
         private bool playback;
+        private float newPlaybackTime = -1.0f;
 
         enum DemoState
         {
@@ -53,7 +54,7 @@ namespace ccl.rewind_plugin_demos
                     playbackPreparer.stopPlayback();
                   
                         _recorder.startRecording();
-                    Time.timeScale = 1.0f;
+                //    Time.timeScale = 1.0f;
                     break;
                 }
                 case DemoState.Paused:
@@ -65,10 +66,11 @@ namespace ccl.rewind_plugin_demos
                     
                     playbackPreparer.startPlayback();
                     _playback.startPlayback();
-                    Time.timeScale = 0.0f;
+                 //   Time.timeScale = 0.0f;
 
                     //start at the end
                     _playback.SetPlaybackTime(endTime);
+                    newPlaybackTime = endTime;
                     
                     break;
                 }
@@ -83,13 +85,18 @@ namespace ccl.rewind_plugin_demos
                 case DemoState.Recording:
                 {
                     _recorder.updateRecording();
+                    _recorder.advanceRecordingTime();
                     statusText.text = $"Record - {rewindStorage.RecordedFrameCount} - {rewindStorage.FrameWriteIndex}";
                     break;
                 }
                 case DemoState.Paused:
                 {
-                    //_playback.AdvancePlaybackTime();
-                    _playback.restoreFrameAtCurrentTime();
+                    float currentTime = _playback.currentTime;
+                  //  if (newPlaybackTime != currentTime)
+                    {
+                        _playback.SetPlaybackTime(newPlaybackTime);
+                        _playback.restoreFrameAtCurrentTime();
+                    }
                     statusText.text = $"Paused";
                     break;
                 }
@@ -118,23 +125,22 @@ namespace ccl.rewind_plugin_demos
                     bool shouldContinue = GUILayout.Button("Continue");
 
                     // Add a scrubber component to control the replay time
-                    float newTime = GUILayout.HorizontalSlider(currentTime, startTime, endTime);
+                    newPlaybackTime = GUILayout.HorizontalSlider(currentTime, startTime, endTime);
                     
-                    // Set the replay time to the scrubber value
-                    _playback.SetPlaybackTime(newTime);
 
                     if (shouldContinue)
                     {
-                        var frameInfo = rewindStorage.findPlaybackFrames(newTime);
+                        var frameInfo = rewindStorage.findPlaybackFrames(newPlaybackTime);
 
                         int currentFrameCount = rewindStorage.RecordedFrameCount;
                         int newUnmappedEndFrame = frameInfo.frameUnmappedB;
                         
-                        rewindStorage.rewindFrames(currentFrameCount - 1 - newUnmappedEndFrame);
-                        
+                        rewindStorage.rewindFrames(currentFrameCount - newUnmappedEndFrame);
+
                         changeState(DemoState.Recording);
-                        
-                        _recorder.recordFrame();
+
+                        _recorder.setRecordTime(newPlaybackTime);
+
                     }
 
                     break;

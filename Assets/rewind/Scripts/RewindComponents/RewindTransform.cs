@@ -65,6 +65,7 @@ namespace ccl.rewind_plugin
 
         public virtual bool shouldDisableComponent(Component component)
         {
+            if (component is Camera) return false;
             return true;//by default disable all other components
         }
     }
