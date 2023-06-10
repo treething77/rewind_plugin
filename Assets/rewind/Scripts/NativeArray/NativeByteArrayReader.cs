@@ -1,80 +1,64 @@
 using Unity.Collections.LowLevel.Unsafe;
 using UnityEngine;
 
-namespace aeric.rewind_plugin
-{
-    public class NativeByteArrayReader
-    {
+namespace aeric.rewind_plugin {
+    public class NativeByteArrayReader {
+        private readonly NativeByteArray _nativeArray;
         private int _readHead;
 
-        private NativeByteArray _nativeArray;
-
-        public NativeByteArrayReader(NativeByteArray nativeByteArray)
-        {
+        public NativeByteArrayReader(NativeByteArray nativeByteArray) {
             _nativeArray = nativeByteArray;
         }
 
-        private T readValue<T>() where T : unmanaged
-        {
-            unsafe
-            {
-                UnsafeUtility.CopyPtrToStructure( ((byte*)_nativeArray.GetUnsafeReadPtr() + _readHead), out T value);
+        private T readValue<T>() where T : unmanaged {
+            unsafe {
+                UnsafeUtility.CopyPtrToStructure((byte*)_nativeArray.GetUnsafeReadPtr() + _readHead, out T value);
 
-                int valueSizeBytes = sizeof(T);
-                int endIndex = _readHead + valueSizeBytes;
+                var valueSizeBytes = sizeof(T);
+                var endIndex = _readHead + valueSizeBytes;
                 _readHead = endIndex;
 
                 return value;
             }
         }
 
-        public unsafe T* getReadHeadDataPtr<T>() where T : unmanaged
-        {
+        public unsafe T* getReadHeadDataPtr<T>() where T : unmanaged {
             return (T*)((byte*)_nativeArray.GetUnsafeReadPtr() + _readHead);
         }
-        
-        public float readFloat()
-        {
+
+        public float readFloat() {
             return readValue<float>();
         }
-        
-        public int readInt()
-        {
+
+        public int readInt() {
             return readValue<int>();
         }
 
-        public bool readBool()
-        {
+        public bool readBool() {
             return readValue<bool>();
         }
-        
-        public byte readByte()
-        {
+
+        public byte readByte() {
             return readValue<byte>();
         }
 
-        public Vector3 readV3()
-        {
+        public Vector3 readV3() {
             return readValue<Vector3>();
         }
 
-        public Quaternion readQuaternion()
-        {
+        public Quaternion readQuaternion() {
             return readValue<Quaternion>();
         }
 
-        public Color readColor()
-        {
+        public Color readColor() {
             return readValue<Color>();
         }
-        
-        public uint readUInt()
-        {
+
+        public uint readUInt() {
             return readValue<uint>();
         }
 
-        public void setReadHead(int readOffsetBytes)
-        {
+        public void setReadHead(int readOffsetBytes) {
             _readHead = readOffsetBytes;
         }
     }

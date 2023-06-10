@@ -1,22 +1,13 @@
 using UnityEngine;
 
-namespace aeric.rewind_plugin
-{
-    public abstract class RewindComponentBase : MonoBehaviour, IRewindHandler
-    {
+namespace aeric.rewind_plugin {
+    public abstract class RewindComponentBase : MonoBehaviour, IRewindHandler {
         //[HideInInspector] 
-        [SerializeField] private uint id; 
-        
-        public void OnBeforeSerialize()
-        {
-            // If we don't have an ID yet then generate one
-            if (id == 0) id = RewindComponentIDGenerator.generateID(this);
-        }
+        [SerializeField] private uint id;
 
         public virtual bool ShouldStayEnabledDuringReplay => false;
-     
-        public uint ID
-        {
+
+        public uint ID {
             get => id;
             set => id = value;
         }
@@ -25,21 +16,25 @@ namespace aeric.rewind_plugin
         public abstract void rewindStore(NativeByteArrayWriter writer);
 
         public abstract int RequiredBufferSizeBytes { get; }
-        public abstract uint HandlerTypeID  { get; }
+        public abstract uint HandlerTypeID { get; }
         public abstract void rewindRestoreInterpolated(NativeByteArrayReader frameReaderA, NativeByteArrayReader frameReaderB, float frameT);
-        
-        public virtual void preRestore() {}
 
-        public virtual void postRestore() {}
+        public virtual void preRestore() { }
 
-        public virtual bool shouldDisableComponent(Component component)
-        {
-            if (component is Camera) return false;
-            return true;//by default disable all other components
+        public virtual void postRestore() { }
+
+        public void OnBeforeSerialize() {
+            // If we don't have an ID yet then generate one
+            if (id == 0) id = RewindComponentIDGenerator.generateID(this);
         }
 
-        public virtual void startPlayback() {}
+        public virtual bool shouldDisableComponent(Component component) {
+            if (component is Camera) return false;
+            return true; //by default disable all other components
+        }
 
-        public virtual void stopPlayback() {}
+        public virtual void startPlayback() { }
+
+        public virtual void stopPlayback() { }
     }
 }

@@ -1,17 +1,14 @@
-
-namespace aeric.rewind_plugin
-{
-    public interface IRewindHandler
-    {
+namespace aeric.rewind_plugin {
+    public interface IRewindHandler {
         uint ID { get; set; }
 
-        void rewindStore(NativeByteArrayWriter writer);
-        
         int RequiredBufferSizeBytes { get; }
         uint HandlerTypeID { get; }
+
+        void rewindStore(NativeByteArrayWriter writer);
         void rewindRestoreInterpolated(NativeByteArrayReader frameReaderA, NativeByteArrayReader frameReaderB, float frameT);
 
-        void preRestore();//callback when values have been restored
-        void postRestore();//callback when values have been restored
+        void preRestore(); //callback when values have been restored
+        void postRestore(); //callback when values have been restored
     }
 }

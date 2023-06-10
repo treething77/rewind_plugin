@@ -1,21 +1,12 @@
-using System.Collections.Generic;
-using System.IO;
-using UnityEngine;
-
-namespace aeric.rewind_plugin
-{
-    public class RewindHandlerStorage
-    {
-        readonly int handlerStorageOffset;
-        readonly int handlerFrameSizeBytes;
-
-        public RewindHandlerStorage(int _handlerStorageOffset, int _handlerFrameSizeBytes)
-        {
-            handlerStorageOffset = _handlerStorageOffset;
-            handlerFrameSizeBytes = _handlerFrameSizeBytes;
+namespace aeric.rewind_plugin {
+    public class RewindHandlerStorage {
+        public RewindHandlerStorage(int _handlerStorageOffset, int _handlerFrameSizeBytes) {
+            HandlerStorageOffset = _handlerStorageOffset;
+            HandlerFrameSizeBytes = _handlerFrameSizeBytes;
         }
 
-        public int HandlerStorageOffset => handlerStorageOffset;
-        public int HandlerFrameSizeBytes => handlerFrameSizeBytes;
+        public int HandlerStorageOffset { get; }
+
+        public int HandlerFrameSizeBytes { get; }
     }
 }

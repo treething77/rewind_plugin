@@ -1,156 +1,136 @@
 using aeric.rewind_plugin;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace aeric.rewind_plugin_demos
-{
-    public class SportsRewind : MonoBehaviour
-    {
-        public TMPro.TMP_Text statusText;
+namespace aeric.rewind_plugin_demos {
+    public class SportsRewind : MonoBehaviour {
+        public TMP_Text statusText;
         public GameObject stackParent;
         public GameObject targetParent;
         public RewindComponentBase robotCamRewind;
 
         public Image rewindBar;
-        
+
         public RewindPlaybackPreparer playbackPreparer;
+        private RewindPlayback _playback;
+        private RewindRecorder _recorder;
+
+        private DemoState demoState = DemoState.None;
+        private float newPlaybackTime = -1.0f;
+
+        private bool playback;
 
         private RewindScene rewindScene;
 
         private RewindStorage rewindStorage;
-        private RewindRecorder _recorder;
-        private RewindPlayback _playback;
 
-        private bool playback;
-        private float newPlaybackTime = -1.0f;
-
-        enum DemoState
-        {
-            None,
-            Recording,
-            Rewinding
-        }
-
-        private DemoState demoState = DemoState.None;
-
-        void Start()
-        {
+        private void Start() {
             rewindScene = new RewindScene();
             rewindScene.addAllChildren(stackParent);
             rewindScene.addAllChildren(targetParent);
             rewindScene.addRewindObject(robotCamRewind);
 
             rewindStorage = new RewindStorage(rewindScene, 150, false);
-   
+
             _recorder = new RewindRecorder(rewindScene, rewindStorage, 30, true);
             _playback = new RewindPlayback(rewindScene, rewindStorage);
-            
+
             _recorder.startRecording();
             changeState(DemoState.Recording);
         }
 
-        private void changeState(DemoState n)
-        {
-            switch (n)
-            {
-                case DemoState.Recording:
-                {
-                    _playback.stopPlayback();
-                    playbackPreparer.stopPlayback();
-                  
-                        _recorder.startRecording();
-                //    Time.timeScale = 1.0f;
-                    break;
-                }
-                case DemoState.Rewinding:
-                {
-                    //Debug.DebugBreak();
-                    
-                   // float startTime = _playback.startTime;
-                    float endTime = _playback.endTime;
-                    
-                    playbackPreparer.startPlayback();
-                    _playback.startPlayback();
-            
-                    //start at the end
-                    _playback.SetPlaybackTime(endTime);
-                    newPlaybackTime = endTime;
-                    
-                    break;
-                }
+        private void Update() {
+            switch (demoState) {
+            case DemoState.Recording: {
+                _recorder.updateRecording();
+                _recorder.advanceRecordingTime();
+
+                var startTime = _playback.startTime;
+                var endTime = _playback.endTime;
+                var currentTime = _playback.currentTime;
+                var fillTime = endTime - startTime;
+
+                if (fillTime <= 0.0f) fillTime = 0.0f;
+                rewindBar.fillAmount = fillTime / 5.0f;
+
+                if (Input.GetKey(KeyCode.Space)) changeState(DemoState.Rewinding);
+                break;
             }
+            case DemoState.Rewinding: {
+                var currentTime = _playback.currentTime;
+                var startTime = _playback.startTime;
+
+                newPlaybackTime = currentTime - Time.deltaTime * 1.0f;
+                if (newPlaybackTime < startTime) newPlaybackTime = startTime;
+
+                {
+                    _playback.SetPlaybackTime(newPlaybackTime);
+                    _playback.restoreFrameAtCurrentTime();
+                }
+
+                var endTime = _playback.endTime;
+                var fillTime = currentTime - startTime;
+                rewindBar.fillAmount = fillTime / 5.0f;
+
+                if (!Input.GetKey(KeyCode.Space) || fillTime < 0.1f) {
+                    var frameInfo = rewindStorage.findPlaybackFrames(newPlaybackTime);
+
+                    var currentFrameCount = rewindStorage.RecordedFrameCount;
+                    var newUnmappedEndFrame = frameInfo.frameUnmappedB;
+
+                    startTime = _playback.startTime;
+                    endTime = _playback.endTime;
+
+                    rewindStorage.rewindFrames(currentFrameCount - newUnmappedEndFrame);
+
+                    startTime = _playback.startTime;
+                    endTime = _playback.endTime;
+
+                    changeState(DemoState.Recording);
+
+                    _recorder.setRecordTime(newPlaybackTime);
+                }
+
+                break;
+            }
+            }
+        }
+
+        private void changeState(DemoState n) {
+            switch (n) {
+            case DemoState.Recording: {
+                _playback.stopPlayback();
+                playbackPreparer.stopPlayback();
+
+                _recorder.startRecording();
+                //    Time.timeScale = 1.0f;
+                break;
+            }
+            case DemoState.Rewinding: {
+                //Debug.DebugBreak();
+
+                // float startTime = _playback.startTime;
+                var endTime = _playback.endTime;
+
+                playbackPreparer.startPlayback();
+                _playback.startPlayback();
+
+                //start at the end
+                _playback.SetPlaybackTime(endTime);
+                newPlaybackTime = endTime;
+
+                break;
+            }
+            }
+
             demoState = n;
         }
 
-        private void Update()
-        {
-            switch (demoState)
-            {
-                case DemoState.Recording:
-                {
-                    _recorder.updateRecording();
-                    _recorder.advanceRecordingTime();
-             
-                    float startTime = _playback.startTime;
-                    float endTime = _playback.endTime;
-                    float currentTime = _playback.currentTime;
-                    float fillTime = endTime - startTime;
-
-                    if (fillTime <= 0.0f)
-                    {
-                        fillTime = 0.0f;
-                    }
-                    rewindBar.fillAmount = fillTime / 5.0f;
-
-                    if (Input.GetKey(KeyCode.Space))
-                    {
-                        changeState(DemoState.Rewinding);
-                    }
-                    break;
-                }
-                case DemoState.Rewinding:
-                {
-                    float currentTime = _playback.currentTime;
-                    float startTime = _playback.startTime;
-                    
-                    newPlaybackTime = currentTime - Time.deltaTime * 1.0f;
-                    if (newPlaybackTime < startTime)
-                    {
-                        newPlaybackTime = startTime;
-                    }
-
-                    {
-                        _playback.SetPlaybackTime(newPlaybackTime);
-                        _playback.restoreFrameAtCurrentTime();
-                    }
-                    
-                    float endTime = _playback.endTime;
-                    float fillTime = currentTime - startTime;
-                    rewindBar.fillAmount = fillTime / 5.0f;
-
-                    if (!Input.GetKey(KeyCode.Space) || fillTime < 0.1f)
-                    {
-                        var frameInfo = rewindStorage.findPlaybackFrames(newPlaybackTime);
-
-                        int currentFrameCount = rewindStorage.RecordedFrameCount;
-                        int newUnmappedEndFrame = frameInfo.frameUnmappedB;
-                        
-                        startTime = _playback.startTime;
-                        endTime = _playback.endTime;
-
-                        rewindStorage.rewindFrames(currentFrameCount - newUnmappedEndFrame);
-
-                        startTime = _playback.startTime;
-                        endTime = _playback.endTime;
-
-                        changeState(DemoState.Recording);
-
-                        _recorder.setRecordTime(newPlaybackTime);
-                    }
-                    
-                    break;
-                }
-            }
+        private enum DemoState {
+            None,
+            Recording,
+            Rewinding
         }
         /*
         private void OnGUI()
