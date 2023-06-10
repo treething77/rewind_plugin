@@ -1,6 +1,5 @@
 #define USE_BURST_FOR_REWIND_COMPONENTS
 
-using System;
 using Unity.Burst;
 using UnityEngine;
 

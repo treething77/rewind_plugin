@@ -1,7 +1,5 @@
-using System;
 using System.Collections;
 using aeric.rewind_plugin;
-using UnityEditor;
 using UnityEngine;
 
 namespace aeric.rewind_plugin_demos

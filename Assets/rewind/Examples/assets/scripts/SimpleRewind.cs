@@ -1,4 +1,3 @@
-using System.Drawing;
 using aeric.rewind_plugin;
 using UnityEngine;
 using Color = UnityEngine.Color;

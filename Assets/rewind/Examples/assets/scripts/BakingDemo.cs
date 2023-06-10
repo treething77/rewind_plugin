@@ -1,6 +1,4 @@
-using System;
 using aeric.rewind_plugin;
-using UnityEditor;
 using UnityEngine;
 
 namespace aeric.rewind_plugin_demos

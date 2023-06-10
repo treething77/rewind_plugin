@@ -1,4 +1,3 @@
-using System;
 using NUnit.Framework;
 using aeric.rewind_plugin;
 using UnityEngine;

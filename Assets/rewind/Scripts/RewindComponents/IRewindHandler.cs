@@ -6,7 +6,6 @@ namespace aeric.rewind_plugin
         uint ID { get; set; }
 
         void rewindStore(NativeByteArrayWriter writer);
-   //     void rewindRestore(NativeByteArrayReader reader);
         
         int RequiredBufferSizeBytes { get; }
         uint HandlerTypeID { get; }
