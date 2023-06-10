@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace ccl.rewind_plugin
+namespace aeric.rewind_plugin
 {
     /// <summary>
     /// Helper class that encapsulates the ownership of the RewindRecorder and its update logic

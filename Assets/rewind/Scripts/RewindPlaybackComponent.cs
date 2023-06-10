@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-namespace ccl.rewind_plugin
+namespace aeric.rewind_plugin
 {
     /// <summary>
     /// Helper class that encapsulates the ownership of the RewindPlayback and its update logic

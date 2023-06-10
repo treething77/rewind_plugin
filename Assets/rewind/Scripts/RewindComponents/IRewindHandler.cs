@@ -1,5 +1,5 @@
 
-namespace ccl.rewind_plugin
+namespace aeric.rewind_plugin
 {
     public interface IRewindHandler
     {

@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace ccl.rewind_plugin_demos
+namespace aeric.rewind_plugin_demos
 {
     public class RobotTeam : MonoBehaviour
     {

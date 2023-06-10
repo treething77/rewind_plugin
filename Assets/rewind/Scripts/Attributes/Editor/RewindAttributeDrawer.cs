@@ -1,7 +1,7 @@
 using UnityEditor;
 using UnityEngine;
 
-namespace ccl.rewind_plugin
+namespace aeric.rewind_plugin
 {
     [CustomPropertyDrawer(typeof(RewindAttribute))]
     public class RewindAttributeDrawer : PropertyDrawer

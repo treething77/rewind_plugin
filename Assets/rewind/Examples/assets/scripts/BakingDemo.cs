@@ -1,9 +1,9 @@
 using System;
-using ccl.rewind_plugin;
+using aeric.rewind_plugin;
 using UnityEditor;
 using UnityEngine;
 
-namespace ccl.rewind_plugin_demos
+namespace aeric.rewind_plugin_demos
 {
     public class BakingDemo : MonoBehaviour
     {

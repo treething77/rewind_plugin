@@ -1,6 +1,6 @@
 using System;
 using NUnit.Framework;
-using ccl.rewind_plugin;
+using aeric.rewind_plugin;
 using UnityEngine;
 
 namespace NativeByteArrayTests

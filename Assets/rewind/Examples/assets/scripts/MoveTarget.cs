@@ -1,10 +1,10 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using ccl.rewind_plugin;
+using aeric.rewind_plugin;
 using UnityEngine;
 
-namespace ccl.rewind_plugin_demos
+namespace aeric.rewind_plugin_demos
 {
     public class MoveTarget : RewindCustomMonoBehaviourAttributes
     {

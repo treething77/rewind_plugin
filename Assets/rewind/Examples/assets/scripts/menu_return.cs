@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-namespace ccl.rewind_plugin_demos
+namespace aeric.rewind_plugin_demos
 {
     public class menu_return : MonoBehaviour
     {

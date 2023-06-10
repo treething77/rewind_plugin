@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace ccl.rewind_plugin
+namespace aeric.rewind_plugin
 {
     /// <summary>
     /// This is a basic implementation of a recorder that records at a specified framerate for

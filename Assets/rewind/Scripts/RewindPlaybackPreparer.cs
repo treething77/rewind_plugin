@@ -3,7 +3,7 @@ using System.Linq;
 using Codice.Client.BaseCommands;
 using UnityEngine;
 
-namespace ccl.rewind_plugin
+namespace aeric.rewind_plugin
 {
     public class RewindPlaybackPreparer : MonoBehaviour
     {

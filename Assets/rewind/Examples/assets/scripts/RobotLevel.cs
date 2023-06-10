@@ -4,7 +4,7 @@ using System.Linq;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
-namespace ccl.rewind_plugin_demos
+namespace aeric.rewind_plugin_demos
 {
     public class RobotLevel : MonoBehaviour
     {

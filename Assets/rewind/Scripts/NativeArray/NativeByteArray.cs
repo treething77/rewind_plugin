@@ -1,7 +1,7 @@
 using Unity.Collections;
 using Unity.Collections.LowLevel.Unsafe;
 
-namespace ccl.rewind_plugin
+namespace aeric.rewind_plugin
 {
     public class NativeByteArray
     {

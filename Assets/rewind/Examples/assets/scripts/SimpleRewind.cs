@@ -1,9 +1,9 @@
 using System.Drawing;
-using ccl.rewind_plugin;
+using aeric.rewind_plugin;
 using UnityEngine;
 using Color = UnityEngine.Color;
 
-namespace ccl.rewind_plugin_demos
+namespace aeric.rewind_plugin_demos
 {
     public class SimpleRewind : MonoBehaviour
     {

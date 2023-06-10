@@ -8,7 +8,7 @@ using UnityEditor;
 using UnityEngine;
 using Random = System.Random;
 
-namespace ccl.rewind_plugin
+namespace aeric.rewind_plugin
 {
     //TODO: move to its own file
     public static class ComponentIDGenerator
