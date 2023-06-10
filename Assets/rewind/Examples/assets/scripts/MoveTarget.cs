@@ -24,13 +24,17 @@ namespace ccl.rewind_plugin_demos
         public void Capture(Robot robot)
         {
             CapturedTeamIndex = robot.Team.teamIndex;
+            
+            //turn white and scale up briefly when captured
             _material.color = Color.white;
+            transform.localScale = new Vector3(1.5f, 1.8f, 1.5f);
         }
 
         private void Update()
         {
             //lerp color back to the team color
-            _material.color = Color.Lerp(_material.color, RobotLevel.Instance.GetTeamColor(CapturedTeamIndex), 0.05f);
+            _material.color = Color.Lerp(_material.color, RobotLevel.Instance.GetTeamColor(CapturedTeamIndex), Time.deltaTime);
+            transform.localScale = Vector3.Lerp(transform.localScale, Vector3.one, Time.deltaTime);
         }
     }
 }

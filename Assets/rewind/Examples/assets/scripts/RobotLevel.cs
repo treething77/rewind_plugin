@@ -15,6 +15,9 @@ namespace ccl.rewind_plugin_demos
         private List<MoveTarget> _targets;
         public static RobotLevel Instance;
 
+        public TMPro.TMP_Text _redTeamScoreTxt;
+        public TMPro.TMP_Text _blueTeamScoreTxt;
+
         private void Awake()
         {
             Instance = this;
@@ -23,6 +26,12 @@ namespace ccl.rewind_plugin_demos
         private void Start()
         { 
             _targets = targetRoot.GetComponentsInChildren<MoveTarget>().ToList();
+        }
+
+        private void Update()
+        {
+            _redTeamScoreTxt.text = "Red: " + _targets.Count(x => x.CapturedTeamIndex == 1);
+            _blueTeamScoreTxt.text = "Blue: " + _targets.Count(x => x.CapturedTeamIndex == 2);
         }
 
         public int FindTarget(Robot robot)
@@ -95,6 +104,21 @@ namespace ccl.rewind_plugin_demos
             }
 
             return Color.grey;
+        }
+
+        public void CaptureTargetsWithinRange(Vector3 pt, float captureRange, Robot robot)
+        {
+            for (int i = 0; i < _targets.Count; i++)
+            {
+                var target = _targets[i];
+                if (target.CapturedTeamIndex != robot.Team.teamIndex)
+                {
+                    if ((target.transform.position - pt).magnitude < captureRange)
+                    {
+                        CaptureTarget(i, robot);
+                    }
+                }
+            }
         }
     }
 }

@@ -6,6 +6,8 @@ namespace ccl.rewind_plugin_demos
     public class Robot : RewindCustomMonoBehaviourAttributes
     {
         public RobotLevel _level;
+
+        public bool playerControlled;
         
         private Transform transform1;
 
@@ -71,47 +73,88 @@ namespace ccl.rewind_plugin_demos
 
         private void OnAnimatorMove()
         {
-      //      if (playbackActive)
-        //        return;
-            
-            Vector3 dMove = moveTargetPt - transform1.position;
-            dMove.y = 0.0f;
-
             var gravity = Vector3.up * 5.0f;
-
             var animMove = a.deltaPosition;
             animMove.y = 0.0f;
 
-            Vector3 actualMove = dMove.normalized * animMove.magnitude;
-
-            Vector3 moveAmount = actualMove - gravity * Time.deltaTime; 
-           // Debug.Log($"Robot move: {moveAmount}");
-            c.Move(moveAmount);
-
-            if (dMove.magnitude < 0.7f)
+            //move forward
             {
-                _level.CaptureTarget(moveTargetIndex, this);
-                
-                //choose new target
-                ChooseTarget();
+                Vector3 moveDirection = transform1.forward;
+                moveDirection.y = 0.0f;
+
+                Vector3 actualMove = moveDirection.normalized * animMove.magnitude;
+
+                Vector3 moveAmount = actualMove - gravity * Time.deltaTime;
+                c.Move(moveAmount);
+            }
+
+            if (playerControlled)
+            {
+                _level.CaptureTargetsWithinRange(transform1.position, 1.5f, this);
+            }
+            else
+            {
+                if (( moveTargetPt - transform1.position).magnitude < 1.5f)
+                {
+                    _level.CaptureTarget(moveTargetIndex, this);
+
+                    //choose new target
+                    ChooseTarget();
+                }
             }
         }
+
+        private float playerSpeed = 0.0f;
 
         // Update is called once per frame
         void Update()
         {
-            var position = moveTargetPt;
-            Vector3 lookAt = position;
-            var position1 = transform1.position;
-            lookAt.y = position1.y;
+            if (playerControlled)
+            {
+                
+                bool keyFwd = Input.GetKey(KeyCode.W);
+                bool keyLeft = Input.GetKey(KeyCode.A);
+                bool keyRight = Input.GetKey(KeyCode.D);
 
-            var ogRot = transform1.rotation;
-            transform1.LookAt(lookAt);
-            transform1.rotation = Quaternion.Lerp(ogRot, transform1.rotation, 0.1f);
+                if (keyFwd)
+                {
+                    playerSpeed += Time.deltaTime * 4.0f;
+                    playerSpeed = Mathf.Min(playerSpeed, 1.0f);
+                }
+                else
+                {
+                    playerSpeed -= Time.deltaTime * 2.0f;
+                }
 
-            float moveT = (position1 - moveStartPt).magnitude / (position - moveStartPt).magnitude;
-            float moveBlend = Mathf.Lerp(moveBlendStart, moveBlendEnd, moveT);
-            a.SetFloat(Blend, moveBlend);
+                playerSpeed = Mathf.Clamp01(playerSpeed);
+                
+                a.SetFloat(Blend, playerSpeed);
+
+                if (keyLeft)
+                {
+                    transform1.Rotate(Vector3.up, -100.0f * Time.deltaTime);
+                }
+                if (keyRight)
+                {
+                    transform1.Rotate(Vector3.up, 100.0f * Time.deltaTime);
+                }
+                
+            }
+            else
+            {
+                var position = moveTargetPt;
+                Vector3 lookAt = position;
+                var position1 = transform1.position;
+                lookAt.y = position1.y;
+
+                var ogRot = transform1.rotation;
+                transform1.LookAt(lookAt);
+                transform1.rotation = Quaternion.Lerp(ogRot, transform1.rotation, 0.1f);
+
+                float moveT = (position1 - moveStartPt).magnitude / (position - moveStartPt).magnitude;
+                float moveBlend = Mathf.Lerp(moveBlendStart, moveBlendEnd, moveT);
+                a.SetFloat(Blend, moveBlend);
+            }
         }
     }
 }

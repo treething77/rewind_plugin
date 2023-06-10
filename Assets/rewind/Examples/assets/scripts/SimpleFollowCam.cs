@@ -14,7 +14,7 @@ namespace ccl.rewind_plugin_demos
      
         void LateUpdate()
         {
-            Vector3 target = player.position + (transform.position - player.position).normalized * distance;
+            Vector3 target = player.position - (player.transform.forward * distance);
             transform.position = Vector3.SmoothDamp(transform.position, target, ref currentVelocity, smoothTime);
 
             if (transform.position.y < minHeight)

@@ -32,10 +32,7 @@ namespace ccl.rewind_plugin
         private readonly NativeByteArrayReader frameReaderA;
         private readonly NativeByteArrayReader frameReaderB;
 
-        private int rewindFramesCount;
 
-        private int rewindWriteHead => (rewindReadHead + rewindFramesCount) % _maxFrameCount;
-        private int rewindReadHead;
         
         private bool supportsRewind;
         
@@ -149,9 +146,12 @@ namespace ccl.rewind_plugin
             }
         }
         
+        private int rewindFramesCount;
+        private int rewindReadHead;
+        
         public int RecordedFrameCount => rewindFramesCount;
         public int FrameReadIndex => rewindReadHead;
-        public int FrameWriteIndex => rewindWriteHead;
+        public int FrameWriteIndex =>  (FrameReadIndex + RecordedFrameCount) % _maxFrameCount;
 
         public RewindHandlerStorage getHandlerStorage(uint rewindHandlerID)
         {
@@ -170,7 +170,7 @@ namespace ccl.rewind_plugin
             RewindHandlerStorage handlerStorage = getHandlerStorage(rewindHandler.ID);
             
             //set the write head to the correct location
-            storageWriter.setWriteHead(handlerStorage.HandlerStorageOffset + (handlerStorage.HandlerFrameSizeBytes * rewindWriteHead));
+            storageWriter.setWriteHead(handlerStorage.HandlerStorageOffset + (handlerStorage.HandlerFrameSizeBytes * FrameWriteIndex));
             
             //store ID
             //do we really need to store the ID here? we could just use the offset to determine the ID
@@ -182,7 +182,7 @@ namespace ccl.rewind_plugin
         public void writeFrameStart(float frameTimeRelativeToStart)
         {
             // write frame time
-            int currentFrameTimeOffset = _frameDataOffset + (4 * rewindWriteHead);
+            int currentFrameTimeOffset = _frameDataOffset + (4 * FrameWriteIndex);
             storageWriter.setWriteHead(currentFrameTimeOffset);
             
             //frame time is the current time? time from start of recording?
@@ -289,7 +289,7 @@ namespace ccl.rewind_plugin
         private RewindMappedFrame remapIndex(int frameIndex)
         {
             //is buffer full yet?
-            if (rewindFramesCount < _maxFrameCount) return (RewindMappedFrame)frameIndex;
+          //  if (rewindFramesCount < _maxFrameCount) return (RewindMappedFrame)frameIndex;
             
             int mappedFrameIndex = (rewindReadHead + frameIndex) % _maxFrameCount;
             return (RewindMappedFrame)mappedFrameIndex;
@@ -375,7 +375,8 @@ namespace ccl.rewind_plugin
             //the READ head does not move (start of valid data)
             //the WRITE head is implicit so moves when we set frame count
             rewindFramesCount -= frameCountToRewind;
-            
+            if (rewindFramesCount < 0) rewindFramesCount = 0;
+
             //rewindFrameWriteIndex -= frameCountToRewind;
             //if (rewindFrameWriteIndex < 0) rewindFrameWriteIndex += _maxFrameCount;
         }

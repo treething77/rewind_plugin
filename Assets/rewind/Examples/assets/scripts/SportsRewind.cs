@@ -1,5 +1,6 @@
 using ccl.rewind_plugin;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace ccl.rewind_plugin_demos
 {
@@ -9,6 +10,8 @@ namespace ccl.rewind_plugin_demos
         public GameObject stackParent;
         public GameObject targetParent;
         public RewindComponentBase robotCamRewind;
+
+        public Image rewindBar;
         
         public RewindPlaybackPreparer playbackPreparer;
 
@@ -25,7 +28,7 @@ namespace ccl.rewind_plugin_demos
         {
             None,
             Recording,
-            Paused
+            Rewinding
         }
 
         private DemoState demoState = DemoState.None;
@@ -59,17 +62,16 @@ namespace ccl.rewind_plugin_demos
                 //    Time.timeScale = 1.0f;
                     break;
                 }
-                case DemoState.Paused:
+                case DemoState.Rewinding:
                 {
                     //Debug.DebugBreak();
                     
-                    float startTime = _playback.startTime;
+                   // float startTime = _playback.startTime;
                     float endTime = _playback.endTime;
                     
                     playbackPreparer.startPlayback();
                     _playback.startPlayback();
-                 //   Time.timeScale = 0.0f;
-
+            
                     //start at the end
                     _playback.SetPlaybackTime(endTime);
                     newPlaybackTime = endTime;
@@ -88,23 +90,69 @@ namespace ccl.rewind_plugin_demos
                 {
                     _recorder.updateRecording();
                     _recorder.advanceRecordingTime();
-                    statusText.text = $"Record - {rewindStorage.RecordedFrameCount} - {rewindStorage.FrameWriteIndex}";
+             
+                    float startTime = _playback.startTime;
+                    float endTime = _playback.endTime;
+                    float currentTime = _playback.currentTime;
+                    float fillTime = endTime - startTime;
+
+                    if (fillTime <= 0.0f)
+                    {
+                        fillTime = 0.0f;
+                    }
+                    rewindBar.fillAmount = fillTime / 5.0f;
+
+                    if (Input.GetKey(KeyCode.Space))
+                    {
+                        changeState(DemoState.Rewinding);
+                    }
                     break;
                 }
-                case DemoState.Paused:
+                case DemoState.Rewinding:
                 {
                     float currentTime = _playback.currentTime;
-                  //  if (newPlaybackTime != currentTime)
+                    float startTime = _playback.startTime;
+                    
+                    newPlaybackTime = currentTime - Time.deltaTime * 1.0f;
+                    if (newPlaybackTime < startTime)
+                    {
+                        newPlaybackTime = startTime;
+                    }
+
                     {
                         _playback.SetPlaybackTime(newPlaybackTime);
                         _playback.restoreFrameAtCurrentTime();
                     }
-                    statusText.text = $"Paused";
+                    
+                    float endTime = _playback.endTime;
+                    float fillTime = currentTime - startTime;
+                    rewindBar.fillAmount = fillTime / 5.0f;
+
+                    if (!Input.GetKey(KeyCode.Space) || fillTime < 0.1f)
+                    {
+                        var frameInfo = rewindStorage.findPlaybackFrames(newPlaybackTime);
+
+                        int currentFrameCount = rewindStorage.RecordedFrameCount;
+                        int newUnmappedEndFrame = frameInfo.frameUnmappedB;
+                        
+                        startTime = _playback.startTime;
+                        endTime = _playback.endTime;
+
+                        rewindStorage.rewindFrames(currentFrameCount - newUnmappedEndFrame);
+
+                        startTime = _playback.startTime;
+                        endTime = _playback.endTime;
+
+                        changeState(DemoState.Recording);
+
+                        _recorder.setRecordTime(newPlaybackTime);
+                    }
+                    
                     break;
                 }
             }
         }
-        
+        /*
         private void OnGUI()
         {
             GUILayout.BeginArea(new Rect(0,0,400,400));
@@ -155,6 +203,6 @@ namespace ccl.rewind_plugin_demos
             GUILayout.Label("Time: " + currentTime.ToString("F2"));
 
             GUILayout.EndArea();
-        }
+        }*/
     }
 }
