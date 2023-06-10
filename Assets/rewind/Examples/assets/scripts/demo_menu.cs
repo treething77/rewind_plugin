@@ -27,5 +27,14 @@ namespace ccl.rewind_plugin_demos
             SceneManager.LoadScene("Assets/rewind/Examples/scenes/baking/play_bake.unity");
         }
 
+        public void loadSimple()
+        {
+            SceneManager.LoadScene("Assets/rewind/Examples/scenes/simple/simple.unity");
+        }
+        
+        public void loadSimpleRewind()
+        {
+            SceneManager.LoadScene("Assets/rewind/Examples/scenes/simple-rewind/simple-rewind.unity");
+        }
     }
 }

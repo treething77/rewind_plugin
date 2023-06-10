@@ -28,7 +28,7 @@ namespace ccl.rewind_plugin_demos
         [Rewind]
         public float moveBlendEnd;
 
-        [Rewind(Lerp=false)] public int moveTargetIndex;
+        [Rewind(Lerp=false)] public int moveTargetIndex = 0;
         
         private Animator a;
         CharacterController c;
@@ -41,11 +41,10 @@ namespace ccl.rewind_plugin_demos
             transform1 = transform;
             prevP = transform1.position;
 
-            //pick a target to move towards
-            ChooseTarget();
-
             a = GetComponent<Animator>();
             c = GetComponent<CharacterController>();
+
+            moveTargetIndex = -1;
         }
 
         private bool playbackActive;
@@ -111,7 +110,6 @@ namespace ccl.rewind_plugin_demos
         {
             if (playerControlled)
             {
-                
                 bool keyFwd = Input.GetKey(KeyCode.W);
                 bool keyLeft = Input.GetKey(KeyCode.A);
                 bool keyRight = Input.GetKey(KeyCode.D);
@@ -142,6 +140,10 @@ namespace ccl.rewind_plugin_demos
             }
             else
             {
+                //pick a target to move towards
+                if (moveTargetIndex == -1)
+                    ChooseTarget();
+
                 var position = moveTargetPt;
                 Vector3 lookAt = position;
                 var position1 = transform1.position;

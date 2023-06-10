@@ -9,6 +9,8 @@ namespace ccl.rewind_plugin_demos
     {
         public void menuReturn()
         {
+            //Reset the timescale in case we changed it
+            Time.timeScale = 1.0f;
             SceneManager.LoadScene("Assets/rewind/Examples/scenes/menu.unity");
         }
     }

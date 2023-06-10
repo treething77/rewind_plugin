@@ -26,4 +26,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/rewind/Examples/scenes/sports-rewind/sports-rewind.unity
     guid: c5a2a6629df7324408d6f9680866229b
+  - enabled: 1
+    path: Assets/rewind/Examples/scenes/simple-rewind/simple-rewind.unity
+    guid: 096c16b50dae73847a73e47bb7b5e0b1
   m_configObjects: {}
