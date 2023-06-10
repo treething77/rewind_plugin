@@ -1,6 +1,8 @@
 #define USE_BURST_FOR_REWIND_COMPONENTS
 
+#if USE_BURST_FOR_REWIND_COMPONENTS
 using Unity.Burst;
+#endif
 using UnityEngine;
 
 namespace aeric.rewind_plugin

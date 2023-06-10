@@ -9,8 +9,8 @@ namespace aeric.rewind_plugin
         /// </summary>
         public static int LerpInt(int a, int b, float t)
         {
-            //When interpolating integers we want to divide the 0-1 space into (b-a+1) buckets of equal size
-
+            //While interpolating integers, it is customary to divide the range from 0 to 1 into (b-a+1) buckets,
+            //ensuring they are of equal size.
             float fT = a + ((b - a + (1-Mathf.Epsilon)) * t);
                     
             return Mathf.FloorToInt(fT);

@@ -8,21 +8,10 @@ namespace aeric.rewind_plugin
         private NativeArray<byte> _nativeBuffer;
         public bool isDisposed;
 
-        //private NativeByteArrayWriter _writer;
-        //private NativeByteArrayReader _reader;
-
         public NativeByteArray(int bufferSizeBytes)
         {
             _nativeBuffer = new NativeArray<byte>(bufferSizeBytes, Allocator.Persistent);
         }
-        
-
-        //_writer = new NativeByteArrayWriter(this);
-         //   _reader = new NativeByteArrayReader(this);
-        
-
-        //public NativeByteArrayWriter writer => _writer;
-       // public NativeByteArrayReader reader => _reader;
 
         public int Length => _nativeBuffer.Length;
 

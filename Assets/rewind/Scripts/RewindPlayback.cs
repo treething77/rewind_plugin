@@ -19,31 +19,14 @@ namespace aeric.rewind_plugin
             _rewindStorage = rewindStorage;
         }
 
-        public float startTime
-        {
-            get
-            {
-                //get the times from the times array in the storage
-                return _rewindStorage.getTime(0);
-            }
-        }
+        public float startTime =>
+            //get the times from the times array in the storage
+            _rewindStorage.getTime(0);
 
-        public float endTime
-        {
-            get
-            {
-                return _rewindStorage.getTime(_rewindStorage.RecordedFrameCount-1);
-            }
-        }
+        public float endTime => _rewindStorage.getTime(_rewindStorage.RecordedFrameCount-1);
 
-        public float currentTime
-        {
-            get
-            {
-                return playbackCurrentTime;
-            }
-        }
-        
+        public float currentTime => playbackCurrentTime;
+
         public void SetPlaybackTime(float newTime)
         {
             playbackCurrentTime = newTime;

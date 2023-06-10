@@ -20,7 +20,7 @@ namespace aeric.rewind_plugin
         {
             while (RewindHandlers.Find(x => x.ID == rewindHandler.ID) != null)
             {
-                rewindHandler.ID = ComponentIDGenerator.generateID(rewindHandler);
+                rewindHandler.ID = RewindComponentIDGenerator.generateID(rewindHandler);
             }
         }
         

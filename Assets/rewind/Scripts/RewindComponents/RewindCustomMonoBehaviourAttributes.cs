@@ -7,72 +7,8 @@ using Random = System.Random;
 
 namespace aeric.rewind_plugin
 {
-    //TODO: move to its own file
-    public static class ComponentIDGenerator
-    {
-        private static Random _idRandom;
-        
-        public static uint generateID(IRewindHandler rewindHandler) 
-        {
-            if (_idRandom == null)
-            {
-                _idRandom = new Random();
-            }
-          
-            uint id = (uint) _idRandom.Next(0, 2 << 24) << 8;
-  
-            id |= rewindHandler.HandlerTypeID; 
-            Debug.Log($"Generated id {id}");
-
-            return id;
-        }
-/*
-        static List<RewindComponentBase> rewindComponents = new List<RewindComponentBase>();
-
-        public static void register(RewindComponentBase rewindComponentBase)
-        {
-            rewindComponents.Add(rewindComponentBase);
-        }
-
-        public static void registerHierarchy(Transform rewindParent)
-        {
-            RewindComponentBase[] rewindComponentBases = rewindParent.GetComponentsInChildren<RewindComponentBase>(true);
-            foreach (RewindComponentBase rewindComponentBase in rewindComponentBases)
-            {
-                register(rewindComponentBase);
-            }
-        }
-
-        public static void unregister(RewindComponentBase rewindComponentBase)
-        {
-            rewindComponents.Remove(rewindComponentBase);
-        }
-
-        public static void unregisterHierarchy(Transform rewindParent)
-        {
-            RewindComponentBase[] rewindComponentBases = rewindParent.GetComponentsInChildren<RewindComponentBase>(true);
-            foreach (RewindComponentBase rewindComponentBase in rewindComponentBases)
-            {
-                unregister(rewindComponentBase);
-            }
-        }
-        
-        public static bool isRegistered(uint id)
-        {
-            foreach (var rewindComponent in rewindComponents)
-            {
-                if (rewindComponent.ID == id) return true;
-            }
-
-            return false;
-        }
-        */
-    }
-    
     public class RewindCustomMonoBehaviourAttributes : RewindComponentBase
     {
-        //[HideInInspector] [SerializeField] private ComponentIdentity identity; 
-
         private FieldInfo[] rewindFields;
         private bool[] rewindFieldLerp;
         private int requiredBufferSize;
@@ -91,8 +27,6 @@ namespace aeric.rewind_plugin
                 var rewindAttribute = rewindField.GetCustomAttribute(typeof(RewindAttribute));
                 rewindFieldLerp[i] = ((RewindAttribute)rewindAttribute).Lerp;
             }
-            
-            //TODO: register here too?
         }
 
 
