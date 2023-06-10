@@ -7,6 +7,7 @@ namespace ccl.rewind_plugin_demos
     {
         public TMPro.TMP_Text statusText;
         public GameObject stackParent;
+        public GameObject targetsParent;
         public RewindPlaybackPreparer playbackPreparer;
 
         private RewindScene rewindScene;
@@ -21,6 +22,7 @@ namespace ccl.rewind_plugin_demos
         {
             rewindScene = new RewindScene();
             rewindScene.addAllChildren(stackParent);
+            rewindScene.addAllChildren(targetsParent);
 
             rewindStorage = new RewindStorage(rewindScene, 150, false);
    

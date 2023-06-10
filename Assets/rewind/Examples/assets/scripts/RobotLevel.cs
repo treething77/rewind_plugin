@@ -30,8 +30,10 @@ namespace ccl.rewind_plugin_demos
 
         private void Update()
         {
-            _redTeamScoreTxt.text = "Red: " + _targets.Count(x => x.CapturedTeamIndex == 1);
-            _blueTeamScoreTxt.text = "Blue: " + _targets.Count(x => x.CapturedTeamIndex == 2);
+            if (_redTeamScoreTxt != null)
+                _redTeamScoreTxt.text = "Red: " + _targets.Count(x => x.CapturedTeamIndex == 1);
+            if (_blueTeamScoreTxt != null)
+                _blueTeamScoreTxt.text = "Blue: " + _targets.Count(x => x.CapturedTeamIndex == 2);
         }
 
         public int FindTarget(Robot robot)
