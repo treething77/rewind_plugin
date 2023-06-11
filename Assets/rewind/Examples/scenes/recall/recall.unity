@@ -316,7 +316,7 @@ TerrainCollider:
   m_Material: {fileID: 0}
   m_Enabled: 1
   m_TerrainData: {fileID: 15600000, guid: 416525cdf622293449fd19ab2b7c8374, type: 2}
-  m_EnableTreeColliders: 1
+  m_EnableTreeColliders: 0
 --- !u!218 &372244109
 Terrain:
   m_ObjectHideFlags: 0
@@ -571,6 +571,10 @@ PrefabInstance:
     - target: {fileID: 6096118043948858974, guid: a92f6a207ff38c34096b764e3554f4a7, type: 3}
       propertyPath: m_Name
       value: robot_recall
+      objectReference: {fileID: 0}
+    - target: {fileID: 6366025944911052891, guid: a92f6a207ff38c34096b764e3554f4a7, type: 3}
+      propertyPath: m_UseGravity
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6904602771339338980, guid: a92f6a207ff38c34096b764e3554f4a7, type: 3}
       propertyPath: m_RootOrder

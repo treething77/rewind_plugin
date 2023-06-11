@@ -128,8 +128,8 @@ namespace aeric.rewind_plugin_demos {
             moveTargetPt = _level.GetTargetPosition(moveTargetIndex);
 
             moveStartPt = transform.position;
-            moveBlendStart = Random.Range(0.0f, 1.0f);
-            moveBlendEnd = Random.Range(0.0f, 1.0f);
+            moveBlendStart = Random.Range(0.2f, 1.0f);
+            moveBlendEnd = Random.Range(0.2f, 1.0f);
         }
     }
 }
