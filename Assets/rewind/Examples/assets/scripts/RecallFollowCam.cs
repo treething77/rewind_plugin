@@ -1,7 +1,7 @@
 using UnityEngine;
 
 namespace aeric.rewind_plugin_demos {
-    public class SimpleFollowCam : MonoBehaviour {
+    public class RecallFollowCam : MonoBehaviour {
         public Transform player;
         public float distance = 3;
         public float smoothTime = 0.25f;
@@ -18,6 +18,8 @@ namespace aeric.rewind_plugin_demos {
             if (transform.position.y < minTargetRelativeHeight) transform.position = new Vector3(transform.position.x, minTargetRelativeHeight, transform.position.z);
 
             transform.LookAt(player);
+            
+            //TODO: raycast against terrain to prevent clipping
         }
     }
 }
