@@ -30,6 +30,8 @@ namespace aeric.rewind_plugin {
 
         public virtual bool shouldDisableComponent(Component component) {
             if (component is Camera) return false;
+            if (component is AudioSource) return false;
+            if (component is AudioListener) return false;
             return true; //by default disable all other components
         }
 

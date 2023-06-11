@@ -43,6 +43,23 @@ namespace aeric.rewind_plugin_demos {
             moveTargetIndex = -1;
         }
 
+        public void Step(int i) {
+            if (playerControlled) {
+                float vol = 0.7f;
+                if (i == 1) vol = 0.4f;
+                if (i == 0) vol = 0.2f;
+
+                var audioSrc = GetComponent<AudioSource>();
+                if (playbackActive)
+                    audioSrc.PlayOneShot(footStepSFXBackwards, vol);
+                else
+                    audioSrc.PlayOneShot(footStepSFX, vol);
+            }
+        }
+
+        public AudioClip footStepSFX;
+        public AudioClip footStepSFXBackwards;
+
         // Update is called once per frame
         private void Update() {
             if (playerControlled) {
