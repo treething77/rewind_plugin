@@ -7,7 +7,6 @@ namespace aeric.rewind_plugin_demos {
         public float smoothTime = 0.25f;
         public float minHeight = 2.0f;
 
-
         private Vector3 currentVelocity;
 
         private void LateUpdate() {

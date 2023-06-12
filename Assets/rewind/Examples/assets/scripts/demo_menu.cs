@@ -2,6 +2,9 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 
 namespace aeric.rewind_plugin_demos {
+    /// <summary>
+    /// Demo menu implementation for accessing various demo scenes.
+    /// </summary>
     public class demo_menu : MonoBehaviour {
         public void loadSportsReplay() {
             SceneManager.LoadScene("Assets/rewind/Examples/scenes/sports-replay/sports-replay.unity");

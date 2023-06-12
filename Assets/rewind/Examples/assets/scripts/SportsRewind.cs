@@ -15,7 +15,12 @@ namespace aeric.rewind_plugin_demos {
         public RewindPlaybackPreparer playbackPreparer;
         private RewindPlayback _playback;
         private RewindRecorder _recorder;
-
+        
+        enum DemoState {
+            None,
+            Recording,
+            Rewinding
+        }
         private DemoState demoState = DemoState.None;
         private float newPlaybackTime = -1.0f;
 
@@ -127,62 +132,5 @@ namespace aeric.rewind_plugin_demos {
             demoState = n;
         }
 
-        private enum DemoState {
-            None,
-            Recording,
-            Rewinding
-        }
-        /*
-        private void OnGUI()
-        {
-            GUILayout.BeginArea(new Rect(0,0,400,400));
-            float startTime = _playback.startTime;
-            float endTime = _playback.endTime;
-            float currentTime = _playback.currentTime;
-            
-            switch (demoState)
-            {
-                case DemoState.Recording:
-                {
-                    if (GUILayout.Button("Pause"))
-                    {
-                        changeState(DemoState.Paused);
-                    }
-                    break;
-                }
-                case DemoState.Paused:
-                {
-                    bool shouldContinue = GUILayout.Button("Continue");
-
-                    // Add a scrubber component to control the replay time
-                    newPlaybackTime = GUILayout.HorizontalSlider(currentTime, startTime, endTime);
-                    
-
-                    if (shouldContinue)
-                    {
-                        var frameInfo = rewindStorage.findPlaybackFrames(newPlaybackTime);
-
-                        int currentFrameCount = rewindStorage.RecordedFrameCount;
-                        int newUnmappedEndFrame = frameInfo.frameUnmappedB;
-                        
-                        rewindStorage.rewindFrames(currentFrameCount - newUnmappedEndFrame);
-
-                        changeState(DemoState.Recording);
-
-                        _recorder.setRecordTime(newPlaybackTime);
-
-                    }
-
-                    break;
-                }
-            }
-            
-            // Add a label to display the current time
-            GUILayout.Label("startTime: " + startTime.ToString("F2"));
-            GUILayout.Label("endTime: " + endTime.ToString("F2"));
-            GUILayout.Label("Time: " + currentTime.ToString("F2"));
-
-            GUILayout.EndArea();
-        }*/
     }
 }

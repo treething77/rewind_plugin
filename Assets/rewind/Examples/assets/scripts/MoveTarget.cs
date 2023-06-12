@@ -4,8 +4,8 @@ using UnityEngine;
 namespace aeric.rewind_plugin_demos {
     public class MoveTarget : RewindCustomMonoBehaviourAttributes {
         [Rewind(Lerp = false)] public int CapturedTeamIndex;
-        //  public static List<MoveTarget> targetList = new List<MoveTarget>();
 
+        //component reference caching
         private Material _material;
 
         private void Awake() {
@@ -15,7 +15,7 @@ namespace aeric.rewind_plugin_demos {
 
         private void Update() {
             //lerp color back to the team color
-            _material.color = Color.Lerp(_material.color, RobotLevel.Instance.GetTeamColor(CapturedTeamIndex), Time.deltaTime);
+            _material.color = Color.Lerp(_material.color, RobotLevel._instance.GetTeamColor(CapturedTeamIndex), Time.deltaTime);
             transform.localScale = Vector3.Lerp(transform.localScale, Vector3.one, Time.deltaTime);
         }
 

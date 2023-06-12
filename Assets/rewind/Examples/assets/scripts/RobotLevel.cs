@@ -5,18 +5,18 @@ using UnityEngine;
 
 namespace aeric.rewind_plugin_demos {
     public class RobotLevel : MonoBehaviour {
-        public static RobotLevel Instance;
+        public static RobotLevel _instance;
+
         public GameObject targetRoot;
-
         public List<RobotTeam> _robotTeams;
-
         public TMP_Text _redTeamScoreTxt;
         public TMP_Text _blueTeamScoreTxt;
 
+        //reference caching
         private List<MoveTarget> _targets;
 
         private void Awake() {
-            Instance = this;
+            _instance = this;
         }
 
         private void Start() {

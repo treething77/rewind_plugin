@@ -1,18 +1,21 @@
 using UnityEngine;
 
 namespace aeric.rewind_plugin_demos {
+    /// <summary>
+    /// Camera script for the recall demo.
+    /// Follows the player behind, raycast against terrain to avoid clipping the ground.
+    /// </summary>
     public class RecallFollowCam : MonoBehaviour {
         public Transform player;
         public float distance = 3;
         public float smoothTime = 0.25f;
         public float minHeight = 2.0f;
 
-
-        private Vector3 currentVelocity;
+        private Vector3 _currentVelocity;
 
         private void LateUpdate() {
             var target = player.position - player.transform.forward * distance;
-            transform.position = Vector3.SmoothDamp(transform.position, target, ref currentVelocity, smoothTime);
+            transform.position = Vector3.SmoothDamp(transform.position, target, ref _currentVelocity, smoothTime);
 
             float minTargetHeight = player.transform.position.y + minHeight;
 
@@ -25,7 +28,6 @@ namespace aeric.rewind_plugin_demos {
             if (transform.position.y < minTargetHeight) transform.position = new Vector3(transform.position.x, minTargetHeight, transform.position.z);
 
             transform.LookAt(player);
-            
         }
     }
 }

@@ -1,30 +1,45 @@
-using aeric.rewind_plugin;
 using UnityEngine;
 
 namespace aeric.rewind_plugin_demos {
+    /// <summary>
+    /// Handles the player motion and controls in the recall demo
+    /// </summary>
     public class RobotRecall : MonoBehaviour {
+        //animation state constants
         private static readonly int Blend = Animator.StringToHash("Blend");
-        
-        private Animator a;
-        private CharacterController c;
-        private Vector3 motion;
-
-        private float playerSpeed;
-
-        private Transform transform1;
         private static readonly int Jump = Animator.StringToHash("Jump");
+        private static readonly int Land = Animator.StringToHash("Land");
 
-        private void Start() {
-            transform1 = transform;
-            a = GetComponent<Animator>();
-            c = GetComponent<CharacterController>();
+        //inspector references
+        public AudioClip footStepSFX;
+        
+        //component reference caches
+        private Animator _animator;
+        private CharacterController _controller;
+        private Transform _transform;
+
+        
+        private Vector3 motion;
+        private float playerSpeed;
+        private GameObject _platformObject;
+        
+                
+        enum MoveState {
+            Moving,
+            Jumping,
         }
 
-        private float jumpCooldown;
+        private MoveState moveState = MoveState.Moving;
 
-        private GameObject parentPlatform;
+        private Vector3 jumpVelocity;
+
+
+        private void Start() {
+            _transform = transform;
+            _animator = GetComponent<Animator>();
+            _controller = GetComponent<CharacterController>();
+        }
         
-        // Update is called once per frame
         private void Update() {
             var keyFwd = Input.GetKey(KeyCode.W);
             var keyLeft = Input.GetKey(KeyCode.A);
@@ -40,54 +55,41 @@ namespace aeric.rewind_plugin_demos {
             
             playerSpeed = Mathf.Clamp01(playerSpeed);
 
-            a.SetFloat(Blend, playerSpeed);
+            _animator.SetFloat(Blend, playerSpeed);
 
-            if (keyLeft) transform1.Rotate(Vector3.up, -100.0f * Time.deltaTime);
-            if (keyRight) transform1.Rotate(Vector3.up, 100.0f * Time.deltaTime);
+            if (keyLeft) _transform.Rotate(Vector3.up, -100.0f * Time.deltaTime);
+            if (keyRight) _transform.Rotate(Vector3.up, 100.0f * Time.deltaTime);
             
             RaycastHit[] hits = Physics.RaycastAll(transform.position + Vector3.up * 2.0f, -Vector3.up, 4.0f);
 
             foreach (var hit in hits) {
-                if (c.isGrounded) {
+                if (_controller.isGrounded) {
                     //You should use tags/layers for this. I'm trying not to do that since this will be imported into 
                     //another project
                     if (hit.collider.gameObject.name.Contains("platform")) {
-                        parentPlatform = hit.collider.gameObject;
-                        this.transform1.SetParent(parentPlatform.transform, true);
+                        _platformObject = hit.collider.gameObject;
                     }
                 }
             }
 
-            if (!c.isGrounded && parentPlatform != null) {
-                parentPlatform = null;
-                this.transform1.SetParent(null, true);
+            if (!_controller.isGrounded && _platformObject != null) {
+                _platformObject = null;
             }
-
         }
-        
-        enum MoveState {
-            Moving,
-            Jumping,
-        }
-
-        private MoveState moveState = MoveState.Moving;
-
-        private Vector3 jumpVelocity;
-        private static readonly int Land = Animator.StringToHash("Land");
 
         private void OnAnimatorMove() {
-            var animMove = a.deltaPosition;
-            animMove.y = 0.0f;
+            var animMove = _animator.deltaPosition;
+            animMove.y = 0.0f;//ignore vertical motion from the animation
 
             Vector3 platformMove = Vector3.zero;
-            if (parentPlatform != null) {
-                RecallPlatform p = parentPlatform.GetComponent<RecallPlatform>();
-                platformMove = p.move;
+            if (_platformObject != null) {
+                RecallPlatform platform = _platformObject.GetComponent<RecallPlatform>();
+                platformMove = platform.move;
             }
 
             //move forward
             if (moveState == MoveState.Moving) {
-                var moveDirection = transform1.forward;
+                var moveDirection = _transform.forward;
                 moveDirection.y = 0.0f;
 
                 var actualMove = moveDirection.normalized * animMove.magnitude + platformMove;
@@ -95,42 +97,36 @@ namespace aeric.rewind_plugin_demos {
                 var gravity = Vector3.up * 5.0f;
                 var moveAmount = actualMove - gravity * Time.deltaTime;
                 
-                bool groundedPlayer = c.isGrounded;
+                bool groundedPlayer = _controller.isGrounded;
             
                 if (Input.GetKeyDown(KeyCode.Space) && groundedPlayer) {
-                    a.SetTrigger(Jump);
-                    jumpCooldown = 1.0f;
-                 //   moveAmount.y += 5.0f;
-
+                    _animator.SetTrigger(Jump);
                     jumpVelocity = actualMove*1.2f + Vector3.up*0.3f;
                     moveState = MoveState.Jumping;
                 }
                 
-                c.Move(moveAmount);
+                _controller.Move(moveAmount);
             }
             else {
                 var gravity = Vector3.up * 1.0f;
                 jumpVelocity -= gravity * Time.deltaTime;
-                c.Move(jumpVelocity);
-                if (c.isGrounded) {
+                _controller.Move(jumpVelocity);
+                if (_controller.isGrounded) {
                     moveState = MoveState.Moving;
-                    a.SetTrigger(Land);
+                    _animator.SetTrigger(Land);
                 }
             }
         }
         
         public void Step(int i) {
-            if (c.isGrounded) {
-                float vol = 0.3f;
-                if (i == 1) vol = 0.2f;
-                if (i == 0) vol = 0.1f;
+            if (_controller.isGrounded) {
+                float vol = 0.3f;//running
+                if (i == 1) vol = 0.2f;//slower
+                if (i == 0) vol = 0.1f;//walk
 
                 var audioSrc = GetComponent<AudioSource>();
                 audioSrc.PlayOneShot(footStepSFX, vol);
             }
         }
-
-        public AudioClip footStepSFX;
-
     }
 }

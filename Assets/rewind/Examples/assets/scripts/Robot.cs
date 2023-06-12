@@ -2,43 +2,43 @@ using aeric.rewind_plugin;
 using UnityEngine;
 
 namespace aeric.rewind_plugin_demos {
+    /// <summary>
+    /// Handles the AI and player behavior/controls in the rewind/replay demos
+    /// </summary>
     public class Robot : RewindCustomMonoBehaviourAttributes {
         private static readonly int Blend = Animator.StringToHash("Blend");
+        
         public RobotLevel _level;
-
         public bool playerControlled;
+        
+        public AudioClip footStepSFX;
+        public AudioClip footStepSFXBackwards;
 
+        public bool playReversedSoundInPlayback;
+        
+        // Rewind state
         [Rewind] public Vector3 moveStartPt;
-
         [Rewind] public Vector3 moveTargetPt;
-
-        //    private MoveTarget moveTarget;
-
         [Rewind] public float moveBlendStart;
-
         [Rewind] public float moveBlendEnd;
-
         [Rewind(Lerp = false)] public int moveTargetIndex;
 
-        private Animator a;
-        private CharacterController c;
-        private Vector3 motion;
+        //component reference caching
+        private Animator _animator;
+        private CharacterController _controller;
+        private Transform _transform;
 
-        private bool playbackActive;
+        
+        private Vector3 _motion;
+        private bool _playbackActive;
+        private float _playerSpeed;
 
-        private float playerSpeed;
-
-        private Vector3 prevP;
-
-        private Transform transform1;
         public RobotTeam Team { get; set; }
 
         private void Start() {
-            transform1 = transform;
-            prevP = transform1.position;
-
-            a = GetComponent<Animator>();
-            c = GetComponent<CharacterController>();
+            _transform = transform;
+            _animator = GetComponent<Animator>();
+            _controller = GetComponent<CharacterController>();
 
             moveTargetIndex = -1;
         }
@@ -49,16 +49,15 @@ namespace aeric.rewind_plugin_demos {
                 if (i == 1) vol = 0.4f;
                 if (i == 0) vol = 0.2f;
 
+                //If we are in playback mode then play a reversed version of the sound
                 var audioSrc = GetComponent<AudioSource>();
-                if (playbackActive)
+                if (_playbackActive && playReversedSoundInPlayback)
                     audioSrc.PlayOneShot(footStepSFXBackwards, vol);
                 else
                     audioSrc.PlayOneShot(footStepSFX, vol);
             }
         }
 
-        public AudioClip footStepSFX;
-        public AudioClip footStepSFXBackwards;
 
         // Update is called once per frame
         private void Update() {
@@ -68,19 +67,19 @@ namespace aeric.rewind_plugin_demos {
                 var keyRight = Input.GetKey(KeyCode.D);
 
                 if (keyFwd) {
-                    playerSpeed += Time.deltaTime * 4.0f;
-                    playerSpeed = Mathf.Min(playerSpeed, 1.0f);
+                    _playerSpeed += Time.deltaTime * 4.0f;
+                    _playerSpeed = Mathf.Min(_playerSpeed, 1.0f);
                 }
                 else {
-                    playerSpeed -= Time.deltaTime * 2.0f;
+                    _playerSpeed -= Time.deltaTime * 2.0f;
                 }
 
-                playerSpeed = Mathf.Clamp01(playerSpeed);
+                _playerSpeed = Mathf.Clamp01(_playerSpeed);
 
-                a.SetFloat(Blend, playerSpeed);
+                _animator.SetFloat(Blend, _playerSpeed);
 
-                if (keyLeft) transform1.Rotate(Vector3.up, -100.0f * Time.deltaTime);
-                if (keyRight) transform1.Rotate(Vector3.up, 100.0f * Time.deltaTime);
+                if (keyLeft) _transform.Rotate(Vector3.up, -100.0f * Time.deltaTime);
+                if (keyRight) _transform.Rotate(Vector3.up, 100.0f * Time.deltaTime);
             }
             else {
                 //pick a target to move towards
@@ -89,40 +88,40 @@ namespace aeric.rewind_plugin_demos {
 
                 var position = moveTargetPt;
                 var lookAt = position;
-                var position1 = transform1.position;
+                var position1 = _transform.position;
                 lookAt.y = position1.y;
 
-                var ogRot = transform1.rotation;
-                transform1.LookAt(lookAt);
-                transform1.rotation = Quaternion.Lerp(ogRot, transform1.rotation, 0.1f);
+                var ogRot = _transform.rotation;
+                _transform.LookAt(lookAt);
+                _transform.rotation = Quaternion.Lerp(ogRot, _transform.rotation, 0.1f);
 
                 var moveT = (position1 - moveStartPt).magnitude / (position - moveStartPt).magnitude;
                 var moveBlend = Mathf.Lerp(moveBlendStart, moveBlendEnd, moveT);
-                a.SetFloat(Blend, moveBlend);
+                _animator.SetFloat(Blend, moveBlend);
             }
         }
 
         private void OnAnimatorMove() {
             var gravity = Vector3.up * 5.0f;
-            var animMove = a.deltaPosition;
-            animMove.y = 0.0f;
+            var animMove = _animator.deltaPosition;
+            animMove.y = 0.0f;//ignore vertical motion from animation
 
             //move forward
             {
-                var moveDirection = transform1.forward;
+                var moveDirection = _transform.forward;
                 moveDirection.y = 0.0f;
 
                 var actualMove = moveDirection.normalized * animMove.magnitude;
 
                 var moveAmount = actualMove - gravity * Time.deltaTime;
-                c.Move(moveAmount);
+                _controller.Move(moveAmount);
             }
 
             if (playerControlled) {
-                _level.CaptureTargetsWithinRange(transform1.position, 1.5f, this);
+                _level.CaptureTargetsWithinRange(_transform.position, 1.5f, this);
             }
             else {
-                if ((moveTargetPt - transform1.position).magnitude < 1.5f) {
+                if ((moveTargetPt - _transform.position).magnitude < 1.5f) {
                     _level.CaptureTarget(moveTargetIndex, this);
 
                     //choose new target
@@ -132,11 +131,11 @@ namespace aeric.rewind_plugin_demos {
         }
 
         public override void startPlayback() {
-            playbackActive = true;
+            _playbackActive = true;
         }
 
         public override void stopPlayback() {
-            playbackActive = false;
+            _playbackActive = false;
         }
 
         private void ChooseTarget() {

@@ -3,51 +3,55 @@ using aeric.rewind_plugin;
 using UnityEngine;
 
 namespace aeric.rewind_plugin_demos {
+    /// <summary>
+    /// Handles the playback of the baked state data.
+    /// Spins the camera around and plays with timeScale for "cinematic" effect
+    /// </summary>
     public class PlayBakeDemo : MonoBehaviour {
         public GameObject stackParent;
 
         public RewindPlaybackPreparer playbackPreparer;
 
+        //component reference caching
         private Camera _camera;
 
-        private bool playingBack;
-        private RewindPlayback rewindPlayback;
+        private bool _playingBack;
+        private RewindPlayback _rewindPlayback;
 
-        private RewindScene rewindScene;
-        private RewindStorage rewindStorage;
+        private RewindScene _rewindScene;
+        private RewindStorage _rewindStorage;
 
         private void Start() {
             _camera = Camera.main;
-            rewindScene = new RewindScene();
-            rewindScene.addAllChildren(stackParent);
+            _rewindScene = new RewindScene();
+            _rewindScene.addAllChildren(stackParent);
 
-            rewindStorage = new RewindStorage(rewindScene, 150, false);
-
-            rewindPlayback = new RewindPlayback(rewindScene, rewindStorage);
+            _rewindStorage = new RewindStorage(_rewindScene, 150, false);
+            _rewindPlayback = new RewindPlayback(_rewindScene, _rewindStorage);
 
             //Load the bake and apply the starting frame to get the settled starting position
             var path = Application.dataPath;
             path += "/rewind/Examples/assets/bakes/baked_rewind_data";
 
-            rewindStorage.loadFromFile(path);
+            _rewindStorage.loadFromFile(path);
 
             playbackPreparer.startPlayback();
-            rewindPlayback.startPlayback();
+            _rewindPlayback.startPlayback();
 
-            rewindPlayback.restoreFrameAtCurrentTime();
+            _rewindPlayback.restoreFrameAtCurrentTime();
 
             _camera.transform.LookAt(Vector3.up);
         }
 
         private void Update() {
-            if (playingBack) {
-                rewindPlayback.AdvancePlaybackTime();
-                rewindPlayback.restoreFrameAtCurrentTime();
+            if (_playingBack) {
+                _rewindPlayback.AdvancePlaybackTime();
+                _rewindPlayback.restoreFrameAtCurrentTime();
 
-                if (rewindPlayback.isPlaybackComplete) {
-                    rewindPlayback.stopPlayback();
+                if (_rewindPlayback.isPlaybackComplete) {
+                    _rewindPlayback.stopPlayback();
                     playbackPreparer.stopPlayback();
-                    playingBack = false;
+                    _playingBack = false;
                 }
             }
         }
@@ -55,10 +59,10 @@ namespace aeric.rewind_plugin_demos {
         private void OnGUI() {
             GUILayout.BeginArea(new Rect(Screen.width - 200.0f, 0.0f, 200.0f, Screen.height));
             if (GUILayout.Button("Play Baked Sim")) {
-                playingBack = true;
+                _playingBack = true;
 
                 //call again to reset the start time so we get correct relative times
-                rewindPlayback.startPlayback();
+                _rewindPlayback.startPlayback();
 
                 StartCoroutine(BoomCam());
             }
@@ -87,7 +91,6 @@ namespace aeric.rewind_plugin_demos {
                 _camera.transform.position = offset;
 
                 _camera.transform.LookAt(Vector3.up);
-
 
                 yield return null;
             }

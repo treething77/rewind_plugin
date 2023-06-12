@@ -2,33 +2,37 @@ using aeric.rewind_plugin;
 using UnityEngine;
 
 namespace aeric.rewind_plugin_demos {
+    /// <summary>
+    /// Demo to show baking state recording to a file for later playback.
+    /// </summary>
     public class BakingDemo : MonoBehaviour {
         private const float ExplosionWaitTime = 0.5f;
+
+        //inspector references
         public GameObject stackParent;
         public Rigidbody bomb;
+
+        private float _explosionTimer;
+        private bool _recording;
+
+        private RewindScene _rewindScene;
+        private RewindStorage _rewindStorage;
         private RewindRecorder _recorder;
-        private float explosionTimer;
-
-        private bool recording;
-
-        private RewindScene rewindScene;
-
-        private RewindStorage rewindStorage;
 
         private void Start() {
-            rewindScene = new RewindScene();
-            rewindScene.addAllChildren(stackParent);
+            _rewindScene = new RewindScene();
+            _rewindScene.addAllChildren(stackParent);
 
-            rewindStorage = new RewindStorage(rewindScene, 150, false);
+            _rewindStorage = new RewindStorage(_rewindScene, 150, false);
 
-            _recorder = new RewindRecorder(rewindScene, rewindStorage, 30, false);
+            _recorder = new RewindRecorder(_rewindScene, _rewindStorage, 30, false);
         }
 
         private void Update() {
-            if (recording) {
-                if (explosionTimer < ExplosionWaitTime) {
-                    explosionTimer += Time.deltaTime;
-                    if (explosionTimer >= ExplosionWaitTime) {
+            if (_recording) {
+                if (_explosionTimer < ExplosionWaitTime) {
+                    _explosionTimer += Time.deltaTime;
+                    if (_explosionTimer >= ExplosionWaitTime) {
                         //set off the "bomb"
                         bomb.velocity = Vector3.up * 20.0f;
                         bomb.AddExplosionForce(100.0f, bomb.transform.position, 1.0f);
@@ -36,7 +40,7 @@ namespace aeric.rewind_plugin_demos {
                 }
 
                 //if the recording is full then stop
-                if (!rewindStorage.isFull) {
+                if (!_rewindStorage.isFull) {
                     _recorder.updateRecording();
                     _recorder.advanceRecordingTime();
                 }
@@ -46,12 +50,12 @@ namespace aeric.rewind_plugin_demos {
         private void OnGUI() {
             GUILayout.BeginArea(new Rect(Screen.width - 200.0f, 0.0f, 200.0f, Screen.height));
             if (GUILayout.Button("Start & Record")) {
-                recording = true;
+                _recording = true;
                 _recorder.startRecording();
             }
 
 #if UNITY_EDITOR
-            if (rewindStorage.isFull)
+            if (_rewindStorage.isFull)
                 if (GUILayout.Button("Write Bake To File")) {
                     //Write the recording to a file
                     //write to the correct location in the Assets folder
@@ -59,7 +63,7 @@ namespace aeric.rewind_plugin_demos {
                     var path = Application.dataPath;
                     path += "/rewind/Examples/assets/bakes/baked_rewind_data";
 
-                    rewindStorage.writeToFile(path);
+                    _rewindStorage.writeToFile(path);
                 }
 #endif
 
