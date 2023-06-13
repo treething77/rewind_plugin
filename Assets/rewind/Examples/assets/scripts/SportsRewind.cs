@@ -5,16 +5,17 @@ using UnityEngine.UI;
 
 namespace aeric.rewind_plugin_demos {
     public class SportsRewind : MonoBehaviour {
-        public TMP_Text statusText;
+        //inspector references
         public GameObject stackParent;
         public GameObject targetParent;
         public RewindComponentBase robotCamRewind;
-
         public Image rewindBar;
-
         public RewindPlaybackPreparer playbackPreparer;
+
         private RewindPlayback _playback;
         private RewindRecorder _recorder;
+        private RewindScene _rewindScene;
+        private RewindStorage _rewindStorage;
         
         enum DemoState {
             None,
@@ -23,23 +24,18 @@ namespace aeric.rewind_plugin_demos {
         }
         private DemoState demoState = DemoState.None;
         private float newPlaybackTime = -1.0f;
-
         private bool playback;
 
-        private RewindScene rewindScene;
-
-        private RewindStorage rewindStorage;
-
         private void Start() {
-            rewindScene = new RewindScene();
-            rewindScene.addAllChildren(stackParent);
-            rewindScene.addAllChildren(targetParent);
-            rewindScene.addRewindObject(robotCamRewind);
+            _rewindScene = new RewindScene();
+            _rewindScene.addAllChildren(stackParent);
+            _rewindScene.addAllChildren(targetParent);
+            _rewindScene.addRewindObject(robotCamRewind);
 
-            rewindStorage = new RewindStorage(rewindScene, 150, false);
+            _rewindStorage = new RewindStorage(_rewindScene, 150, false);
 
-            _recorder = new RewindRecorder(rewindScene, rewindStorage, 30, true);
-            _playback = new RewindPlayback(rewindScene, rewindStorage);
+            _recorder = new RewindRecorder(_rewindScene, _rewindStorage, 30, true);
+            _playback = new RewindPlayback(_rewindScene, _rewindStorage);
 
             _recorder.startRecording();
             changeState(DemoState.Recording);
@@ -79,18 +75,12 @@ namespace aeric.rewind_plugin_demos {
                 rewindBar.fillAmount = fillTime / 5.0f;
 
                 if (!Input.GetKey(KeyCode.Space) || fillTime < 0.1f) {
-                    var frameInfo = rewindStorage.findPlaybackFrames(newPlaybackTime);
+                    var frameInfo = _rewindStorage.findPlaybackFrames(newPlaybackTime);
 
-                    var currentFrameCount = rewindStorage.RecordedFrameCount;
+                    var currentFrameCount = _rewindStorage.RecordedFrameCount;
                     var newUnmappedEndFrame = frameInfo.frameUnmappedB;
 
-                    startTime = _playback.startTime;
-                    endTime = _playback.endTime;
-
-                    rewindStorage.rewindFrames(currentFrameCount - newUnmappedEndFrame);
-
-                    startTime = _playback.startTime;
-                    endTime = _playback.endTime;
+                    _rewindStorage.rewindFrames(currentFrameCount - newUnmappedEndFrame);
 
                     changeState(DemoState.Recording);
 
@@ -102,20 +92,16 @@ namespace aeric.rewind_plugin_demos {
             }
         }
 
-        private void changeState(DemoState n) {
-            switch (n) {
+        private void changeState(DemoState newState) {
+            switch (newState) {
             case DemoState.Recording: {
                 _playback.stopPlayback();
                 playbackPreparer.stopPlayback();
 
                 _recorder.startRecording();
-                //    Time.timeScale = 1.0f;
                 break;
             }
             case DemoState.Rewinding: {
-                //Debug.DebugBreak();
-
-                // float startTime = _playback.startTime;
                 var endTime = _playback.endTime;
 
                 playbackPreparer.startPlayback();
@@ -129,7 +115,7 @@ namespace aeric.rewind_plugin_demos {
             }
             }
 
-            demoState = n;
+            demoState = newState;
         }
 
     }

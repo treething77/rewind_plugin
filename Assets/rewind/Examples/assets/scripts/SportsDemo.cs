@@ -4,28 +4,27 @@ using UnityEngine;
 
 namespace aeric.rewind_plugin_demos {
     public class SportsDemo : MonoBehaviour {
+        //inspector references
         public TMP_Text statusText;
         public GameObject stackParent;
         public GameObject targetsParent;
         public RewindPlaybackPreparer playbackPreparer;
+        
         private RewindPlayback _playback;
         private RewindRecorder _recorder;
+        private RewindScene _rewindScene;
+        private RewindStorage _rewindStorage;
 
         private bool playback;
 
-        private RewindScene rewindScene;
-
-        private RewindStorage rewindStorage;
-
         private void Start() {
-            rewindScene = new RewindScene();
-            rewindScene.addAllChildren(stackParent);
-            rewindScene.addAllChildren(targetsParent);
+            _rewindScene = new RewindScene();
+            _rewindScene.addAllChildren(stackParent);
+            _rewindScene.addAllChildren(targetsParent);
 
-            rewindStorage = new RewindStorage(rewindScene, 150, false);
-
-            _recorder = new RewindRecorder(rewindScene, rewindStorage, 30, true);
-            _playback = new RewindPlayback(rewindScene, rewindStorage);
+            _rewindStorage = new RewindStorage(_rewindScene, 150, false);
+            _recorder = new RewindRecorder(_rewindScene, _rewindStorage, 30, true);
+            _playback = new RewindPlayback(_rewindScene, _rewindStorage);
 
             _recorder.startRecording();
         }
@@ -47,7 +46,7 @@ namespace aeric.rewind_plugin_demos {
             else {
                 _recorder.updateRecording();
                 _recorder.advanceRecordingTime();
-                statusText.text = $"Record - {rewindStorage.RecordedFrameCount} - {rewindStorage.FrameWriteIndex}";
+                statusText.text = $"Record - {_rewindStorage.RecordedFrameCount} - {_rewindStorage.FrameWriteIndex}";
             }
         }
 

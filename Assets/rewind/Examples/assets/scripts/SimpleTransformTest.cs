@@ -9,36 +9,33 @@ namespace aeric.rewind_plugin_demos {
         private const float SpinSpeed = 2.0f;
         private const float ScaleSpeed = 1.0f;
         private const float BounceSpeed = 4.0f;
-
-        public TMP_Text statusText;
-
-        public RewindTransform transformTest;
-
-        private Transform _transform;
-        private RewindPlaybackComponent playbackComponent;
-
-        private RewindRecorderComponent recorderComponent;
-
         private readonly int recordFPS = 30;
 
-        private RewindScene rewindScene;
+        //inspector references
+        public TMP_Text statusText;
 
-        private RewindStorage rewindStorage;
+        //caching component references
+        private Transform _transform;
+        private RewindTransform _transformTest;
 
+        private RewindPlaybackComponent _playbackComponent;
+        private RewindRecorderComponent _recorderComponent;
+        private RewindScene _rewindScene;
+        private RewindStorage _rewindStorage;
 
         private void Awake() {
             _transform = transform;
-            transformTest = GetComponent<RewindTransform>();
-            recorderComponent = GetComponent<RewindRecorderComponent>();
-            playbackComponent = GetComponent<RewindPlaybackComponent>();
+            _transformTest = GetComponent<RewindTransform>();
+            _recorderComponent = GetComponent<RewindRecorderComponent>();
+            _playbackComponent = GetComponent<RewindPlaybackComponent>();
         }
 
         private void Start() {
-            rewindScene = new RewindScene();
-            rewindScene.addRewindObject(transformTest);
+            _rewindScene = new RewindScene();
+            _rewindScene.addRewindObject(_transformTest);
 
             //3 seconds at max 30fps
-            rewindStorage = new RewindStorage(rewindScene, recordFPS * 3, false);
+            _rewindStorage = new RewindStorage(_rewindScene, recordFPS * 3, false);
 
             StartCoroutine(SimpleTestCoroutine());
         }
@@ -46,7 +43,7 @@ namespace aeric.rewind_plugin_demos {
         private IEnumerator SimpleTestCoroutine() {
             statusText.text = "RECORDING";
             //start recording (create recorder component, add to object)
-            recorderComponent.startRecording(rewindScene, rewindStorage, recordFPS);
+            _recorderComponent.startRecording(_rewindScene, _rewindStorage, recordFPS);
 
             //spin and move for 3 seconds
             var timer = 0.0f;
@@ -64,7 +61,6 @@ namespace aeric.rewind_plugin_demos {
 
                 _transform.localRotation = Quaternion.Euler(0.0f, rot * 100.0f, 0.0f);
 
-
                 var posTimeScale = Mathf.Sin(timer * BounceSpeed);
                 posTimeScale *= posTimeScale;
                 var pos = Vector3.Lerp(startPos, startPos + Vector3.one, posTimeScale);
@@ -74,12 +70,12 @@ namespace aeric.rewind_plugin_demos {
             }
 
             //stop recording
-            recorderComponent.stopRecording();
+            _recorderComponent.stopRecording();
 
             statusText.text = "PLAYBACK";
 
             //start playback
-            playbackComponent.startPlayback(rewindScene, rewindStorage);
+            _playbackComponent.startPlayback(_rewindScene, _rewindStorage);
         }
     }
 }

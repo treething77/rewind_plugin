@@ -1,7 +1,10 @@
+#if UNITY_EDITOR
 using UnityEditor;
+#endif
 using UnityEngine;
 
 namespace aeric.rewind_plugin {
+#if UNITY_EDITOR
     [CustomPropertyDrawer(typeof(RewindAttribute))]
     public class RewindAttributeDrawer : PropertyDrawer {
         public override float GetPropertyHeight(SerializedProperty property, GUIContent label) {
@@ -27,4 +30,5 @@ namespace aeric.rewind_plugin {
             EditorGUI.EndProperty();
         }
     }
+#endif
 }

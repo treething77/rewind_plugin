@@ -1,6 +1,3 @@
-#define USE_BURST_FOR_REWIND_COMPONENTS
-
-
 using UnityEngine;
 #if USE_BURST_FOR_REWIND_COMPONENTS
 using Unity.Burst;

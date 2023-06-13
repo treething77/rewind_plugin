@@ -100,7 +100,7 @@ namespace aeric.rewind_plugin {
             return true;
         }
 
-        private void readAnimationState(NativeByteArrayReader reader, ref AnimationStoredState animState) {
+        private static void ReadAnimationState(NativeByteArrayReader reader, ref AnimationStoredState animState) {
             animState.stateCount = reader.readInt();
             animState.parameterCount = reader.readInt();
 
@@ -142,8 +142,8 @@ namespace aeric.rewind_plugin {
 
         public override void rewindRestoreInterpolated([NotNull] NativeByteArrayReader frameReaderA, [NotNull] NativeByteArrayReader frameReaderB, float frameT) {
             //First read both animation states in full and then interpolate and restore the state
-            readAnimationState(frameReaderA, ref _animStateA);
-            readAnimationState(frameReaderB, ref _animStateB);
+            ReadAnimationState(frameReaderA, ref _animStateA);
+            ReadAnimationState(frameReaderB, ref _animStateB);
 
             if (!validateAnimationStates()) return;
 
