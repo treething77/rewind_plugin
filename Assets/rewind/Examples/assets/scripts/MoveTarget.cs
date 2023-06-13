@@ -8,7 +8,7 @@ namespace aeric.rewind_plugin_demos {
         //component reference caching
         private Material _material;
 
-        private void Awake() {
+        private new void Awake() {
             _material = GetComponent<MeshRenderer>().material;
             base.Awake();
         }
