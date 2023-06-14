@@ -27,7 +27,7 @@ public class RecallPlatform : RewindCustomMonoBehaviourAttributes, IRewindDataHa
     public RewindPlaybackPreparer playbackPreparer;
     private float newPlaybackTime = -1.0f;
 
-    Vector3[] rewindPath = new Vector3[100];
+    Vector3[] rewindPath = new Vector3[101];
     private int pathIndex;
     private int pathLength;
 
@@ -132,6 +132,7 @@ public class RecallPlatform : RewindCustomMonoBehaviourAttributes, IRewindDataHa
                     _rewindStorage.getUnmappedFrameData(i, this, this);
                     pathIndex++;
                 }
+                rewindPath[pathIndex-1] = newPos;
 
                 pathLength = endPathFrame+1;
 
