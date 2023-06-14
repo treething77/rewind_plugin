@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace aeric.rewind_plugin_demos {
@@ -12,12 +13,19 @@ namespace aeric.rewind_plugin_demos {
 
         //inspector references
         public AudioClip footStepSFX;
+        public RecallScanningUI scanningUI;
+
+        public List<RecallPlatform> platforms;
+
+        public List<Material> platformMaterials;
+        public Material scanningMaterial;
         
         //component reference caches
         private Animator _animator;
         private CharacterController _controller;
         private Transform _transform;
 
+        private RecallPlatform highlightedPlatform;
         
         private Vector3 motion;
         private float playerSpeed;
@@ -39,11 +47,31 @@ namespace aeric.rewind_plugin_demos {
             _animator = GetComponent<Animator>();
             _controller = GetComponent<CharacterController>();
         }
+
+        private bool scanningEnabled;
+        private bool rewinding;
+        private float scanT;
         
         private void Update() {
             var keyFwd = Input.GetKey(KeyCode.W);
+            
             var keyLeft = Input.GetKey(KeyCode.A);
             var keyRight = Input.GetKey(KeyCode.D);
+
+            var keyScanningToggle = Input.GetKeyDown(KeyCode.E);
+            var keyQ = Input.GetKey(KeyCode.Q);
+
+            if (keyScanningToggle) {
+                scanningEnabled = !scanningEnabled;
+                
+                //If entering scan mode set all platforms to scanning
+                //so they stop moving and recording move data
+                foreach (var platform in platforms) {
+                    platform.changeState(RecallPlatform.PlatformState.Scanning);
+                }
+            }
+
+            scanningUI.SetScanningState(scanningEnabled, highlightedPlatform, rewinding);
 
             if (keyFwd) {
                 playerSpeed += Time.deltaTime * 4.0f;
@@ -52,7 +80,41 @@ namespace aeric.rewind_plugin_demos {
             else {
                 playerSpeed -= Time.deltaTime * 2.0f;
             }
-            
+
+            if (scanningEnabled) {
+                playerSpeed = 0.0f;
+                
+                //scan for platforms
+                foreach (var platform in platforms) {
+                    //check if the platform is in front of the player
+                    var playerPos = _transform.position;
+                    var platformPos = platform.transform.position;
+                    var platformOffset = platformPos - playerPos;
+                    var platformOffsetN = platformOffset.normalized;
+                    float dp = Vector3.Dot(platformOffsetN, _transform.forward);
+                    if (dp > 0.8f) {
+                        SetHightlightedPlatform(platform);
+                     }
+                }
+            }
+            else {
+                SetHightlightedPlatform(null);
+            }
+
+            if (keyQ && highlightedPlatform != null) {
+                if (!rewinding) {
+                    rewinding = true;
+                    highlightedPlatform.startRewinding();
+                }
+            }
+            else {
+                if (rewinding) {
+                    highlightedPlatform.stopRewinding();
+                    if (scanningEnabled) highlightedPlatform.changeState( RecallPlatform.PlatformState.Scanning );
+                }
+                rewinding = false;
+            }
+
             playerSpeed = Mathf.Clamp01(playerSpeed);
 
             _animator.SetFloat(Blend, playerSpeed);
@@ -75,6 +137,47 @@ namespace aeric.rewind_plugin_demos {
             if (!_controller.isGrounded && _platformObject != null) {
                 _platformObject = null;
             }
+
+            scanT += Time.deltaTime;
+            float scanPulseT = Mathf.PingPong(scanT, 1.0f);
+
+            Color scanColor = Color.Lerp(Color.blue, Color.cyan, scanPulseT);
+            scanningMaterial.color = scanColor;
+        }
+
+        private void SetHightlightedPlatform(RecallPlatform platform) {
+            if (highlightedPlatform != platform) {
+                if (highlightedPlatform != null) {
+                    //If we are scanning go back to scan mode
+                    //otherwise go to recording
+                    if (scanningEnabled)
+                        highlightedPlatform.changeState( RecallPlatform.PlatformState.Scanning );
+                    else
+                        highlightedPlatform.changeState( RecallPlatform.PlatformState.Recording );
+                    
+                    //clear the material changes
+                    var meshRenderers = highlightedPlatform.GetComponentsInChildren<MeshRenderer>();
+                    foreach (var meshRenderer in meshRenderers) {
+                        var materials = meshRenderer.materials;
+                        materials[0] = platformMaterials[0];
+                        materials[1] = platformMaterials[1];
+                        materials[2] = platformMaterials[2];
+                        meshRenderer.materials = materials;
+                    }
+                }
+            }
+            highlightedPlatform = platform;
+
+            if (highlightedPlatform != null) {
+                var meshRenderers = highlightedPlatform.GetComponentsInChildren<MeshRenderer>();
+                foreach (var meshRenderer in meshRenderers) {
+                    var materials = meshRenderer.materials;
+                    materials[0] = scanningMaterial;
+                    materials[1] = scanningMaterial;
+                    materials[2] = scanningMaterial;
+                    meshRenderer.materials = materials;
+                }
+            }
         }
 
         private void OnAnimatorMove() {
@@ -84,6 +187,8 @@ namespace aeric.rewind_plugin_demos {
             Vector3 platformMove = Vector3.zero;
             if (_platformObject != null) {
                 RecallPlatform platform = _platformObject.GetComponent<RecallPlatform>();
+                
+                //TODO: accumulate this and apply in FixedUpdate?
                 platformMove = platform.move;
             }
 

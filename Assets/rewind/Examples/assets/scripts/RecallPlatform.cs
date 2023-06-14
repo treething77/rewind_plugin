@@ -51,21 +51,27 @@ public class RecallPlatform : RewindCustomMonoBehaviourAttributes, IRewindDataHa
         trailRenderer.gameObject.SetActive(false);
     }
 
-    enum PlatformState {
+    public enum PlatformState {
         None,
         Recording,
+        Scanning,
         Rewinding
     }
 
     private PlatformState _platformState = PlatformState.Recording;
-    
-    private void changeState(PlatformState newState) {
+
+    public void changeState(PlatformState newState) {
         switch (newState) {
         case PlatformState.Recording: {
             _playback.stopPlayback();
             playbackPreparer.stopPlayback();
 
             _recorder.startRecording();
+            lineRenderer.gameObject.SetActive(false);
+            trailRenderer.gameObject.SetActive(false);
+            break;
+        }
+        case PlatformState.Scanning: {
             lineRenderer.gameObject.SetActive(false);
             trailRenderer.gameObject.SetActive(false);
             break;
@@ -88,7 +94,24 @@ public class RecallPlatform : RewindCustomMonoBehaviourAttributes, IRewindDataHa
 
         _platformState = newState;
     }
+
+    public void startRewinding() {
+        changeState(PlatformState.Rewinding);
+    }
     
+    public void stopRewinding() {
+        var frameInfo = _rewindStorage.findPlaybackFrames(newPlaybackTime);
+
+        var currentFrameCount = _rewindStorage.RecordedFrameCount;
+        var newUnmappedEndFrame = frameInfo.frameUnmappedB;
+
+        _rewindStorage.rewindFrames(currentFrameCount - newUnmappedEndFrame);
+
+        changeState(PlatformState.Recording);
+
+        _recorder.setRecordTime(newPlaybackTime);
+    }
+
     private void Update() {
         while (moveT >= 2.0f) moveT -= 2.0f;
 
@@ -104,11 +127,8 @@ public class RecallPlatform : RewindCustomMonoBehaviourAttributes, IRewindDataHa
             moveT += Time.deltaTime * speed;
             _recorder.updateRecording();
             _recorder.advanceRecordingTime();
-            if (Input.GetKey(KeyCode.E)) {
-                changeState(PlatformState.Rewinding);
-            }
         }
-        else {
+        else if (_platformState == PlatformState.Rewinding) {
             var currentTime = _playback.currentTime;
             var startTime = _playback.startTime;
 
@@ -146,17 +166,8 @@ public class RecallPlatform : RewindCustomMonoBehaviourAttributes, IRewindDataHa
             var fillTime = currentTime - startTime;
         //    rewindBar.fillAmount = fillTime / 5.0f;
 
-            if (!Input.GetKey(KeyCode.E) || fillTime < 0.1f) {
-                var frameInfo = _rewindStorage.findPlaybackFrames(newPlaybackTime);
-
-                var currentFrameCount = _rewindStorage.RecordedFrameCount;
-                var newUnmappedEndFrame = frameInfo.frameUnmappedB;
-
-                _rewindStorage.rewindFrames(currentFrameCount - newUnmappedEndFrame);
-
-                changeState(PlatformState.Recording);
-
-                _recorder.setRecordTime(newPlaybackTime);
+            if (fillTime < 0.1f) {
+                stopRewinding();
             }
         }
 
