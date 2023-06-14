@@ -20,6 +20,7 @@ namespace aeric.rewind_plugin {
         //Map of ID to RewindHandlerStorage
         private readonly Dictionary<uint, RewindHandlerStorage> rewindHandlerStorageMap = new();
 
+        //TODO: not necessary?
         private bool supportsRewind;
 
         public RewindStorage(RewindScene rewindScene, int maxFrameCount, bool supportsRewind) {
