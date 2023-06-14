@@ -74,7 +74,7 @@ namespace aeric.rewind_plugin_demos {
             scanningUI.SetScanningState(scanningEnabled, highlightedPlatform, rewinding);
 
             if (keyFwd) {
-                playerSpeed += Time.deltaTime * 4.0f;
+                playerSpeed += Time.deltaTime * 3.0f;
                 playerSpeed = Mathf.Min(playerSpeed, 1.0f);
             }
             else {
@@ -82,8 +82,6 @@ namespace aeric.rewind_plugin_demos {
             }
 
             if (scanningEnabled) {
-                playerSpeed = 0.0f;
-                
                 //scan for platforms
                 foreach (var platform in platforms) {
                     //check if the platform is in front of the player
@@ -110,8 +108,13 @@ namespace aeric.rewind_plugin_demos {
             else {
                 if (rewinding) {
                     highlightedPlatform.stopRewinding();
-                    if (scanningEnabled) highlightedPlatform.changeState( RecallPlatform.PlatformState.Scanning );
                 }
+
+                foreach (var platform in platforms) {
+                    if (scanningEnabled) platform.changeState( RecallPlatform.PlatformState.Scanning );
+                    else platform.changeState( RecallPlatform.PlatformState.Recording );
+                }
+                
                 rewinding = false;
             }
 
@@ -130,12 +133,14 @@ namespace aeric.rewind_plugin_demos {
                     //another project
                     if (hit.collider.gameObject.name.Contains("platform")) {
                         _platformObject = hit.collider.gameObject;
+                        this._transform.SetParent(_platformObject.transform, true);
                     }
                 }
             }
 
             if (!_controller.isGrounded && _platformObject != null) {
                 _platformObject = null;
+                this._transform.SetParent(null, true);
             }
 
             scanT += Time.deltaTime;
@@ -200,10 +205,10 @@ namespace aeric.rewind_plugin_demos {
                 var actualMove = moveDirection.normalized * animMove.magnitude + platformMove;
 
                 var gravity = Vector3.up * 5.0f;
+                bool groundedPlayer = _controller.isGrounded;
+
                 var moveAmount = actualMove - gravity * Time.deltaTime;
                 
-                bool groundedPlayer = _controller.isGrounded;
-            
                 if (Input.GetKeyDown(KeyCode.Space) && groundedPlayer) {
                     _animator.SetTrigger(Jump);
                     jumpVelocity = actualMove*1.2f + Vector3.up*0.3f;
