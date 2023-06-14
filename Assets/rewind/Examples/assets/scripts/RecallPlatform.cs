@@ -1,7 +1,10 @@
 using aeric.rewind_plugin;
 using UnityEngine;
 
-public class RecallPlatform : RewindCustomMonoBehaviourAttributes {
+//TODO: namespace
+
+
+public class RecallPlatform : RewindCustomMonoBehaviourAttributes, IRewindDataHandler {
     public Transform startPt;
     public Transform endPt;
 
@@ -16,6 +19,7 @@ public class RecallPlatform : RewindCustomMonoBehaviourAttributes {
 
     private Transform _transform;
     
+    //TODO: encapsulate this stuff
     private RewindScene _rewindScene;
     private RewindStorage _rewindStorage;
     private RewindPlayback _playback;
@@ -23,6 +27,13 @@ public class RecallPlatform : RewindCustomMonoBehaviourAttributes {
     public RewindPlaybackPreparer playbackPreparer;
     private float newPlaybackTime = -1.0f;
 
+    Vector3[] rewindPath = new Vector3[100];
+    private int pathIndex;
+    private int pathLength;
+
+    public LineRenderer lineRenderer;
+    public TrailRenderer trailRenderer;
+    
     private new void Awake() {
         _transform = transform;
         base.Awake();
@@ -33,9 +44,11 @@ public class RecallPlatform : RewindCustomMonoBehaviourAttributes {
         _rewindScene.addRewindObject(this);
 
         _rewindStorage = new RewindStorage(_rewindScene, 100, true);
-        _recorder = new RewindRecorder(_rewindScene, _rewindStorage, 30, true);
+        _recorder = new RewindRecorder(_rewindScene, _rewindStorage, 10, true);
         _playback = new RewindPlayback(_rewindScene, _rewindStorage);
         _recorder.startRecording();
+        lineRenderer.gameObject.SetActive(false);
+        trailRenderer.gameObject.SetActive(false);
     }
 
     enum PlatformState {
@@ -53,6 +66,8 @@ public class RecallPlatform : RewindCustomMonoBehaviourAttributes {
             playbackPreparer.stopPlayback();
 
             _recorder.startRecording();
+            lineRenderer.gameObject.SetActive(false);
+            trailRenderer.gameObject.SetActive(false);
             break;
         }
         case PlatformState.Rewinding: {
@@ -64,6 +79,8 @@ public class RecallPlatform : RewindCustomMonoBehaviourAttributes {
             //start at the end
             _playback.SetPlaybackTime(endTime);
             newPlaybackTime = endTime;
+            lineRenderer.gameObject.SetActive(true);
+            trailRenderer.gameObject.SetActive(true);
 
             break;
         }
@@ -102,6 +119,27 @@ public class RecallPlatform : RewindCustomMonoBehaviourAttributes {
                 _playback.SetPlaybackTime(newPlaybackTime);
                 _playback.restoreFrameAtCurrentTime();
             }
+            
+            //Get all the points in the platforms rewind path
+            {
+                pathIndex = 0;
+                var frameInfo = _rewindStorage.findPlaybackFrames(newPlaybackTime);
+
+                int startPathFrame = 0;
+                int endPathFrame = frameInfo.frameUnmappedB;
+                
+                for (int i = startPathFrame; i <= endPathFrame; i++) {
+                    _rewindStorage.getUnmappedFrameData(i, this, this);
+                    pathIndex++;
+                }
+
+                pathLength = endPathFrame+1;
+
+                lineRenderer.positionCount = pathLength;
+                lineRenderer.SetPositions(rewindPath);
+             //   trailRenderer.positionCount = pathLength;
+                trailRenderer.SetPositions(rewindPath);
+            }
 
             var endTime = _playback.endTime;
             var fillTime = currentTime - startTime;
@@ -121,5 +159,16 @@ public class RecallPlatform : RewindCustomMonoBehaviourAttributes {
             }
         }
 
+    }
+
+    public void RewindHandlerData(IRewindHandler rewindHandler, NativeByteArrayReader nativeByteArrayReader) {
+        if (ReferenceEquals(rewindHandler, this)) {
+            float moveT = nativeByteArrayReader.readFloat();
+            float lerpT = moveCurve.Evaluate(moveT);
+        
+            //ping pong between the two points
+            Vector3 newPos = Vector3.Lerp(startPt.position, endPt.position, lerpT);
+            rewindPath[pathIndex] = newPos;
+        }
     }
 }

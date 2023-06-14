@@ -3,6 +3,10 @@ using System.IO;
 using UnityEngine;
 
 namespace aeric.rewind_plugin {
+    public interface IRewindDataHandler {
+        public void RewindHandlerData(IRewindHandler rewindHandler, NativeByteArrayReader nativeByteArrayReader);
+    }
+
     public enum RewindMappedFrame { }
 
     public class RewindStorage {
@@ -317,6 +321,7 @@ namespace aeric.rewind_plugin {
             //if (rewindFrameWriteIndex < 0) rewindFrameWriteIndex += _maxFrameCount;
         }
 
+        //TODO: using unmapped here is wrong
         public float getFrameTime(int unmappedFrameIndex) {
             unsafe {
                 frameReaderA.setReadHead(_frameDataOffset);
@@ -325,6 +330,7 @@ namespace aeric.rewind_plugin {
             }
         }
 
+        //TODO: using unmapped here is wrong
         public Vector3 getFramePosition(int unmappedFrameIndex, IRewindHandler rewindHandler) {
             var handlerStorage = getHandlerStorage(rewindHandler.ID);
 
@@ -334,6 +340,16 @@ namespace aeric.rewind_plugin {
 
             //assume the handler is RewindTransform and read the position
             return frameReaderA.readV3();
+        }
+
+        public void getUnmappedFrameData(int unmappedFrameIndex, IRewindHandler rewindHandler, IRewindDataHandler dataHandler) {
+            var handlerStorage = getHandlerStorage(rewindHandler.ID);
+
+            RewindMappedFrame frameIndex = remapIndex(unmappedFrameIndex);
+            //set the read head to the correct location
+            frameReaderA.setReadHead(handlerStorage.HandlerStorageOffset + handlerStorage.HandlerFrameSizeBytes * (int)frameIndex);
+            var handlerIDA = frameReaderA.readUInt();
+            dataHandler.RewindHandlerData(rewindHandler, frameReaderA);
         }
     }
 }
