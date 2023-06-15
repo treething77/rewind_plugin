@@ -15,6 +15,8 @@ namespace aeric.rewind_plugin {
         //private float timeSinceFrameRecorded = 0.0f;
         private float _recordingTime;
 
+        public float RecordingTime => _recordingTime;
+        
         public RewindRecorder(RewindScene rewindScene, RewindStorage rewindStorage, int recordFPS, bool continuousRecording) {
             _rewindScene = rewindScene;
             _rewindStorage = rewindStorage;

@@ -320,8 +320,7 @@ namespace aeric.rewind_plugin {
             //rewindFrameWriteIndex -= frameCountToRewind;
             //if (rewindFrameWriteIndex < 0) rewindFrameWriteIndex += _maxFrameCount;
         }
-
-        //TODO: using unmapped here is wrong
+        
         public float getFrameTime(int unmappedFrameIndex) {
             unsafe {
                 frameReaderA.setReadHead(_frameDataOffset);
@@ -330,7 +329,6 @@ namespace aeric.rewind_plugin {
             }
         }
 
-        //TODO: using unmapped here is wrong
         public Vector3 getFramePosition(int unmappedFrameIndex, IRewindHandler rewindHandler) {
             var handlerStorage = getHandlerStorage(rewindHandler.ID);
 

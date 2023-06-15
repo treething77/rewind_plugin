@@ -129,10 +129,10 @@ namespace aeric.rewind_plugin_demos {
             for (var i = 0; i < 10; i++) {
                 GUILayout.BeginHorizontal();
 
-                var isReadHead = i == _rewindStorage.FrameReadIndex;
-                var isWriteHead = i == _rewindStorage.FrameWriteIndex;
+                bool isReadHead = i == _rewindStorage.FrameReadIndex;
+                bool isWriteHead = i == _rewindStorage.FrameWriteIndex;
 
-                var lbl = i.ToString();
+                string lbl = i.ToString();
                 if (isReadHead) lbl += " R";
                 if (isWriteHead) lbl += " W";
 

@@ -77,6 +77,12 @@ namespace aeric.rewind_plugin_demos {
         public void CaptureTarget(int moveTargetIndex, Robot robot) {
             if (moveTargetIndex < 0 || moveTargetIndex >= _targets.Count) return;
             _targets[moveTargetIndex].Capture(robot);
+
+            //Record the capture event so we can query the list during replays
+            CaptureEvent capEvent = new CaptureEvent(moveTargetIndex, robot, SportsDemo._instance._recorder.RecordingTime);
+            if (SportsDemo._instance != null) {
+                SportsDemo._instance.AddCaptureEvent(capEvent);
+            }
         }
 
         public Color GetTeamColor(int teamIndex) {

@@ -1,3 +1,4 @@
+using System;
 using NUnit.Framework;
 using aeric.rewind_plugin;
 using UnityEngine;
@@ -47,7 +48,7 @@ namespace NativeByteArrayTests
             float r2 = nativeArraySmallReader.readFloat();
 
             Assert.IsTrue(r1 == 32);
-            Assert.IsTrue(r2 == 3.141f);
+            Assert.IsTrue(Math.Abs(r2 - 3.141f) < 0.001f);
         }
 
         [Test]
