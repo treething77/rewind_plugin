@@ -1,14 +1,17 @@
 using aeric.rewind_plugin;
-using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace aeric.rewind_plugin_demos {
     public class SportsDemo : MonoBehaviour {
         //inspector references
-        public TMP_Text statusText;
+        public Text statusText;
         public GameObject stackParent;
         public GameObject targetsParent;
         public RewindPlaybackPreparer playbackPreparer;
+
+        public RectTransform livePanel;
+        public GameObject replayUI;
         
         private RewindPlayback _playback;
         private RewindRecorder _recorder;
@@ -30,6 +33,9 @@ namespace aeric.rewind_plugin_demos {
         }
 
         private void Update() {
+            replayUI.SetActive(playback);
+            livePanel.gameObject.SetActive(!playback);
+
             if (playback) {
                 _playback.AdvancePlaybackTime();
                 _playback.restoreFrameAtCurrentTime();

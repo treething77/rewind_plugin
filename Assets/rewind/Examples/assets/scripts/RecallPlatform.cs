@@ -1,3 +1,4 @@
+using System;
 using aeric.rewind_plugin;
 using UnityEngine;
 
@@ -38,7 +39,11 @@ public class RecallPlatform : RewindCustomMonoBehaviourAttributes, IRewindDataHa
         _transform = transform;
         base.Awake();
     }
-    
+
+    private void OnDestroy() {
+        _rewindStorage.Dispose();
+    }
+
     private void Start() {
         _rewindScene = new RewindScene();
         _rewindScene.addRewindObject(this);

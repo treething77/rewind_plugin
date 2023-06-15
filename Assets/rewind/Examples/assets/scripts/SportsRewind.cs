@@ -1,5 +1,5 @@
+using System;
 using aeric.rewind_plugin;
-using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -39,6 +39,10 @@ namespace aeric.rewind_plugin_demos {
 
             _recorder.startRecording();
             changeState(DemoState.Recording);
+        }
+
+        private void OnDestroy() {
+            _rewindStorage.Dispose();
         }
 
         private void Update() {

@@ -1,7 +1,8 @@
+using System;
 using System.Collections;
 using aeric.rewind_plugin;
-using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace aeric.rewind_plugin_demos {
     public class SimpleTransformTest : MonoBehaviour {
@@ -12,7 +13,7 @@ namespace aeric.rewind_plugin_demos {
         private readonly int recordFPS = 30;
 
         //inspector references
-        public TMP_Text statusText;
+        public Text statusText;
 
         //caching component references
         private Transform _transform;
@@ -28,6 +29,10 @@ namespace aeric.rewind_plugin_demos {
             _transformTest = GetComponent<RewindTransform>();
             _recorderComponent = GetComponent<RewindRecorderComponent>();
             _playbackComponent = GetComponent<RewindPlaybackComponent>();
+        }
+
+        private void OnDestroy() {
+            _rewindStorage.Dispose();
         }
 
         private void Start() {

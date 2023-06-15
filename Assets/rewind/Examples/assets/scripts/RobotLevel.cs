@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
-using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace aeric.rewind_plugin_demos {
     public class RobotLevel : MonoBehaviour {
@@ -9,8 +9,8 @@ namespace aeric.rewind_plugin_demos {
 
         public GameObject targetRoot;
         public List<RobotTeam> _robotTeams;
-        public TMP_Text _redTeamScoreTxt;
-        public TMP_Text _blueTeamScoreTxt;
+        public Text _redTeamScoreTxt;
+        public Text _blueTeamScoreTxt;
 
         //reference caching
         private List<MoveTarget> _targets;
