@@ -1522,7 +1522,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 676259033846470007, guid: 150d4b3fb9372394f8569ddd4f64f1c9, type: 3}
       propertyPath: m_Name
-      value: platform end
+      value: end
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 150d4b3fb9372394f8569ddd4f64f1c9, type: 3}
@@ -3468,7 +3468,7 @@ MonoBehaviour:
   id: 0
   startPt: {fileID: 2076207623}
   endPt: {fileID: 944440496}
-  speed: 0
+  speed: 0.15
   move: {x: 0, y: 0, z: 0}
   moveCurve:
     serializedVersion: 2

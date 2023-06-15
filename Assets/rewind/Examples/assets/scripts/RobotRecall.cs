@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Diagnostics.Contracts;
 using UnityEngine;
 
 namespace aeric.rewind_plugin_demos {
@@ -51,7 +52,8 @@ namespace aeric.rewind_plugin_demos {
         private bool scanningEnabled;
         private bool rewinding;
         private float scanT;
-        
+        private float ctimer;
+
         private void Update() {
             var keyFwd = Input.GetKey(KeyCode.W);
             
@@ -74,6 +76,9 @@ namespace aeric.rewind_plugin_demos {
             scanningUI.SetScanningState(scanningEnabled, highlightedPlatform, rewinding);
 
             if (keyFwd) {
+                _controller.enabled = true;
+                ctimer = 0.5f;
+
                 playerSpeed += Time.deltaTime * 3.0f;
                 playerSpeed = Mathf.Min(playerSpeed, 1.0f);
             }
@@ -83,17 +88,24 @@ namespace aeric.rewind_plugin_demos {
 
             if (scanningEnabled) {
                 //scan for platforms
+                RecallPlatform closestPlatform = null;
+                float closestDP = -1.0f;
+                
                 foreach (var platform in platforms) {
                     //check if the platform is in front of the player
                     var playerPos = _transform.position;
                     var platformPos = platform.transform.position;
                     var platformOffset = platformPos - playerPos;
+                    platformOffset.y = 0.0f;
                     var platformOffsetN = platformOffset.normalized;
                     float dp = Vector3.Dot(platformOffsetN, _transform.forward);
-                    if (dp > 0.8f) {
-                        SetHightlightedPlatform(platform);
-                     }
+                    if (dp > 0.8f && dp > closestDP) {
+                        closestPlatform = platform;
+                        closestDP = dp;
+                    }
                 }
+
+                SetHightlightedPlatform(closestPlatform);
             }
             else {
                 SetHightlightedPlatform(null);
@@ -107,7 +119,8 @@ namespace aeric.rewind_plugin_demos {
             }
             else {
                 if (rewinding) {
-                    highlightedPlatform.stopRewinding();
+                    if (highlightedPlatform != null)
+                        highlightedPlatform.stopRewinding();
                 }
 
                 foreach (var platform in platforms) {
@@ -126,7 +139,7 @@ namespace aeric.rewind_plugin_demos {
             if (keyRight) _transform.Rotate(Vector3.up, 100.0f * Time.deltaTime);
             
             RaycastHit[] hits = Physics.RaycastAll(transform.position + Vector3.up * 2.0f, -Vector3.up, 4.0f);
-
+            ctimer -= Time.deltaTime;
             foreach (var hit in hits) {
                 if (_controller.isGrounded) {
                     //You should use tags/layers for this. I'm trying not to do that since this will be imported into 
@@ -134,6 +147,9 @@ namespace aeric.rewind_plugin_demos {
                     if (hit.collider.gameObject.name.Contains("platform")) {
                         _platformObject = hit.collider.gameObject;
                         this._transform.SetParent(_platformObject.transform, true);
+                        Camera.main.transform.SetParent(_platformObject.transform, true);
+                        if (ctimer < 0.0f)
+                            _controller.enabled = false;
                     }
                 }
             }
@@ -141,6 +157,7 @@ namespace aeric.rewind_plugin_demos {
             if (!_controller.isGrounded && _platformObject != null) {
                 _platformObject = null;
                 this._transform.SetParent(null, true);
+                Camera.main.transform.SetParent(null, true);
             }
 
             scanT += Time.deltaTime;
@@ -211,8 +228,10 @@ namespace aeric.rewind_plugin_demos {
                 
                 if (Input.GetKeyDown(KeyCode.Space) && groundedPlayer) {
                     _animator.SetTrigger(Jump);
-                    jumpVelocity = actualMove*1.2f + Vector3.up*0.3f;
+                    jumpVelocity = actualMove + Vector3.up*0.3f;
                     moveState = MoveState.Jumping;
+                    _controller.enabled = true;
+                    ctimer = 0.5f;
                 }
                 
                 _controller.Move(moveAmount);
