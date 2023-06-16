@@ -79,6 +79,9 @@ namespace aeric.rewind_plugin {
 
         public void startRecording() {
             //_recordingStartTime = e;
+            foreach (var rewindHandler in _rewindScene.RewindHandlers) {
+                rewindHandler.startRecording();
+            }
         }
 
         public void setRecordTime(float newPlaybackTime) {

@@ -19,9 +19,20 @@ namespace aeric.rewind_plugin {
         public abstract uint HandlerTypeID { get; }
         public abstract void rewindRestoreInterpolated(NativeByteArrayReader frameReaderA, NativeByteArrayReader frameReaderB, float frameT);
 
+        /// <summary>
+        /// Called before each restore operation
+        /// </summary>
         public virtual void preRestore() { }
 
+        /// <summary>
+        /// Called after each restore operation
+        /// </summary>
         public virtual void postRestore() { }
+
+        /// <summary>
+        /// Called before we start recording
+        /// </summary>
+        public virtual void startRecording() {}
 
         public void OnBeforeSerialize() {
             // If we don't have an ID yet then generate one

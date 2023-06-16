@@ -5,6 +5,8 @@ namespace aeric.rewind_plugin {
         int RequiredBufferSizeBytes { get; }
         uint HandlerTypeID { get; }
 
+        void startRecording();
+
         void rewindStore(NativeByteArrayWriter writer);
         void rewindRestoreInterpolated(NativeByteArrayReader frameReaderA, NativeByteArrayReader frameReaderB, float frameT);
 
