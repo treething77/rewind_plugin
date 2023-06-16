@@ -94,6 +94,8 @@ namespace aeric.rewind_plugin {
             Debug.Log("r : " + simulationTime);
             if (systemIsAliveA)
                 _particles.Simulate(simulationTime, true, true);
+            if (!systemIsAliveA && !systemIsAliveB)
+                _particles.Stop( true, ParticleSystemStopBehavior.StopEmittingAndClear);
         }
     }
 }

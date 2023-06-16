@@ -78,9 +78,9 @@ namespace aeric.rewind_plugin_demos {
             if (moveTargetIndex < 0 || moveTargetIndex >= _targets.Count) return;
             _targets[moveTargetIndex].Capture(robot);
 
-            //Record the capture event so we can query the list during replays
-            CaptureEvent capEvent = new CaptureEvent(moveTargetIndex, robot, SportsDemo._instance._recorder.RecordingTime);
             if (SportsDemo._instance != null) {
+                //Record the capture event so we can query the list during replays
+                CaptureEvent capEvent = new CaptureEvent(moveTargetIndex, robot, SportsDemo._instance._recorder.RecordingTime);
                 SportsDemo._instance.AddCaptureEvent(capEvent);
             }
         }

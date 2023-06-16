@@ -80,6 +80,10 @@ namespace aeric.rewind_plugin {
 
                 var handlerStorage = new RewindHandlerStorage(bufferHandlerStartOffset, handlerFrameSizeBytes);
 
+                if (rewindHandler.ID == 0) {
+                    rewindHandler.ID = RewindComponentIDGenerator.generateID(rewindHandler);
+                }
+                
                 rewindHandlerStorageMap.Add(rewindHandler.ID, handlerStorage);
 
                 bufferSizeBytes += handlerStorageSizeBytes;
