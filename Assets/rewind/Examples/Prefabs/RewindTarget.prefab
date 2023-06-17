@@ -66,7 +66,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -116,6 +116,8 @@ MonoBehaviour:
   id: 0
   CapturedTeamIndex: 0
   captureVFX: {fileID: 2924883211820221439}
+  _vfxMaterialBlue: {fileID: 2100000, guid: 3a0c99a35c64ead4b9cfe098bf66cdfc, type: 2}
+  _vfxMaterialRed: {fileID: 2100000, guid: a01ca6420c69d84459edc0589dad3460, type: 2}
 --- !u!114 &2924883211727102443
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -155,6 +157,7 @@ GameObject:
   - component: {fileID: 2924883211820221439}
   - component: {fileID: 2924883211820221438}
   - component: {fileID: 7035176914874128092}
+  - component: {fileID: 8447754850865357859}
   m_Layer: 0
   m_Name: CaptureVFX
   m_TagString: Untagged
@@ -429,7 +432,7 @@ ParticleSystem:
     startSize:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 1
+      scalar: 0.4
       minScalar: 1
       maxCurve:
         serializedVersion: 2
@@ -1121,7 +1124,7 @@ ParticleSystem:
       countCurve:
         serializedVersion: 2
         minMaxState: 0
-        scalar: 20
+        scalar: 50
         minScalar: 30
         maxCurve:
           serializedVersion: 2
@@ -1179,7 +1182,7 @@ ParticleSystem:
       countCurve:
         serializedVersion: 2
         minMaxState: 0
-        scalar: 10
+        scalar: 50
         minScalar: 30
         maxCurve:
           serializedVersion: 2
@@ -5082,6 +5085,19 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9f9d2c00306f6e94baf413709da41ac4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  id: 0
+--- !u!114 &8447754850865357859
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2924883211820221436}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 057b07e52284b3f4a861b137ccade03b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   id: 0
