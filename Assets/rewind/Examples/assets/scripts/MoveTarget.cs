@@ -10,6 +10,9 @@ namespace aeric.rewind_plugin_demos {
         //component reference caching
         private Material _material;
 
+        public Material _vfxMaterialBlue;
+        public Material _vfxMaterialRed;
+
         private new void Awake() {
             _material = GetComponent<MeshRenderer>().material;
             base.Awake();
@@ -27,7 +30,7 @@ namespace aeric.rewind_plugin_demos {
             //turn white and scale up briefly when captured
             _material.color = Color.white;
             transform.localScale = new Vector3(1.5f, 1.8f, 1.5f);
-            
+           /* 
             //trigger capture vfx
             //captureVFX.colorOverLifetime
             var col = captureVFX.colorOverLifetime;
@@ -48,7 +51,12 @@ namespace aeric.rewind_plugin_demos {
             );
 
             col.color = grad;
-   
+   */
+            if (robot.Team.teamIndex == 1)
+               captureVFX.GetComponent<Renderer>().material = _vfxMaterialRed;
+            else
+               captureVFX.GetComponent<Renderer>().material = _vfxMaterialBlue;
+           
             captureVFX.Play();
         }
     }
