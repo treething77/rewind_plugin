@@ -19,7 +19,8 @@ namespace aeric.rewind_plugin {
         private bool _startEmitting;
 
         private bool _prevPlaying = false;
-        
+        private float _prevParticlesTime;
+
         public override void startRecording() {
             if (_particles.useAutoRandomSeed) {
                 Debug.LogWarning("dont do this");
@@ -47,13 +48,21 @@ namespace aeric.rewind_plugin {
                 _simulationTime = _particles.time;
                 _startTime = Time.time;
             }
+
+            //If particles.time goes backwards it probably means the system was retriggered and the simulation
+            //should reset back to the particles.time value
+            if (_particles.time < _prevParticlesTime) {
+                _simulationTime = _particles.time;
+            }
             
             //This is not necessarily called every frame so we can't use Time.deltaTime to accumulate time
+            //If particles.time is past the tracked time then use particles.time
             if (_particles.time > _simulationTime) {
                 _simulationTime = _particles.time;
                 _startTime = Time.time;
             }
             else {
+                //otherwise increase our tracked simulation time based on the time delta from the last store
                 _simulationTime += Time.time - _startTime;
                 _startTime = Time.time;
             }
@@ -63,7 +72,7 @@ namespace aeric.rewind_plugin {
             writer.writeBool(_particles.isEmitting);
             writer.writeBool(systemIsAlive);
             
-            Debug.Log("t : " + _simulationTime);
+        //    Debug.Log("t : " + _simulationTime);
             
             //the particles.time is not enough to fully re-simulate the particle system because it is clamped
             //at the particles duration
@@ -71,6 +80,7 @@ namespace aeric.rewind_plugin {
             writer.writeFloat(_simulationTime);
 
             _prevPlaying = systemIsPlaying;
+            _prevParticlesTime = _particles.time;
         }
 
         public override void rewindRestoreInterpolated(NativeByteArrayReader frameReaderA, NativeByteArrayReader frameReaderB, float frameT) {
@@ -91,11 +101,16 @@ namespace aeric.rewind_plugin {
             float t2 = frameReaderB.readFloat();
           
             float simulationTime = Mathf.Lerp(t1, t2, frameT);
-            Debug.Log("r : " + simulationTime);
-            if (systemIsAliveA)
+            if (systemIsAliveA) {
                 _particles.Simulate(simulationTime, true, true);
-            if (!systemIsAliveA && !systemIsAliveB)
-                _particles.Stop( true, ParticleSystemStopBehavior.StopEmittingAndClear);
+                _particles.Play();
+
+          //      Debug.Log("r : " + _particles.isPlaying);
+            }
+
+            if (!systemIsAliveA && !systemIsAliveB) {
+                _particles.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+            }
         }
     }
 }
