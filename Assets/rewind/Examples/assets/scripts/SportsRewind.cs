@@ -2,6 +2,9 @@ using System;
 using aeric.rewind_plugin;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.Rendering;
+using UnityEngine.Rendering.PostProcessing;
+using Bloom = UnityEngine.Rendering.Universal.Bloom;
 
 namespace aeric.rewind_plugin_demos {
     public class SportsRewind : MonoBehaviour {
@@ -12,6 +15,9 @@ namespace aeric.rewind_plugin_demos {
         public Image rewindBar;
         public RewindPlaybackPreparer playbackPreparer;
 
+        public Volume m_Volume;
+      // public VolumeComponent bloom;
+        
         private RewindPlayback _playback;
         private RewindRecorder _recorder;
         private RewindScene _rewindScene;
@@ -45,6 +51,9 @@ namespace aeric.rewind_plugin_demos {
             _rewindStorage.Dispose();
         }
 
+        private float ppRamp = 0.0f;
+        private float rewindTime;
+
         private void Update() {
             switch (demoState) {
             case DemoState.Recording: {
@@ -60,12 +69,15 @@ namespace aeric.rewind_plugin_demos {
                 rewindBar.fillAmount = fillTime / 5.0f;
 
                 if (Input.GetKey(KeyCode.Space)) changeState(DemoState.Rewinding);
+                ppRamp -= Time.deltaTime * 3.0f;
                 break;
             }
             case DemoState.Rewinding: {
                 var currentTime = _playback.currentTime;
                 var startTime = _playback.startTime;
 
+                ppRamp += Time.deltaTime * 1.5f;
+                rewindTime += Time.deltaTime;
                 newPlaybackTime = currentTime - Time.deltaTime * 1.0f;
                 if (newPlaybackTime < startTime) newPlaybackTime = startTime;
 
@@ -94,6 +106,16 @@ namespace aeric.rewind_plugin_demos {
                 break;
             }
             }
+
+            ppRamp = Mathf.Clamp01(ppRamp);
+
+            m_Volume.weight = ppRamp;
+          //  for (int i = 0; i < 3; i++) {
+              //  if (m_Volume.profile.components[0].name == "Bloom(Clone)") {
+                    Bloom b = (Bloom)m_Volume.profile.components[0];
+                    b.intensity.value = ((Mathf.Sin(rewindTime * 10.0f) + 1.0f) * 3.0f) * ppRamp + 1.0f;
+           //     }
+          //  }
         }
 
         private void changeState(DemoState newState) {
@@ -115,6 +137,7 @@ namespace aeric.rewind_plugin_demos {
                 _playback.SetPlaybackTime(endTime);
                 newPlaybackTime = endTime;
 
+                rewindTime = 0.0f;
                 break;
             }
             }
