@@ -7,7 +7,7 @@ namespace aeric.rewind_plugin {
     public class RewindTransformHierarchy : RewindComponentBase {
         private Transform[] _transforms;
 
-        public override int RequiredBufferSizeBytes {
+    /*    public override int RequiredBufferSizeBytes {
             get {
                 var transformCount = _transforms.Length;
                 var boneCost = 4 * (3 + 4 + 3);
@@ -15,8 +15,16 @@ namespace aeric.rewind_plugin {
                 return totalSizeBytes;
             }
         }
+        */
 
-        public override uint HandlerTypeID => 2;
+    public override RewindDataSchema makeDataSchema() {
+        var transformCount = _transforms.Length;
+        return new RewindDataSchema().addVector3(transformCount)//position
+                                     .addQuaternion(transformCount)//rotation
+                                     .addVector3(transformCount); //scale
+    }
+
+    public override uint HandlerTypeID => 2;
 
         private void Awake() {
             //Get all transforms in the hierarchy

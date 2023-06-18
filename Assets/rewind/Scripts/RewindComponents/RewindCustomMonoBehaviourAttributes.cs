@@ -6,31 +6,44 @@ using UnityEngine;
 
 namespace aeric.rewind_plugin {
     public class RewindCustomMonoBehaviourAttributes : RewindComponentBase {
-        private int requiredBufferSize;
         private bool[] rewindFieldLerp;
         private FieldInfo[] rewindFields;
 
-        public override int RequiredBufferSizeBytes => requiredBufferSize;
+        private RewindDataSchema _schema;
+
+        public override RewindDataSchema makeDataSchema() {
+            return initializeFromFields();
+        }
+
         public override uint HandlerTypeID => 3;
 
-        public void Awake() {
+        private RewindDataSchema initializeFromFields() {
+            if (_schema != null) return _schema;
+            
             //get all the fields on this object that have the Rewind attribute
             rewindFields = RewindAttributeHelper.GetRewindFields(this);
 
             rewindFieldLerp = new bool[rewindFields.Length];
 
+            _schema = new RewindDataSchema();
+
             for (var i = 0; i < rewindFields.Length; i++) {
                 var rewindField = rewindFields[i];
-                requiredBufferSize += Marshal.SizeOf(rewindField.FieldType);
+                _schema.addType(rewindField.FieldType);
 
                 var rewindAttribute = rewindField.GetCustomAttribute(typeof(RewindAttribute));
                 rewindFieldLerp[i] = ((RewindAttribute)rewindAttribute).Lerp;
             }
+
+            return _schema;
         }
 
+        public void Awake() {
+            initializeFromFields();
+        }
 
         public override void rewindStore(NativeByteArrayWriter writer) {
-            foreach (var rewindField in rewindFields)
+            foreach (var rewindField in rewindFields) {
                 //Call a different method in writer depending on the type of the field
                 if (rewindField.FieldType == typeof(float))
                     writer.writeFloat((float)rewindField.GetValue(this));
@@ -43,7 +56,10 @@ namespace aeric.rewind_plugin {
                 else if (rewindField.FieldType == typeof(Color))
                     writer.writeColor((Color)rewindField.GetValue(this));
                 else if (rewindField.FieldType == typeof(bool)) writer.writeBool((bool)rewindField.GetValue(this));
+            }
         }
+
+     //   public override int RequiredBufferSizeBytes { get; }
 
         public override void rewindRestoreInterpolated(NativeByteArrayReader frameReaderA, NativeByteArrayReader frameReaderB, float frameT) {
             for (var i = 0; i < rewindFields.Length; i++) {

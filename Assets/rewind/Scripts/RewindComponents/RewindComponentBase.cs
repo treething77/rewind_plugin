@@ -15,7 +15,9 @@ namespace aeric.rewind_plugin {
         //Required to be implemented by sub-classes
         public abstract void rewindStore(NativeByteArrayWriter writer);
 
-        public abstract int RequiredBufferSizeBytes { get; }
+   //     public abstract int RequiredBufferSizeBytes { get; }
+        public abstract RewindDataSchema makeDataSchema();
+
         public abstract uint HandlerTypeID { get; }
         public abstract void rewindRestoreInterpolated(NativeByteArrayReader frameReaderA, NativeByteArrayReader frameReaderB, float frameT);
 

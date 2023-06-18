@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using Mono.Cecil;
 using UnityEngine;
 
 namespace aeric.rewind_plugin {
@@ -7,8 +9,7 @@ namespace aeric.rewind_plugin {
         private Transform _transform;
 
         private bool controllerEnabledState;
-
-        public override int RequiredBufferSizeBytes => 4 * 3 + 4 * 4 + (recordScale ? 4 * 3 : 0);
+        
         public override uint HandlerTypeID => 1;
 
         private void Awake() {
@@ -16,6 +17,12 @@ namespace aeric.rewind_plugin {
             TryGetComponent(out _controller);
         }
 
+        public override RewindDataSchema makeDataSchema() {
+            var schema = new RewindDataSchema().addVector3().addQuaternion();
+            if (recordScale) schema.addVector3();
+            return schema;
+        }
+        
         public override void rewindStore(NativeByteArrayWriter writer) {
             writer.writeV3(_transform.position);
             writer.writeQuaternion(_transform.rotation);

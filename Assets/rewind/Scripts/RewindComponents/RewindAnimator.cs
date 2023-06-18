@@ -1,4 +1,5 @@
 using JetBrains.Annotations;
+using Unity.VisualScripting.Antlr3.Runtime;
 using UnityEngine;
 
 namespace aeric.rewind_plugin {
@@ -11,15 +12,38 @@ namespace aeric.rewind_plugin {
         private AnimatorControllerParameter[] animParams;
         private int animStateCount;
 
-        public override int RequiredBufferSizeBytes {
-            get {
-                var stateCount = _animator.layerCount;
-                var paramCount = _animator.parameterCount;
+        public override RewindDataSchema makeDataSchema() {
+            RewindDataSchema schema = new RewindDataSchema();
 
-                return 8 + // (state count, param count)
-                       stateCount * 8 + // (hash, time)
-                       paramCount * 12; // (hash, type, value)
+            schema.addInt().addInt();//state count, param count
+            
+            for (int i=0;i<animStateCount;i++)
+                schema.addInt().addFloat();//hash, time
+
+            for (var i = 0; i < animParamCount; i++) {
+                var animParam = animParams[i];
+         
+                schema.addInt().addInt();//hash, type
+
+                switch (animParam.type) {
+                case AnimatorControllerParameterType.Bool:
+                    schema.addBool();
+                    break;
+                case AnimatorControllerParameterType.Trigger:
+                    schema.addBool();
+                    break;
+                case AnimatorControllerParameterType.Int:
+                    schema.addInt();
+                    break;
+                case AnimatorControllerParameterType.Float:
+                    schema.addFloat();
+                    break;
+                default:
+                    Debug.LogError("Parameter Type unsupported: " + animParam.type);
+                    break;
+                }
             }
+            return schema;
         }
 
         public override uint HandlerTypeID => 4;

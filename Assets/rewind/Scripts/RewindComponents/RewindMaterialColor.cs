@@ -6,9 +6,13 @@ namespace aeric.rewind_plugin {
         private Material _material;
         private Renderer _renderer;
 
-        public override int RequiredBufferSizeBytes => 16; //rgba float
+   //     public override int RequiredBufferSizeBytes => 16; //rgba float
 
-        public override uint HandlerTypeID => 5;
+       public override RewindDataSchema makeDataSchema() {
+           return new RewindDataSchema().addColor();
+       }
+
+       public override uint HandlerTypeID => 5;
 
         private void Awake() {
             _renderer = GetComponent<Renderer>();

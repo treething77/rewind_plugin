@@ -4,7 +4,9 @@ namespace aeric.rewind_plugin {
     public class RewindParticleSystem : RewindComponentBase {
         private ParticleSystem _particles;
 
-        public override int RequiredBufferSizeBytes => 4*4 + 4;
+        //   public override int RequiredBufferSizeBytes => 4*4 + 4;
+        public override RewindDataSchema makeDataSchema() => new RewindDataSchema().addBool(4).addFloat();
+
         public override uint HandlerTypeID => 6;
 
         private void Awake() {

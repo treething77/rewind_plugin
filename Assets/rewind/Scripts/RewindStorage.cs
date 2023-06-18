@@ -69,7 +69,7 @@ namespace aeric.rewind_plugin {
             foreach (var rewindHandler in rewindScene.RewindHandlers) {
                 var bufferHandlerStartOffset = bufferSizeBytes;
 
-                var handlerFrameSizeBytes = rewindHandler.RequiredBufferSizeBytes;
+                var handlerFrameSizeBytes = rewindHandler.makeDataSchema().getSchemaSize();
 
                 //add space for bookkeeping data
                 handlerFrameSizeBytes += 8; //ID

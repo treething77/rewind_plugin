@@ -11,7 +11,9 @@ namespace aeric.rewind_plugin {
         
         private Renderer _renderer;
 
-        public override int RequiredBufferSizeBytes => 4;
+        //   public override int RequiredBufferSizeBytes => 4;
+        public override RewindDataSchema makeDataSchema() => new RewindDataSchema().addInt();
+
         public override uint HandlerTypeID => 7;
 
         private void Awake() {
@@ -33,11 +35,14 @@ namespace aeric.rewind_plugin {
             int materialIndex2 = frameReaderB.readInt();
             
             int newMaterialIndex = RewindUtilities.LerpInt(materialIndex1, materialIndex2, frameT);
-            Material mat = _materials[newMaterialIndex];
-            if (mat != _renderer.material) {
-                _renderer.material = mat;
+            if (newMaterialIndex < 0 || newMaterialIndex >= _materials.Count)
+                Debug.LogError("Material index out of bounds!");
+            else {
+                Material mat = _materials[newMaterialIndex];
+                if (mat != _renderer.material) {
+                    _renderer.material = mat;
+                }
             }
-
         }
     }
 }
