@@ -1,10 +1,11 @@
-using System;
 using aeric.rewind_plugin;
 using UnityEngine;
 using UnityEngine.UI;
-using UnityEngine.Rendering;
+
+#if REWIND_POST_PROCESSING_SUPPORT
 using UnityEngine.Rendering.PostProcessing;
 using Bloom = UnityEngine.Rendering.Universal.Bloom;
+#endif
 
 namespace aeric.rewind_plugin_demos {
     public class SportsRewind : MonoBehaviour {
@@ -15,8 +16,9 @@ namespace aeric.rewind_plugin_demos {
         public Image rewindBar;
         public RewindPlaybackPreparer playbackPreparer;
 
-        public Volume m_Volume;
-      // public VolumeComponent bloom;
+#if REWIND_POST_PROCESSING_SUPPORT
+        public Volume _ppVolume;
+#endif
         
         private RewindPlayback _playback;
         private RewindRecorder _recorder;
@@ -109,13 +111,13 @@ namespace aeric.rewind_plugin_demos {
 
             ppRamp = Mathf.Clamp01(ppRamp);
 
-            m_Volume.weight = ppRamp;
-          //  for (int i = 0; i < 3; i++) {
-              //  if (m_Volume.profile.components[0].name == "Bloom(Clone)") {
-                    Bloom b = (Bloom)m_Volume.profile.components[0];
-                    b.intensity.value = ((Mathf.Sin(rewindTime * 10.0f) + 1.0f) * 3.0f) * ppRamp + 1.0f;
-           //     }
-          //  }
+            #if REWIND_POST_PROCESSING_SUPPORT
+            _ppVolume.weight = ppRamp;
+
+            //Make the bloom pulse
+            Bloom bloomModule = (Bloom)_ppVolume.profile.components[0];
+            bloomModule.intensity.value = ((Mathf.Sin(rewindTime * 10.0f) + 1.0f) * 3.0f) * ppRamp + 1.0f;
+            #endif
         }
 
         private void changeState(DemoState newState) {
@@ -144,6 +146,5 @@ namespace aeric.rewind_plugin_demos {
 
             demoState = newState;
         }
-
     }
 }
