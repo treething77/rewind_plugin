@@ -518,7 +518,7 @@ namespace aeric.rewind_plugin {
                 //write data
                 for (int v = 0; v < handlerData.values.Length; v++) {
                     RewindStorageData_Value val = handlerData.values[v];
-                    storageWriter.writeInt((int) val.valueType);
+                  //  storageWriter.writeInt((int) val.valueType);
                     switch (val.valueType) {
                     case RewindDataPointType.FLOAT:
                         storageWriter.writeFloat(val.f);
