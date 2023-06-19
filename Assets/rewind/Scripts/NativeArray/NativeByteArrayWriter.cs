@@ -29,7 +29,7 @@ namespace aeric.rewind_plugin {
             _writeHead = endIndex;
         }
 
-        public void writeV3(Vector3 value) {
+        public void writeVector3(Vector3 value) {
             writeSimpleValueImpl(value);
         }
 

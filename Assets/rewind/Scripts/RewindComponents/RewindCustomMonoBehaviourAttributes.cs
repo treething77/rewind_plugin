@@ -48,7 +48,7 @@ namespace aeric.rewind_plugin {
                 if (rewindField.FieldType == typeof(float))
                     writer.writeFloat((float)rewindField.GetValue(this));
                 else if (rewindField.FieldType == typeof(Vector3))
-                    writer.writeV3((Vector3)rewindField.GetValue(this));
+                    writer.writeVector3((Vector3)rewindField.GetValue(this));
                 else if (rewindField.FieldType == typeof(Quaternion))
                     writer.writeQuaternion((Quaternion)rewindField.GetValue(this));
                 else if (rewindField.FieldType == typeof(int))

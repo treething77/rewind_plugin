@@ -55,7 +55,7 @@ namespace NativeByteArrayTests
         public void TestReadWriteVector3()
         {
             Vector3 a = new Vector3(1, 2, 3);
-            nativeArraySmallWriter.writeV3(a);
+            nativeArraySmallWriter.writeVector3(a);
             Vector3 b = nativeArraySmallReader.readVector3();
 
             Assert.IsTrue(a == b);

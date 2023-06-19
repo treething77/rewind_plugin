@@ -24,9 +24,9 @@ namespace aeric.rewind_plugin {
         }
         
         public override void rewindStore(NativeByteArrayWriter writer) {
-            writer.writeV3(_transform.position);
+            writer.writeVector3(_transform.position);
             writer.writeQuaternion(_transform.rotation);
-            if (recordScale) writer.writeV3(_transform.localScale);
+            if (recordScale) writer.writeVector3(_transform.localScale);
         }
 
         public override void preRestore() {

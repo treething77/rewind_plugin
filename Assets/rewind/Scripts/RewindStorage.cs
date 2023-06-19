@@ -344,14 +344,13 @@ namespace aeric.rewind_plugin {
        //     frameReaderA.setReadHead(_handlerDataOffset);
 
             int dataIndex = 0;
-            for (int frame = 0; frame < storageData.recordedFrameCount; frame++) {
-                for (int i = 0; i < storageData.handlerCount; i++) {
+            for (int i = 0; i < storageData.handlerCount; i++) {
+                KeyValuePair<uint, RewindHandlerStorage> handlerStoragePair = rewindHandlerStorageMap.ElementAt(i);
 
-                    KeyValuePair<uint, RewindHandlerStorage> handlerStoragePair = rewindHandlerStorageMap.ElementAt(i);
+                var handlerID = handlerStoragePair.Key;
+                var handlerStorage = handlerStoragePair.Value;
 
-                    var handlerID = handlerStoragePair.Key;
-                    var handlerStorage = handlerStoragePair.Value;
-
+                for (int frame = 0; frame < storageData.recordedFrameCount; frame++) {
                     RewindMappedFrame mappedFrame = remapIndex(frame);
                     frameReaderA.setReadHead(handlerStorage.HandlerStorageOffset + handlerStorage.HandlerFrameSizeBytes * (int)mappedFrame);
 
@@ -493,7 +492,58 @@ namespace aeric.rewind_plugin {
         }
         
         private void loadFromStorage(RewindStorageData storageData) {
+            RecordedFrameCount = storageData.recordedFrameCount;
             
+            //frame times
+            storageWriter.setWriteHead(_frameDataOffset);
+
+            for (int i = 0; i < storageData.recordedFrameCount; i++) {
+                float frameTime = storageData.frameTimeData[i];
+                storageWriter.writeFloat(frameTime);
+            }
+            
+            //handler data
+            for (int i = 0; i < storageData.handlerData.Length; i++) {
+                RewindStorageData_Handler handlerData = storageData.handlerData[i];
+                
+                var handlerStorage = getHandlerStorage(handlerData.id);
+
+                int frameIndex = i % storageData.recordedFrameCount;
+
+                //set the write head to the correct location
+                storageWriter.setWriteHead(handlerStorage.HandlerStorageOffset + handlerStorage.HandlerFrameSizeBytes * frameIndex);
+
+                storageWriter.writeUInt(handlerData.id);
+
+                //write data
+                for (int v = 0; v < handlerData.values.Length; v++) {
+                    RewindStorageData_Value val = handlerData.values[v];
+                    storageWriter.writeInt((int) val.valueType);
+                    switch (val.valueType) {
+                    case RewindDataPointType.FLOAT:
+                        storageWriter.writeFloat(val.f);
+                        break;
+                    case RewindDataPointType.INT:
+                        storageWriter.writeInt(val.i);
+                        break;
+                    case RewindDataPointType.COLOR:
+                        storageWriter.writeColor(val.c);
+                        break;
+                    case RewindDataPointType.BOOL:
+                        storageWriter.writeBool(val.b);
+                        break;
+                    case RewindDataPointType.VECTOR3:
+                        storageWriter.writeVector3(val.v);
+                        break;
+                    case RewindDataPointType.QUATERNION:
+                        storageWriter.writeQuaternion(val.q);
+                        break;
+                    default:
+                        Debug.LogError($"Type not handled {val.valueType}");
+                        break;
+                    }
+                }
+            }
         }
         
         public void loadFromJsonFile(string fullPath) {
@@ -554,6 +604,7 @@ namespace aeric.rewind_plugin {
                         }
                         handlerData[i] = handler;
                     }
+                    storageData.handlerData = handlerData;
                     
                     loadFromStorage(storageData);
                 }

@@ -37,9 +37,9 @@ namespace aeric.rewind_plugin {
         public override void rewindStore(NativeByteArrayWriter writer) {
             foreach (var t in _transforms) {
                 t.GetLocalPositionAndRotation(out var localPos, out var localRot);
-                writer.writeV3(localPos);
+                writer.writeVector3(localPos);
                 writer.writeQuaternion(localRot);
-                writer.writeV3(t.localScale);
+                writer.writeVector3(t.localScale);
             }
         }
 
