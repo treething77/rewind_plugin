@@ -567,42 +567,49 @@ namespace aeric.rewind_plugin {
                         storageData.frameTimeData[i] = reader.ReadSingle();
                     }
                     
-                    //read the handler data
-                    var handlerData = new RewindStorageData_Handler[storageData.handlerCount];
+                    //read the handler data  
+                    int dataIndex = 0;
+                    var handlerData = new RewindStorageData_Handler[storageData.handlerCount*storageData.recordedFrameCount];
                     for (int i = 0; i < storageData.handlerCount; i++) {
-                        RewindStorageData_Handler handler = new RewindStorageData_Handler();
-                        handler.id = reader.ReadUInt32();
-                        handler.values = new RewindStorageData_Value[reader.ReadUInt32()];
-                        for (int v = 0; v < handler.values.Length; v++) {
-                            RewindStorageData_Value val = new RewindStorageData_Value();
-                            val.valueType = (RewindDataPointType)reader.ReadUInt32();
-                            
-                            switch (val.valueType) {
-                            case RewindDataPointType.FLOAT:
-                                val.f = reader.ReadSingle();
-                                break;
-                            case RewindDataPointType.INT:
-                                val.i = reader.ReadInt32();
-                                break;
-                            case RewindDataPointType.COLOR:
-                                val.c = new Color(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
-                                break;
-                            case RewindDataPointType.BOOL:
-                                val.b = reader.ReadBoolean();
-                                break;
-                            case RewindDataPointType.VECTOR3:
-                                val.v = new Vector3(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
-                                break;
-                            case RewindDataPointType.QUATERNION:
-                                val.q = new Quaternion(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
-                                break;
-                            default:
-                                Debug.LogError($"Type not handled {val.valueType}");
-                                break;
+                        for (int frameIndex = 0; frameIndex < storageData.recordedFrameCount; frameIndex++) {
+
+                            RewindStorageData_Handler handler = new RewindStorageData_Handler();
+                            handler.id = reader.ReadUInt32();
+                            handler.values = new RewindStorageData_Value[reader.ReadUInt32()];
+                            for (int v = 0; v < handler.values.Length; v++) {
+                                RewindStorageData_Value val = new RewindStorageData_Value();
+                                val.valueType = (RewindDataPointType)reader.ReadUInt32();
+
+                                switch (val.valueType) {
+                                case RewindDataPointType.FLOAT:
+                                    val.f = reader.ReadSingle();
+                                    break;
+                                case RewindDataPointType.INT:
+                                    val.i = reader.ReadInt32();
+                                    break;
+                                case RewindDataPointType.COLOR:
+                                    val.c = new Color(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
+                                    break;
+                                case RewindDataPointType.BOOL:
+                                    val.b = reader.ReadBoolean();
+                                    break;
+                                case RewindDataPointType.VECTOR3:
+                                    val.v = new Vector3(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
+                                    break;
+                                case RewindDataPointType.QUATERNION:
+                                    val.q = new Quaternion(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
+                                    break;
+                                default:
+                                    Debug.LogError($"Type not handled {val.valueType}");
+                                    break;
+                                }
+
+                                handler.values[v] = val;
                             }
-                            handler.values[v] = val;
+     
+                            handlerData[dataIndex] = handler;
+                            dataIndex++;
                         }
-                        handlerData[i] = handler;
                     }
                     storageData.handlerData = handlerData;
                     
