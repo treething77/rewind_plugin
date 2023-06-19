@@ -1,5 +1,7 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using UnityEngine;
 
 namespace aeric.rewind_plugin {
@@ -23,12 +25,11 @@ namespace aeric.rewind_plugin {
 
         //Map of ID to RewindHandlerStorage
         private readonly Dictionary<uint, RewindHandlerStorage> rewindHandlerStorageMap = new();
+        private readonly RewindScene _scene;
 
-        //TODO: not necessary?
-        private bool supportsRewind;
-
-        public RewindStorage(RewindScene rewindScene, int maxFrameCount, bool supportsRewind) {
+        public RewindStorage(RewindScene rewindScene, int maxFrameCount) {
             _maxFrameCount = maxFrameCount;
+            _scene = rewindScene;
 
             // Storage size calculation:
             // -sum of the required space for all rewind handlers
@@ -75,9 +76,7 @@ namespace aeric.rewind_plugin {
                 handlerFrameSizeBytes += 8; //ID
 
                 var handlerStorageSizeBytes = handlerFrameSizeBytes * maxFrameCount;
-
-                if (supportsRewind) handlerStorageSizeBytes *= 2;
-
+                
                 var handlerStorage = new RewindHandlerStorage(bufferHandlerStartOffset, handlerFrameSizeBytes);
 
                 if (rewindHandler.ID == 0) {
@@ -141,7 +140,7 @@ namespace aeric.rewind_plugin {
             storageWriter.setWriteHead(handlerStorage.HandlerStorageOffset + handlerStorage.HandlerFrameSizeBytes * FrameWriteIndex);
 
             //store ID
-            //do we really need to store the ID here? we could just use the offset to determine the ID
+            //do we really need to store the ID here? we could just use the offset to determine the ID 
             storageWriter.writeUInt(rewindHandler.ID);
 
             rewindHandler.rewindStore(storageWriter);
@@ -272,7 +271,156 @@ namespace aeric.rewind_plugin {
             rewindHandler.postRestore();
         }
 
-        public void writeToFile(string fileName) {
+        [Serializable]
+        public class RewindStorageData_Frame {
+            public RewindStorageData_Frame(float ft) {
+                frameTime = ft;
+            }
+
+            public float frameTime;
+        }
+        
+        
+        [Serializable]
+        public class RewindStorageData_Value {
+            public RewindDataPointType valueType; //RewindDataPointType
+            
+            public float f;
+            public int i;
+            public bool b;
+            public Vector3 v;
+            public Quaternion q;
+            public Color c;
+            /*      FLOAT,
+                    INT,
+                    BOOL,
+                    VECTOR3,
+                    QUATERNION,
+                    COLOR, */
+        }
+
+
+        [Serializable]
+        public class RewindStorageData_Handler {
+            public uint id;
+            public RewindStorageData_Value[] values;
+        }
+        
+        [Serializable]
+        public class RewindStorageData {
+            public int maxFrameCount;
+            public int recordedFrameCount;
+            public int handlerCount;
+            public int version = 1;
+
+            public float[] frameTimeData;
+            public RewindStorageData_Handler[] handlerData;
+        }
+
+        private RewindStorageData convertToStorage() {
+            
+            var storageData = new RewindStorageData();
+            storageData.maxFrameCount = _maxFrameCount;
+            storageData.recordedFrameCount = RecordedFrameCount;
+             
+            frameReaderA.setReadHead(0);
+            frameReaderA.readInt();
+            storageData.handlerCount =  frameReaderA.readInt();
+            
+            //read head?
+            
+            //convert the  contents of the NativeArray to json using the schema of each component
+
+            frameReaderA.setReadHead(_frameDataOffset);
+            //frame data
+            storageData.frameTimeData = new float[storageData.recordedFrameCount];
+            for (int i = 0; i < storageData.recordedFrameCount; i++) {
+                float frameTime = frameReaderA.readFloat();
+                storageData.frameTimeData[i] = frameTime;
+            }
+            
+            //handler data
+            storageData.handlerData = new RewindStorageData_Handler[storageData.handlerCount * storageData.recordedFrameCount];
+       //     frameReaderA.setReadHead(_handlerDataOffset);
+
+            int dataIndex = 0;
+            for (int frame = 0; frame < storageData.recordedFrameCount; frame++) {
+                for (int i = 0; i < storageData.handlerCount; i++) {
+
+                    KeyValuePair<uint, RewindHandlerStorage> handlerStoragePair = rewindHandlerStorageMap.ElementAt(i);
+
+                    var handlerID = handlerStoragePair.Key;
+                    var handlerStorage = handlerStoragePair.Value;
+
+                    RewindMappedFrame mappedFrame = remapIndex(frame);
+                    frameReaderA.setReadHead(handlerStorage.HandlerStorageOffset + handlerStorage.HandlerFrameSizeBytes * (int)mappedFrame);
+
+                    uint id = frameReaderA.readUInt();//id  
+                    Debug.Assert(id == handlerID);
+                    
+                    IRewindHandler handler = _scene.getHandler(handlerID);
+                    
+                    RewindDataSchema dataSchema = handler.makeDataSchema();
+                    
+                    //_rewindStorage.restoreHandlerInterpolated(rewindHandler, playbackFrames.frameMappedA, playbackFrames.frameMappedB, playbackFrames.frameT);
+
+                    RewindStorageData_Handler data = new RewindStorageData_Handler();
+                    data.id = handlerID;
+
+                    List<RewindDataPoint> schema = dataSchema.getSchema();
+                    data.values = new RewindStorageData_Value[dataSchema.GetValueCount()];
+
+                    int valueIndex = 0;
+                    for (int v = 0; v < schema.Count; v++) {
+                        RewindDataPoint schemaDataPoint = schema[v];
+
+                        for (int vi = 0; vi < schemaDataPoint._count; vi++) {
+                            RewindStorageData_Value val = new RewindStorageData_Value();
+                            val.valueType = schemaDataPoint._type;
+                            switch (val.valueType) {
+                            case RewindDataPointType.FLOAT:
+                                val.f = frameReaderA.readFloat();
+                                break;
+                            case RewindDataPointType.INT:
+                                val.i = frameReaderA.readInt();
+                                break;
+                            case RewindDataPointType.COLOR:
+                                val.c = frameReaderA.readColor();
+                                break;
+                            case RewindDataPointType.BOOL:
+                                val.b = frameReaderA.readBool();
+                                break;
+                            case RewindDataPointType.VECTOR3:
+                                val.v = frameReaderA.readVector3();
+                                break;
+                            case RewindDataPointType.QUATERNION:
+                                val.q = frameReaderA.readQuaternion();
+                                break;
+                            default:
+                                Debug.LogError($"Type not handled {val.valueType}");
+                                break;
+                            }
+                            
+                            data.values[valueIndex] = val;
+                            valueIndex++;
+                        }
+                    }
+                    
+                    storageData.handlerData[dataIndex] = data;
+                    dataIndex++;
+                }
+            }
+
+            return storageData;
+        }
+
+        public string writeToJson() {
+            var storageData = convertToStorage();
+            string jsonStr = JsonUtility.ToJson(storageData, true);
+            return jsonStr;
+        }
+
+        public void writeToRawBinaryFile(string fileName) {
             using (var fileStream = new FileStream(fileName, FileMode.Create)) {
                 //write the header
                 fileStream.WriteByte(1); //v1
@@ -282,8 +430,142 @@ namespace aeric.rewind_plugin {
                 fileStream.Write(managedArray);
             }
         }
+        
+        public void writeToBinaryStreamFile(string fileName) {
+            var storageData = convertToStorage();
+            
+            using (var fileStream = new FileStream(fileName, FileMode.Create)) {
+                using (var binaryWriter = new BinaryWriter(fileStream)) {
+                    //write the header
+                    binaryWriter.Write(storageData.maxFrameCount);
+                    binaryWriter.Write(storageData.recordedFrameCount);
+                    binaryWriter.Write(storageData.handlerCount);
+                    binaryWriter.Write(storageData.version);
+                    
+                    //write the frame times
+                    for (int i = 0; i < storageData.recordedFrameCount; i++) {
+                        binaryWriter.Write(storageData.frameTimeData[i]);
+                    }
+                    
+                    //write the handler data
+                    for (int i = 0; i < storageData.handlerData.Length; i++) {
+                        RewindStorageData_Handler handlerData = storageData.handlerData[i];
+                        binaryWriter.Write(handlerData.id);
+                        binaryWriter.Write(handlerData.values.Length);
+                        for (int v = 0; v < handlerData.values.Length; v++) {
+                            RewindStorageData_Value val = handlerData.values[v];
+                            binaryWriter.Write((int) val.valueType);
+                            switch (val.valueType) {
+                            case RewindDataPointType.FLOAT:
+                                binaryWriter.Write(val.f);
+                                break;
+                            case RewindDataPointType.INT:
+                                binaryWriter.Write(val.i);
+                                break;
+                            case RewindDataPointType.COLOR:
+                                binaryWriter.Write(val.c.r);
+                                binaryWriter.Write(val.c.g);
+                                binaryWriter.Write(val.c.b);
+                                binaryWriter.Write(val.c.a);
+                                break;
+                            case RewindDataPointType.BOOL:
+                                binaryWriter.Write(val.b);
+                                break;
+                            case RewindDataPointType.VECTOR3:
+                                binaryWriter.Write(val.v.x);
+                                binaryWriter.Write(val.v.y);
+                                binaryWriter.Write(val.v.z);
+                                break;
+                            case RewindDataPointType.QUATERNION:
+                                binaryWriter.Write(val.q.x);
+                                binaryWriter.Write(val.q.y);
+                                binaryWriter.Write(val.q.z);
+                                binaryWriter.Write(val.q.w);
+                                break;
+                            default:
+                                Debug.LogError($"Type not handled {val.valueType}");
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        
+        private void loadFromStorage(RewindStorageData storageData) {
+            
+        }
+        
+        public void loadFromJsonFile(string fullPath) {
+            string jsonTxt = File.ReadAllText(fullPath);
+            var storageData = JsonUtility.FromJson<RewindStorageData>(jsonTxt);
+            loadFromStorage(storageData);
+        }
 
-        public void loadFromFile(string fileName) {
+        public void loadFromBinaryStreamFile(string fullPath) {
+            using (var stream = File.Open(fullPath, FileMode.Open)) {
+                using (var reader = new BinaryReader(stream)) {
+                    
+                    var storageData = new RewindStorageData();
+                    storageData.maxFrameCount = reader.ReadInt32();
+                    storageData.recordedFrameCount = reader.ReadInt32();
+                    storageData.handlerCount = reader.ReadInt32();
+                    storageData.version = reader.ReadInt32();
+
+                    storageData.frameTimeData = new float[storageData.recordedFrameCount];
+                    for (int i = 0; i < storageData.recordedFrameCount; i++) {
+                        storageData.frameTimeData[i] = reader.ReadSingle();
+                    }
+                    
+                    //read the handler data
+                    var handlerData = new RewindStorageData_Handler[storageData.handlerCount];
+                    for (int i = 0; i < storageData.handlerCount; i++) {
+                        RewindStorageData_Handler handler = new RewindStorageData_Handler();
+                        handler.id = reader.ReadUInt32();
+                        handler.values = new RewindStorageData_Value[reader.ReadUInt32()];
+                        for (int v = 0; v < handler.values.Length; v++) {
+                            RewindStorageData_Value val = new RewindStorageData_Value();
+                            val.valueType = (RewindDataPointType)reader.ReadUInt32();
+                            
+                            switch (val.valueType) {
+                            case RewindDataPointType.FLOAT:
+                                val.f = reader.ReadSingle();
+                                break;
+                            case RewindDataPointType.INT:
+                                val.i = reader.ReadInt32();
+                                break;
+                            case RewindDataPointType.COLOR:
+                                val.c = new Color(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
+                                break;
+                            case RewindDataPointType.BOOL:
+                                val.b = reader.ReadBoolean();
+                                break;
+                            case RewindDataPointType.VECTOR3:
+                                val.v = new Vector3(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
+                                break;
+                            case RewindDataPointType.QUATERNION:
+                                val.q = new Quaternion(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
+                                break;
+                            default:
+                                Debug.LogError($"Type not handled {val.valueType}");
+                                break;
+                            }
+                            handler.values[v] = val;
+                        }
+                        handlerData[i] = handler;
+                    }
+                    
+                    loadFromStorage(storageData);
+                }
+            }
+        }
+
+        public void writeToJsonFile(string fileName) {
+            string jsonStr = writeToJson();
+            File.WriteAllText(fileName, jsonStr);
+        }
+
+        public void loadFromRawBinaryFile(string fileName) {
             using (var fileStream = new FileStream(fileName, FileMode.Open, FileAccess.Read)) {
                 //write the header
                 var version = fileStream.ReadByte();
@@ -341,7 +623,7 @@ namespace aeric.rewind_plugin {
             var handlerIDA = frameReaderA.readUInt();
 
             //assume the handler is RewindTransform and read the position
-            return frameReaderA.readV3();
+            return frameReaderA.readVector3();
         }
 
         public void getUnmappedFrameData(int unmappedFrameIndex, IRewindHandler rewindHandler, IRewindDataHandler dataHandler) {
@@ -353,5 +635,6 @@ namespace aeric.rewind_plugin {
             var handlerIDA = frameReaderA.readUInt();
             dataHandler.RewindHandlerData(rewindHandler, frameReaderA);
         }
+
     }
 }

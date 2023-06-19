@@ -40,7 +40,7 @@ namespace aeric.rewind_plugin_demos {
             _rewindScene.addRewindObject(_transformTest);
 
             //3 seconds at max 30fps
-            _rewindStorage = new RewindStorage(_rewindScene, recordFPS * 3, false);
+            _rewindStorage = new RewindStorage(_rewindScene, recordFPS * 3);
 
             StartCoroutine(SimpleTestCoroutine());
         }

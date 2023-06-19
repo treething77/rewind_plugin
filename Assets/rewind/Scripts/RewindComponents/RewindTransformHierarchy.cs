@@ -48,12 +48,12 @@ namespace aeric.rewind_plugin {
 #endif
         public override void rewindRestoreInterpolated(NativeByteArrayReader frameReaderA, NativeByteArrayReader frameReaderB, float frameT) {
             foreach (var t in _transforms) {
-                var p1 = frameReaderA.readV3();
+                var p1 = frameReaderA.readVector3();
                 var r1 = frameReaderA.readQuaternion();
-                var s1 = frameReaderA.readV3();
-                var p2 = frameReaderB.readV3();
+                var s1 = frameReaderA.readVector3();
+                var p2 = frameReaderB.readVector3();
                 var r2 = frameReaderB.readQuaternion();
-                var s2 = frameReaderB.readV3();
+                var s2 = frameReaderB.readVector3();
 
                 t.localPosition = Vector3.Lerp(p1, p2, frameT);
                 t.localRotation = Quaternion.Lerp(r1, r2, frameT);

@@ -21,24 +21,19 @@ namespace aeric.rewind_plugin_demos {
         private RewindScene _rewindScene;
         private RewindStorage _rewindStorage;
 
+        private string dataPath;
+
         private void Start() {
             _camera = Camera.main;
             _rewindScene = new RewindScene();
             _rewindScene.addAllChildren(stackParent);
 
-            _rewindStorage = new RewindStorage(_rewindScene, 150, false);
+            _rewindStorage = new RewindStorage(_rewindScene, 150);
             _rewindPlayback = new RewindPlayback(_rewindScene, _rewindStorage);
 
             //Load the bake and apply the starting frame to get the settled starting position
-            var path = Application.dataPath;
-            path += "/rewind/Examples/assets/bakes/baked_rewind_data";
-
-            _rewindStorage.loadFromFile(path);
-
-            playbackPreparer.startPlayback();
-            _rewindPlayback.startPlayback();
-
-            _rewindPlayback.restoreFrameAtCurrentTime();
+            dataPath = Application.dataPath;
+            dataPath += "/rewind/Examples/assets/bakes/baked_rewind_data";
 
             _camera.transform.LookAt(Vector3.up);
         }
@@ -58,7 +53,29 @@ namespace aeric.rewind_plugin_demos {
 
         private void OnGUI() {
             GUILayout.BeginArea(new Rect(Screen.width - 200.0f, 0.0f, 200.0f, Screen.height));
-            if (GUILayout.Button("Play Baked Sim")) {
+            bool startPlayback = false;
+            if (GUILayout.Button("Play from json")) {
+                var fullPath = dataPath + ".json";
+                _rewindStorage.loadFromJsonFile(fullPath);
+                startPlayback = true;
+            }
+            if (GUILayout.Button("Play from raw binary")) {
+                var fullPath = dataPath + ".raw";
+                _rewindStorage.loadFromRawBinaryFile(fullPath);
+                startPlayback = true;
+            }
+            if (GUILayout.Button("Play from binary stream")) {
+                var fullPath = dataPath + ".bin";
+                _rewindStorage.loadFromBinaryStreamFile(fullPath);
+                startPlayback = true;
+            }
+
+            if (startPlayback) {
+                playbackPreparer.startPlayback();
+                _rewindPlayback.startPlayback();
+
+                _rewindPlayback.restoreFrameAtCurrentTime();
+
                 _playingBack = true;
 
                 //call again to reset the start time so we get correct relative times

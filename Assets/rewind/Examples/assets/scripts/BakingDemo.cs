@@ -23,7 +23,7 @@ namespace aeric.rewind_plugin_demos {
             _rewindScene = new RewindScene();
             _rewindScene.addAllChildren(stackParent);
 
-            _rewindStorage = new RewindStorage(_rewindScene, 150, false);
+            _rewindStorage = new RewindStorage(_rewindScene, 150);
 
             _recorder = new RewindRecorder(_rewindScene, _rewindStorage, 30, false);
         }
@@ -55,16 +55,23 @@ namespace aeric.rewind_plugin_demos {
             }
 
 #if UNITY_EDITOR
-            if (_rewindStorage.isFull)
-                if (GUILayout.Button("Write Bake To File")) {
-                    //Write the recording to a file
-                    //write to the correct location in the Assets folder
-                    //get the Assets folder location
-                    var path = Application.dataPath;
-                    path += "/rewind/Examples/assets/bakes/baked_rewind_data";
+            if (_rewindStorage.isFull) {
+                //Write the recording to a file
+                //write to the correct location in the Assets folder
+                //get the Assets folder location
+                var path = Application.dataPath;
+                path += "/rewind/Examples/assets/bakes/baked_rewind_data";
 
-                    _rewindStorage.writeToFile(path);
+                if (GUILayout.Button("Write Bake To Raw Binary")) {
+                    _rewindStorage.writeToRawBinaryFile(path + ".raw");
                 }
+                if (GUILayout.Button("Write Bake To Binary Stream")) {
+                    _rewindStorage.writeToBinaryStreamFile(path + ".bin");
+                }
+                if (GUILayout.Button("Write Bake To Json")) {
+                    _rewindStorage.writeToJsonFile(path + ".json");
+                }
+            }
 #endif
 
             GUILayout.EndArea();

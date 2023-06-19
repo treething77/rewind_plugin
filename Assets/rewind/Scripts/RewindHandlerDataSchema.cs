@@ -89,7 +89,7 @@ namespace aeric.rewind_plugin {
                         rewindDataPointSize = sizeof(int);
                         break;
                     case RewindDataPointType.BOOL:
-                        rewindDataPointSize = sizeof(int);//we store bools as integers
+                        rewindDataPointSize = sizeof(bool);
                         break;
                     case RewindDataPointType.VECTOR3:
                         rewindDataPointSize = sizeof(Vector3);
@@ -115,5 +115,10 @@ namespace aeric.rewind_plugin {
             return schema;
         }
 
+        public int GetValueCount() {
+            int count = 0;
+            foreach (var v in schema) count += v._count;
+            return count;
+        }
     }
 }

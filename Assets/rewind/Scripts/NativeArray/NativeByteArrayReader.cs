@@ -42,7 +42,7 @@ namespace aeric.rewind_plugin {
             return readValue<byte>();
         }
 
-        public Vector3 readV3() {
+        public Vector3 readVector3() {
             return readValue<Vector3>();
         }
 

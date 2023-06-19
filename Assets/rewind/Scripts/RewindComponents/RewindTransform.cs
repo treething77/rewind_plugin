@@ -42,8 +42,8 @@ namespace aeric.rewind_plugin {
         }
 
         public override void rewindRestoreInterpolated(NativeByteArrayReader frameReaderA, NativeByteArrayReader frameReaderB, float frameT) {
-            var posA = frameReaderA.readV3();
-            var posB = frameReaderB.readV3();
+            var posA = frameReaderA.readVector3();
+            var posB = frameReaderB.readVector3();
             var position = Vector3.Lerp(posA, posB, frameT);
 
             //  Debug.Log("posA.x=" + posA.x + " posB.x=" + posB.x + " frameT: " + frameT + " result: " + position.x);
@@ -52,7 +52,7 @@ namespace aeric.rewind_plugin {
             _transform.SetPositionAndRotation(position, rotation);
 
             if (recordScale) {
-                var scale = Vector3.Lerp(frameReaderA.readV3(), frameReaderB.readV3(), frameT);
+                var scale = Vector3.Lerp(frameReaderA.readVector3(), frameReaderB.readVector3(), frameT);
                 _transform.localScale = scale;
             }
         }

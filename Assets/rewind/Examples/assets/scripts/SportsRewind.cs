@@ -40,7 +40,7 @@ namespace aeric.rewind_plugin_demos {
             _rewindScene.addAllChildren(targetParent);
             _rewindScene.addRewindObject(robotCamRewind);
 
-            _rewindStorage = new RewindStorage(_rewindScene, 150, false);
+            _rewindStorage = new RewindStorage(_rewindScene, 150);
 
             _recorder = new RewindRecorder(_rewindScene, _rewindStorage, 30, true);
             _playback = new RewindPlayback(_rewindScene, _rewindStorage);

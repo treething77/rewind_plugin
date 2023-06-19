@@ -73,8 +73,8 @@ namespace aeric.rewind_plugin {
                     rewindField.SetValue(this, v);
                 }
                 else if (rewindField.FieldType == typeof(Vector3)) {
-                    var vA = frameReaderA.readV3();
-                    var vB = frameReaderB.readV3();
+                    var vA = frameReaderA.readVector3();
+                    var vB = frameReaderB.readVector3();
                     var v = rewindFieldLerp[i] ? Vector3.Lerp(vA, vB, frameT) : vB;
                     rewindField.SetValue(this, v);
                 }

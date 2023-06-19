@@ -28,5 +28,9 @@ namespace aeric.rewind_plugin {
         public void addAllChildren(GameObject parentObj) {
             foreach (var c in parentObj.GetComponentsInChildren<IRewindHandler>()) addRewindObject(c);
         }
+
+        public IRewindHandler getHandler(uint handlerID) {
+            return RewindHandlers.Find(x => x.ID == handlerID);
+        }
     }
 }
