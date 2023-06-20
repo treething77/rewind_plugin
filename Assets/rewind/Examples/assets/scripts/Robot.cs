@@ -10,6 +10,7 @@ namespace aeric.rewind_plugin_demos {
         
         public RobotLevel _level;
         public bool playerControlled;
+        public Camera playerCamera;
         
         public AudioClip footStepSFX;
         public AudioClip footStepSFXBackwards;
@@ -75,6 +76,11 @@ namespace aeric.rewind_plugin_demos {
                 }
 
                 _playerSpeed = Mathf.Clamp01(_playerSpeed);
+
+                if (playerCamera != null) {
+                    float targetFOV = Mathf.Lerp(55.0f, 65.0f, _playerSpeed);
+                    playerCamera.fieldOfView = Mathf.Lerp(playerCamera.fieldOfView, targetFOV, Time.deltaTime * 2.0f);
+                }
 
                 _animator.SetFloat(Blend, _playerSpeed);
 

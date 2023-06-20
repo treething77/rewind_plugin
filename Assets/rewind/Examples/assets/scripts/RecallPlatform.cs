@@ -44,7 +44,7 @@ namespace aeric.rewind_plugin_demos {
 
         private void Start() {
             _rewindScene = new RewindScene();
-            _rewindScene.addRewindObject(this);
+            _rewindScene.addRewindHandler(this);
 
             _rewindStorage = new RewindStorage(_rewindScene, 100);
             _recorder = new RewindRecorder(_rewindScene, _rewindStorage, 10, true);

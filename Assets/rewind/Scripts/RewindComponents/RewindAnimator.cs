@@ -1,5 +1,3 @@
-using JetBrains.Annotations;
-using Unity.VisualScripting.Antlr3.Runtime;
 using UnityEngine;
 
 namespace aeric.rewind_plugin {
@@ -164,7 +162,7 @@ namespace aeric.rewind_plugin {
             return true;
         }
 
-        public override void rewindRestoreInterpolated([NotNull] NativeByteArrayReader frameReaderA, [NotNull] NativeByteArrayReader frameReaderB, float frameT) {
+        public override void rewindRestoreInterpolated(NativeByteArrayReader frameReaderA, NativeByteArrayReader frameReaderB, float frameT) {
             //First read both animation states in full and then interpolate and restore the state
             ReadAnimationState(frameReaderA, ref _animStateA);
             ReadAnimationState(frameReaderB, ref _animStateB);

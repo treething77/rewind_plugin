@@ -2,19 +2,29 @@ using aeric.rewind_plugin;
 using UnityEngine;
 
 namespace aeric.rewind_plugin_demos {
+    //Maybe separate for rewind/replay demos
     public class MoveTarget : RewindCustomMonoBehaviourAttributes {
         [Rewind(Lerp = false)] public int CapturedTeamIndex;
-
+        [Rewind] public float captureIndicatorTimer;
+        
         public ParticleSystem captureVFX;
+        public GameObject captureIndicator;
         
         //component reference caching
         private Material _material;
+        private Material _captureIndicatorMaterial;
 
         public Material _vfxMaterialBlue;
         public Material _vfxMaterialRed;
 
         private new void Awake() {
             _material = GetComponent<MeshRenderer>().material;
+
+            if (captureIndicator != null) {
+                captureIndicator.SetActive(false);
+                _captureIndicatorMaterial = captureIndicator.GetComponent<MeshRenderer>().material;
+            }
+
             base.Awake();
         }
 
@@ -22,6 +32,15 @@ namespace aeric.rewind_plugin_demos {
             //lerp color back to the team color
             _material.color = Color.Lerp(_material.color, RobotLevel._instance.GetTeamColor(CapturedTeamIndex), Time.deltaTime);
             transform.localScale = Vector3.Lerp(transform.localScale, Vector3.one, Time.deltaTime);
+
+            if (captureIndicatorTimer > 0.0f) {
+                captureIndicator.transform.rotation = Quaternion.Euler(0.0f, captureIndicatorTimer * 200.0f,0.0f);
+                
+                captureIndicatorTimer -= Time.deltaTime;
+                if (captureIndicatorTimer < 0.0f) {
+                    captureIndicator.SetActive(false);
+                }
+            }
         }
 
         public void Capture(Robot robot) {
@@ -37,6 +56,12 @@ namespace aeric.rewind_plugin_demos {
                captureVFX.GetComponent<Renderer>().material = _vfxMaterialBlue;
            
             captureVFX.Play();
+
+            if (captureIndicator != null) {
+                captureIndicator.SetActive(true);
+                _captureIndicatorMaterial.color = robot.Team.teamColor;
+                captureIndicatorTimer = 2.0f;
+            }
         }
     }
 }

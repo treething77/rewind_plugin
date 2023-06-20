@@ -1,4 +1,3 @@
-using JetBrains.Annotations;
 using UnityEngine;
 
 namespace aeric.rewind_plugin {
@@ -24,7 +23,7 @@ namespace aeric.rewind_plugin {
             writer.writeColor(_material.color);
         }
 
-        public override void rewindRestoreInterpolated([NotNull] NativeByteArrayReader frameReaderA, [NotNull] NativeByteArrayReader frameReaderB, float frameT) {
+        public override void rewindRestoreInterpolated(NativeByteArrayReader frameReaderA, NativeByteArrayReader frameReaderB, float frameT) {
             var cA = frameReaderA.readColor();
             var cB = frameReaderB.readColor();
 

@@ -12,7 +12,7 @@ namespace aeric.rewind_plugin_demos {
         //inspector references
         public GameObject stackParent;
         public GameObject targetParent;
-        public RewindComponentBase robotCamRewind;
+        public GameObject robotCamRewind;
         public Image rewindBar;
         public RewindPlaybackPreparer playbackPreparer;
 

@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using aeric.rewind_plugin;
 using UnityEngine;
@@ -36,6 +37,10 @@ namespace aeric.rewind_plugin_demos {
             dataPath += "/rewind/Examples/assets/bakes/baked_rewind_data";
 
             _camera.transform.LookAt(Vector3.up);
+        }
+
+        private void OnDestroy() {
+            _rewindStorage.Dispose();
         }
 
         private void Update() {

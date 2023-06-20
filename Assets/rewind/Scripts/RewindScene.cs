@@ -5,10 +5,14 @@ namespace aeric.rewind_plugin {
     public class RewindScene {
         public List<IRewindHandler> RewindHandlers { get; } = new();
 
-        public void addRewindObject(IRewindHandler rewindHandler) {
+        public void addRewindHandler(IRewindHandler rewindHandler) {
             RewindHandlers.Add(rewindHandler);
         }
-
+        
+        public void addRewindObject(GameObject rewindObject) {
+            foreach (var c in rewindObject.GetComponents<IRewindHandler>()) addRewindHandler(c);
+        }
+        
         /// <summary>
         ///     Ensure that the ID of this handler doesn't conflict with anything already in the scene.
         /// </summary>
@@ -18,7 +22,7 @@ namespace aeric.rewind_plugin {
         }
 
         public void ensureUniqueIDForAllChildren(GameObject parentObj) {
-            foreach (var c in parentObj.GetComponentsInChildren<IRewindHandler>()) ensureUniqueID(c);
+            foreach (var c in parentObj.GetComponentsInChildren<IRewindHandler>(true)) ensureUniqueID(c);
         }
 
         /// <summary>
@@ -26,7 +30,7 @@ namespace aeric.rewind_plugin {
         /// </summary>
         /// <param name="parentObj"></param>
         public void addAllChildren(GameObject parentObj) {
-            foreach (var c in parentObj.GetComponentsInChildren<IRewindHandler>()) addRewindObject(c);
+            foreach (var c in parentObj.GetComponentsInChildren<IRewindHandler>(true)) addRewindHandler(c);
         }
 
         public IRewindHandler getHandler(uint handlerID) {
