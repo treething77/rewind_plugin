@@ -2,6 +2,9 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace aeric.rewind_plugin {
+    /// <summary>
+    /// Represents a list of IRewindHandlers where each handler in the list has a unique id
+    /// </summary>
     public class RewindScene {
         public List<IRewindHandler> RewindHandlers { get; } = new();
 

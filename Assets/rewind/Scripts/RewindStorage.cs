@@ -5,20 +5,22 @@ using System.Linq;
 using UnityEngine;
 
 namespace aeric.rewind_plugin {
+    //TODO: move interface to its own file
     public interface IRewindDataHandler {
         public void RewindHandlerData(IRewindHandler rewindHandler, NativeByteArrayReader nativeByteArrayReader);
     }
 
-    public enum RewindMappedFrame { }
+    public enum RewindMappedFrame {}
 
     public class RewindStorage {
         private readonly int _maxFrameCount;
+        private readonly NativeByteArray _nativeStorage;
 
-        private readonly NativeByteArrayReader frameReaderA;
-        private readonly NativeByteArrayReader frameReaderB;
-        private readonly NativeByteArray nativeStorage;
+        //frame data readers A and B, read 2 adjacent frames and interpolate the results
+        private readonly NativeByteArrayReader _frameReaderA;
+        private readonly NativeByteArrayReader _frameReaderB;
 
-        private readonly NativeByteArrayWriter storageWriter;
+        private readonly NativeByteArrayWriter _storageWriter;
 
         private readonly int _frameDataOffset;
         private readonly int _handlerDataOffset;
@@ -34,19 +36,14 @@ namespace aeric.rewind_plugin {
             // Storage size calculation:
             // -sum of the required space for all rewind handlers
             // -plus any required space for bookkeeping of rewind handlers
-            // -and then double it to account for certain usage scenarios
-            //   -reverse playback of 1 or more objects
-
-            //Each rewind handler will be assigned 1 portion of this buffer
+            
+            //Each rewind handler will be assigned 1 portion of the buffer
             //that will be a contiguous memory area for that handler to use
             // <|--component A--|--component B --| -- etc >
             //vs an interleaved approach
             // <|A1|B1|A2|B2|A3|B3>
-            //This allows us to easily support:
-            // -storing different objects at different rates
-            // -playback/rewind of individual objects
-            // -playback/rewind of all objects
-
+            // This approach gives us more flexibility (which we dont really take advantage of yet)
+            
             var bufferSizeBytes = 0;
 
             //Allocate the storage for the recording info
@@ -56,8 +53,7 @@ namespace aeric.rewind_plugin {
             bufferSizeBytes += 4;
 
             _frameDataOffset = bufferSizeBytes;
-            //Allocate the storage for the frame info
-            //timestamps
+            //Allocate the storage for the frame timestamps
             bufferSizeBytes += 4 * maxFrameCount;
 
             _handlerDataOffset = bufferSizeBytes;
@@ -88,23 +84,23 @@ namespace aeric.rewind_plugin {
                 bufferSizeBytes += handlerStorageSizeBytes;
             }
 
-            nativeStorage = new NativeByteArray(bufferSizeBytes);
-            storageWriter = new NativeByteArrayWriter(nativeStorage);
+            _nativeStorage = new NativeByteArray(bufferSizeBytes);
+            _storageWriter = new NativeByteArrayWriter(_nativeStorage);
 
-            frameReaderA = new NativeByteArrayReader(nativeStorage);
-            frameReaderB = new NativeByteArrayReader(nativeStorage);
+            _frameReaderA = new NativeByteArrayReader(_nativeStorage);
+            _frameReaderB = new NativeByteArrayReader(_nativeStorage);
 
             //write out the basic storage info
-            storageWriter.writeInt(maxFrameCount);
-            storageWriter.writeInt(rewindScene.RewindHandlers.Count);
+            _storageWriter.writeInt(maxFrameCount);
+            _storageWriter.writeInt(rewindScene.RewindHandlers.Count);
 
             //write out the handler info (ids, offsets)
-            storageWriter.setWriteHead(_handlerDataOffset);
+            _storageWriter.setWriteHead(_handlerDataOffset);
             foreach (var rewindHandler in rewindScene.RewindHandlers) {
                 var handlerStorage = getHandlerStorage(rewindHandler.ID);
 
-                storageWriter.writeUInt(rewindHandler.ID);
-                storageWriter.writeInt(handlerStorage.HandlerStorageOffset);
+                _storageWriter.writeUInt(rewindHandler.ID);
+                _storageWriter.writeInt(handlerStorage.HandlerStorageOffset);
             }
         }
 
@@ -118,11 +114,11 @@ namespace aeric.rewind_plugin {
 
         // Destructor
         ~RewindStorage() {
-            if (!nativeStorage.isDisposed) nativeStorage.Dispose();
+            if (!_nativeStorage.isDisposed) _nativeStorage.Dispose();
         }
 
         public void Dispose() {
-            if (!nativeStorage.isDisposed) nativeStorage.Dispose();
+            if (!_nativeStorage.isDisposed) _nativeStorage.Dispose();
         }
 
         public RewindHandlerStorage getHandlerStorage(uint rewindHandlerID) {
@@ -137,22 +133,22 @@ namespace aeric.rewind_plugin {
             var handlerStorage = getHandlerStorage(rewindHandler.ID);
 
             //set the write head to the correct location
-            storageWriter.setWriteHead(handlerStorage.HandlerStorageOffset + handlerStorage.HandlerFrameSizeBytes * FrameWriteIndex);
+            _storageWriter.setWriteHead(handlerStorage.HandlerStorageOffset + handlerStorage.HandlerFrameSizeBytes * FrameWriteIndex);
 
             //store ID
             //do we really need to store the ID here? we could just use the offset to determine the ID 
-            storageWriter.writeUInt(rewindHandler.ID);
+            _storageWriter.writeUInt(rewindHandler.ID);
 
-            rewindHandler.rewindStore(storageWriter);
+            rewindHandler.rewindStore(_storageWriter);
         }
 
         public void writeFrameStart(float frameTimeRelativeToStart) {
             // write frame time
             var currentFrameTimeOffset = _frameDataOffset + 4 * FrameWriteIndex;
-            storageWriter.setWriteHead(currentFrameTimeOffset);
+            _storageWriter.setWriteHead(currentFrameTimeOffset);
 
             //frame time is the current time? time from start of recording?
-            storageWriter.writeFloat(frameTimeRelativeToStart);
+            _storageWriter.writeFloat(frameTimeRelativeToStart);
         }
 
         public void writeFrameEnd() {
@@ -182,10 +178,10 @@ namespace aeric.rewind_plugin {
             var frameB = 0;
             float frameT = 0;
 
-            frameReaderA.setReadHead(_frameDataOffset);
+            _frameReaderA.setReadHead(_frameDataOffset);
 
             unsafe {
-                var pTimes = frameReaderA.getReadHeadDataPtr<float>();
+                var pTimes = _frameReaderA.getReadHeadDataPtr<float>();
                 //Have to handle the continuous recording case
                 //One way to do that would be to remap the indices
 
@@ -239,9 +235,6 @@ namespace aeric.rewind_plugin {
         /// <param name="frameIndex"></param>
         /// <returns></returns>
         private RewindMappedFrame remapIndex(int frameIndex) {
-            //is buffer full yet?
-            //  if (rewindFramesCount < _maxFrameCount) return (RewindMappedFrame)frameIndex;
-
             var mappedFrameIndex = (FrameReadIndex + frameIndex) % _maxFrameCount;
             return (RewindMappedFrame)mappedFrameIndex;
         }
@@ -253,11 +246,11 @@ namespace aeric.rewind_plugin {
             var frameIndexB = (int)frameB;
 
             //set the read head to the correct location
-            frameReaderA.setReadHead(handlerStorage.HandlerStorageOffset + handlerStorage.HandlerFrameSizeBytes * frameIndexA);
-            frameReaderB.setReadHead(handlerStorage.HandlerStorageOffset + handlerStorage.HandlerFrameSizeBytes * frameIndexB);
+            _frameReaderA.setReadHead(handlerStorage.HandlerStorageOffset + handlerStorage.HandlerFrameSizeBytes * frameIndexA);
+            _frameReaderB.setReadHead(handlerStorage.HandlerStorageOffset + handlerStorage.HandlerFrameSizeBytes * frameIndexB);
 
-            var handlerIDA = frameReaderA.readUInt();
-            var handlerIDB = frameReaderB.readUInt();
+            var handlerIDA = _frameReaderA.readUInt();
+            var handlerIDB = _frameReaderB.readUInt();
 
             //sanity check
             Debug.Assert(handlerIDA == handlerIDB);
@@ -266,24 +259,66 @@ namespace aeric.rewind_plugin {
             rewindHandler.preRestore();
 
             //read the data from the 2 frames
-            rewindHandler.rewindRestoreInterpolated(frameReaderA, frameReaderB, frameT);
+            rewindHandler.rewindRestoreInterpolated(_frameReaderA, _frameReaderB, frameT);
 
             rewindHandler.postRestore();
         }
-
-        [Serializable]
-        public class RewindStorageData_Frame {
-            public RewindStorageData_Frame(float ft) {
-                frameTime = ft;
+        
+        
+        public float getTime(int timeFrameIndex) {
+            unsafe {
+                _frameReaderA.setReadHead(_frameDataOffset);
+                var pTimes = _frameReaderA.getReadHeadDataPtr<float>();
+                var mappedTimeIndex = remapIndex(timeFrameIndex);
+                return pTimes[(int)mappedTimeIndex];
             }
+        }
 
-            public float frameTime;
+        public void rewindFrames(int frameCountToRewind) {
+            frameCountToRewind = Mathf.Min(frameCountToRewind, RecordedFrameCount);
+
+            Debug.Log($"Rewinding {frameCountToRewind} frames");
+
+            //the READ head does not move (start of valid data)
+            //the WRITE head is implicit so moves when we set frame count
+            RecordedFrameCount -= frameCountToRewind;
+            if (RecordedFrameCount < 0) RecordedFrameCount = 0;
         }
         
+        public float getFrameTime(int unmappedFrameIndex) {
+            unsafe {
+                _frameReaderA.setReadHead(_frameDataOffset);
+                var pTimes = _frameReaderA.getReadHeadDataPtr<float>();
+                return pTimes[unmappedFrameIndex];
+            }
+        }
+
+        public Vector3 getFramePosition(int unmappedFrameIndex, IRewindHandler rewindHandler) {
+            var handlerStorage = getHandlerStorage(rewindHandler.ID);
+
+            //set the read head to the correct location
+            _frameReaderA.setReadHead(handlerStorage.HandlerStorageOffset + handlerStorage.HandlerFrameSizeBytes * unmappedFrameIndex);
+            var handlerIDA = _frameReaderA.readUInt();
+
+            //assume the handler is RewindTransform and read the position
+            return _frameReaderA.readVector3();
+        }
+
+        public void getUnmappedFrameData(int unmappedFrameIndex, IRewindHandler rewindHandler, IRewindDataHandler dataHandler) {
+            var handlerStorage = getHandlerStorage(rewindHandler.ID);
+
+            RewindMappedFrame frameIndex = remapIndex(unmappedFrameIndex);
+            //set the read head to the correct location
+            _frameReaderA.setReadHead(handlerStorage.HandlerStorageOffset + handlerStorage.HandlerFrameSizeBytes * (int)frameIndex);
+            var handlerIDA = _frameReaderA.readUInt();
+            dataHandler.RewindHandlerData(rewindHandler, _frameReaderA);
+        }
+        
+        //TODO: everything below here move to separate files
         
         [Serializable]
         public class RewindStorageData_Value {
-            public RewindDataPointType valueType; //RewindDataPointType
+            public RewindDataPointType valueType; 
             
             public float f;
             public int i;
@@ -291,12 +326,6 @@ namespace aeric.rewind_plugin {
             public Vector3 v;
             public Quaternion q;
             public Color c;
-            /*      FLOAT,
-                    INT,
-                    BOOL,
-                    VECTOR3,
-                    QUATERNION,
-                    COLOR, */
         }
 
 
@@ -323,25 +352,24 @@ namespace aeric.rewind_plugin {
             storageData.maxFrameCount = _maxFrameCount;
             storageData.recordedFrameCount = RecordedFrameCount;
              
-            frameReaderA.setReadHead(0);
-            frameReaderA.readInt();
-            storageData.handlerCount =  frameReaderA.readInt();
+            _frameReaderA.setReadHead(0);
+            _frameReaderA.readInt();
+            storageData.handlerCount =  _frameReaderA.readInt();
             
             //read head?
             
             //convert the  contents of the NativeArray to json using the schema of each component
 
-            frameReaderA.setReadHead(_frameDataOffset);
+            _frameReaderA.setReadHead(_frameDataOffset);
             //frame data
             storageData.frameTimeData = new float[storageData.recordedFrameCount];
             for (int i = 0; i < storageData.recordedFrameCount; i++) {
-                float frameTime = frameReaderA.readFloat();
+                float frameTime = _frameReaderA.readFloat();
                 storageData.frameTimeData[i] = frameTime;
             }
             
             //handler data
             storageData.handlerData = new RewindStorageData_Handler[storageData.handlerCount * storageData.recordedFrameCount];
-       //     frameReaderA.setReadHead(_handlerDataOffset);
 
             int dataIndex = 0;
             for (int i = 0; i < storageData.handlerCount; i++) {
@@ -352,16 +380,14 @@ namespace aeric.rewind_plugin {
 
                 for (int frame = 0; frame < storageData.recordedFrameCount; frame++) {
                     RewindMappedFrame mappedFrame = remapIndex(frame);
-                    frameReaderA.setReadHead(handlerStorage.HandlerStorageOffset + handlerStorage.HandlerFrameSizeBytes * (int)mappedFrame);
+                    _frameReaderA.setReadHead(handlerStorage.HandlerStorageOffset + handlerStorage.HandlerFrameSizeBytes * (int)mappedFrame);
 
-                    uint id = frameReaderA.readUInt();//id  
+                    uint id = _frameReaderA.readUInt();//id  
                     Debug.Assert(id == handlerID);
                     
                     IRewindHandler handler = _scene.getHandler(handlerID);
                     
                     RewindDataSchema dataSchema = handler.makeDataSchema();
-                    
-                    //_rewindStorage.restoreHandlerInterpolated(rewindHandler, playbackFrames.frameMappedA, playbackFrames.frameMappedB, playbackFrames.frameT);
 
                     RewindStorageData_Handler data = new RewindStorageData_Handler();
                     data.id = handlerID;
@@ -378,22 +404,22 @@ namespace aeric.rewind_plugin {
                             val.valueType = schemaDataPoint._type;
                             switch (val.valueType) {
                             case RewindDataPointType.FLOAT:
-                                val.f = frameReaderA.readFloat();
+                                val.f = _frameReaderA.readFloat();
                                 break;
                             case RewindDataPointType.INT:
-                                val.i = frameReaderA.readInt();
+                                val.i = _frameReaderA.readInt();
                                 break;
                             case RewindDataPointType.COLOR:
-                                val.c = frameReaderA.readColor();
+                                val.c = _frameReaderA.readColor();
                                 break;
                             case RewindDataPointType.BOOL:
-                                val.b = frameReaderA.readBool();
+                                val.b = _frameReaderA.readBool();
                                 break;
                             case RewindDataPointType.VECTOR3:
-                                val.v = frameReaderA.readVector3();
+                                val.v = _frameReaderA.readVector3();
                                 break;
                             case RewindDataPointType.QUATERNION:
-                                val.q = frameReaderA.readQuaternion();
+                                val.q = _frameReaderA.readQuaternion();
                                 break;
                             default:
                                 Debug.LogError($"Type not handled {val.valueType}");
@@ -425,7 +451,7 @@ namespace aeric.rewind_plugin {
                 fileStream.WriteByte(1); //v1
 
                 //write the data
-                var managedArray = nativeStorage.getManagedArray();
+                var managedArray = _nativeStorage.getManagedArray();
                 fileStream.Write(managedArray);
             }
         }
@@ -495,11 +521,11 @@ namespace aeric.rewind_plugin {
             RecordedFrameCount = storageData.recordedFrameCount;
             
             //frame times
-            storageWriter.setWriteHead(_frameDataOffset);
+            _storageWriter.setWriteHead(_frameDataOffset);
 
             for (int i = 0; i < storageData.recordedFrameCount; i++) {
                 float frameTime = storageData.frameTimeData[i];
-                storageWriter.writeFloat(frameTime);
+                _storageWriter.writeFloat(frameTime);
             }
             
             //handler data
@@ -511,32 +537,31 @@ namespace aeric.rewind_plugin {
                 int frameIndex = i % storageData.recordedFrameCount;
 
                 //set the write head to the correct location
-                storageWriter.setWriteHead(handlerStorage.HandlerStorageOffset + handlerStorage.HandlerFrameSizeBytes * frameIndex);
+                _storageWriter.setWriteHead(handlerStorage.HandlerStorageOffset + handlerStorage.HandlerFrameSizeBytes * frameIndex);
 
-                storageWriter.writeUInt(handlerData.id);
+                _storageWriter.writeUInt(handlerData.id);
 
                 //write data
                 for (int v = 0; v < handlerData.values.Length; v++) {
                     RewindStorageData_Value val = handlerData.values[v];
-                  //  storageWriter.writeInt((int) val.valueType);
                     switch (val.valueType) {
                     case RewindDataPointType.FLOAT:
-                        storageWriter.writeFloat(val.f);
+                        _storageWriter.writeFloat(val.f);
                         break;
                     case RewindDataPointType.INT:
-                        storageWriter.writeInt(val.i);
+                        _storageWriter.writeInt(val.i);
                         break;
                     case RewindDataPointType.COLOR:
-                        storageWriter.writeColor(val.c);
+                        _storageWriter.writeColor(val.c);
                         break;
                     case RewindDataPointType.BOOL:
-                        storageWriter.writeBool(val.b);
+                        _storageWriter.writeBool(val.b);
                         break;
                     case RewindDataPointType.VECTOR3:
-                        storageWriter.writeVector3(val.v);
+                        _storageWriter.writeVector3(val.v);
                         break;
                     case RewindDataPointType.QUATERNION:
-                        storageWriter.writeQuaternion(val.q);
+                        _storageWriter.writeQuaternion(val.q);
                         break;
                     default:
                         Debug.LogError($"Type not handled {val.valueType}");
@@ -629,70 +654,19 @@ namespace aeric.rewind_plugin {
                 var version = fileStream.ReadByte();
 
                 //read the data
-                var managedArray = nativeStorage.getManagedArray();
+                var managedArray = _nativeStorage.getManagedArray();
                 var bytesRead = fileStream.Read(managedArray);
                 Debug.Log($"Read {bytesRead} bytes from file");
 
                 //copy back into native storage
-                nativeStorage.setManagedArray(managedArray);
+                _nativeStorage.setManagedArray(managedArray);
             }
 
             //read the frame count
-            frameReaderA.setReadHead(0);
-            RecordedFrameCount = frameReaderA.readInt();
+            _frameReaderA.setReadHead(0);
+            RecordedFrameCount = _frameReaderA.readInt();
         }
 
-        public float getTime(int timeFrameIndex) {
-            unsafe {
-                frameReaderA.setReadHead(_frameDataOffset);
-                var pTimes = frameReaderA.getReadHeadDataPtr<float>();
-                var mappedTimeIndex = remapIndex(timeFrameIndex);
-                return pTimes[(int)mappedTimeIndex];
-            }
-        }
-
-        public void rewindFrames(int frameCountToRewind) {
-            frameCountToRewind = Mathf.Min(frameCountToRewind, RecordedFrameCount);
-
-            Debug.Log($"Rewinding {frameCountToRewind} frames");
-
-            //the READ head does not move (start of valid data)
-            //the WRITE head is implicit so moves when we set frame count
-            RecordedFrameCount -= frameCountToRewind;
-            if (RecordedFrameCount < 0) RecordedFrameCount = 0;
-
-            //rewindFrameWriteIndex -= frameCountToRewind;
-            //if (rewindFrameWriteIndex < 0) rewindFrameWriteIndex += _maxFrameCount;
-        }
-        
-        public float getFrameTime(int unmappedFrameIndex) {
-            unsafe {
-                frameReaderA.setReadHead(_frameDataOffset);
-                var pTimes = frameReaderA.getReadHeadDataPtr<float>();
-                return pTimes[unmappedFrameIndex];
-            }
-        }
-
-        public Vector3 getFramePosition(int unmappedFrameIndex, IRewindHandler rewindHandler) {
-            var handlerStorage = getHandlerStorage(rewindHandler.ID);
-
-            //set the read head to the correct location
-            frameReaderA.setReadHead(handlerStorage.HandlerStorageOffset + handlerStorage.HandlerFrameSizeBytes * unmappedFrameIndex);
-            var handlerIDA = frameReaderA.readUInt();
-
-            //assume the handler is RewindTransform and read the position
-            return frameReaderA.readVector3();
-        }
-
-        public void getUnmappedFrameData(int unmappedFrameIndex, IRewindHandler rewindHandler, IRewindDataHandler dataHandler) {
-            var handlerStorage = getHandlerStorage(rewindHandler.ID);
-
-            RewindMappedFrame frameIndex = remapIndex(unmappedFrameIndex);
-            //set the read head to the correct location
-            frameReaderA.setReadHead(handlerStorage.HandlerStorageOffset + handlerStorage.HandlerFrameSizeBytes * (int)frameIndex);
-            var handlerIDA = frameReaderA.readUInt();
-            dataHandler.RewindHandlerData(rewindHandler, frameReaderA);
-        }
 
     }
 }

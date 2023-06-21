@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace aeric.rewind_plugin {
     /// <summary>
-    ///     This is a basic implementation of a recorder that records at a specified framerate for
+    ///     Records frame data at a specified framerate for
     ///     all objects in the RewindScene.
     /// </summary>
     public class RewindRecorder {
@@ -12,7 +12,6 @@ namespace aeric.rewind_plugin {
         private readonly RewindStorage _rewindStorage;
         private float _lastFrameWriteTime;
 
-        //private float timeSinceFrameRecorded = 0.0f;
         private float _recordingTime;
 
         public float RecordingTime => _recordingTime;
@@ -43,9 +42,6 @@ namespace aeric.rewind_plugin {
                     if (timeSinceFrameRecorded >= recordTimeInterval) recordSnapshot = true;
                 }
             }
-
-            //stop if we run out of storage
-
             if (recordSnapshot) recordFrame();
         }
 
@@ -54,31 +50,16 @@ namespace aeric.rewind_plugin {
         }
 
         public void recordFrame() {
-            //TODO: write the timestamp of the frame? or will that go into individual component data frames?
-            //   after all the goal is we don't have to update all components every frame, and otherwise how 
-            //   do we know which ones were updated when for the replay?
-            // For now just worry about the basic case. Other cases will maybe require custom recorders.
-            //  float currentRelativeTime = Time.time - _recordingStartTime;
             _rewindStorage.writeFrameStart(_recordingTime);
             _lastFrameWriteTime = _recordingTime;
 
-            //foreach object in scene
             foreach (var rewindHandler in _rewindScene.RewindHandlers)
-                //when we create the storage, allocate a section of it for each handler
-                //then each handler writes into that
-                //dont store storage details IN the handler, because then that limits us to 1
-                //scene per handler. Can't then have handlers in multiple scenes.
-                //the details of where the handler writes to is stored in the storage itself
-                //the storage needs to store a map of ID->storage location
-                //the storage location will then store the array of frame data
-                //write the data to the rewind storage
                 _rewindStorage.writeHandlerFrame(rewindHandler);
 
             _rewindStorage.writeFrameEnd();
         }
 
         public void startRecording() {
-            //_recordingStartTime = e;
             foreach (var rewindHandler in _rewindScene.RewindHandlers) {
                 rewindHandler.startRecording();
             }

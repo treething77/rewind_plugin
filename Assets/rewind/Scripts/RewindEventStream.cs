@@ -1,6 +1,11 @@
 using System.Collections.Generic;
 
 namespace aeric.rewind_plugin {
+    /// <summary>
+    /// A list of events each with an associated time. We have logic to find the events within a time range
+    /// for playback.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
     public class RewindEventStream<T> where T: struct {
         public RewindEventStream(int maxEvents) {
             eventList = new List<T>(maxEvents);
