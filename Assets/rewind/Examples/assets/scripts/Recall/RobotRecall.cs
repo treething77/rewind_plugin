@@ -4,7 +4,8 @@ using UnityEngine;
 
 namespace aeric.rewind_plugin_demos {
     /// <summary>
-    /// Handles the player motion and controls in the recall demo
+    /// Handles the player motion and controls in the recall demo. There are some
+    /// complications in this to handle smooth root motion on moving platforms.
     /// </summary>
     public class RobotRecall : MonoBehaviour {
         //animation state constants
@@ -49,10 +50,13 @@ namespace aeric.rewind_plugin_demos {
             _controller = GetComponent<CharacterController>();
         }
 
-        private bool scanningEnabled;
-        private bool rewinding;
-        private float scanT;
-        private float ctimer;
+        private bool _scanningEnabled;
+        private bool _rewinding;
+        private float _scanT;
+        
+        //If we dont move for this period we disable the CharacterController
+        //this is to make the movement stable when on platforms
+        private float _controllerEnableTimer;
 
         private void Update() {
             var keyFwd = Input.GetKey(KeyCode.W);
@@ -64,7 +68,7 @@ namespace aeric.rewind_plugin_demos {
             var keyQ = Input.GetKey(KeyCode.Q);
 
             if (keyScanningToggle) {
-                scanningEnabled = !scanningEnabled;
+                _scanningEnabled = !_scanningEnabled;
                 
                 //If entering scan mode set all platforms to scanning
                 //so they stop moving and recording move data
@@ -73,11 +77,11 @@ namespace aeric.rewind_plugin_demos {
                 }
             }
 
-            scanningUI.SetScanningState(scanningEnabled, highlightedPlatform, rewinding);
+            scanningUI.SetScanningState(_scanningEnabled, highlightedPlatform, _rewinding);
 
             if (keyFwd) {
                 _controller.enabled = true;
-                ctimer = 0.5f;
+                _controllerEnableTimer = 0.5f;
 
                 playerSpeed += Time.deltaTime * 3.0f;
                 playerSpeed = Mathf.Min(playerSpeed, 1.0f);
@@ -86,7 +90,7 @@ namespace aeric.rewind_plugin_demos {
                 playerSpeed -= Time.deltaTime * 2.0f;
             }
 
-            if (scanningEnabled) {
+            if (_scanningEnabled) {
                 //scan for platforms
                 RecallPlatform closestPlatform = null;
                 float closestDP = -1.0f;
@@ -112,23 +116,23 @@ namespace aeric.rewind_plugin_demos {
             }
 
             if (keyQ && highlightedPlatform != null) {
-                if (!rewinding) {
-                    rewinding = true;
+                if (!_rewinding) {
+                    _rewinding = true;
                     highlightedPlatform.startRewinding();
                 }
             }
             else {
-                if (rewinding) {
+                if (_rewinding) {
                     if (highlightedPlatform != null)
                         highlightedPlatform.stopRewinding();
                 }
 
                 foreach (var platform in platforms) {
-                    if (scanningEnabled) platform.changeState( RecallPlatform.PlatformState.Scanning );
+                    if (_scanningEnabled) platform.changeState( RecallPlatform.PlatformState.Scanning );
                     else platform.changeState( RecallPlatform.PlatformState.Recording );
                 }
                 
-                rewinding = false;
+                _rewinding = false;
             }
 
             playerSpeed = Mathf.Clamp01(playerSpeed);
@@ -139,7 +143,7 @@ namespace aeric.rewind_plugin_demos {
             if (keyRight) _transform.Rotate(Vector3.up, 100.0f * Time.deltaTime);
             
             RaycastHit[] hits = Physics.RaycastAll(transform.position + Vector3.up * 2.0f, -Vector3.up, 4.0f);
-            ctimer -= Time.deltaTime;
+            _controllerEnableTimer -= Time.deltaTime;
             foreach (var hit in hits) {
                 if (_controller.isGrounded) {
                     //You should use tags/layers for this. I'm trying not to do that since this will be imported into 
@@ -148,7 +152,7 @@ namespace aeric.rewind_plugin_demos {
                         _platformObject = hit.collider.gameObject;
                         this._transform.SetParent(_platformObject.transform, true);
                         Camera.main.transform.SetParent(_platformObject.transform, true);
-                        if (ctimer < 0.0f)
+                        if (_controllerEnableTimer < 0.0f)
                             _controller.enabled = false;
                     }
                 }
@@ -160,8 +164,8 @@ namespace aeric.rewind_plugin_demos {
                 Camera.main.transform.SetParent(null, true);
             }
 
-            scanT += Time.deltaTime;
-            float scanPulseT = Mathf.PingPong(scanT, 1.0f);
+            _scanT += Time.deltaTime;
+            float scanPulseT = Mathf.PingPong(_scanT, 1.0f);
 
             Color scanColor = Color.Lerp(Color.blue, Color.cyan, scanPulseT);
             scanningMaterial.color = scanColor;
@@ -172,7 +176,7 @@ namespace aeric.rewind_plugin_demos {
                 if (highlightedPlatform != null) {
                     //If we are scanning go back to scan mode
                     //otherwise go to recording
-                    if (scanningEnabled)
+                    if (_scanningEnabled)
                         highlightedPlatform.changeState( RecallPlatform.PlatformState.Scanning );
                     else
                         highlightedPlatform.changeState( RecallPlatform.PlatformState.Recording );
@@ -203,14 +207,13 @@ namespace aeric.rewind_plugin_demos {
         }
 
         private void OnAnimatorMove() {
+            //Called from Unity root motion system
             var animMove = _animator.deltaPosition;
             animMove.y = 0.0f;//ignore vertical motion from the animation
 
             Vector3 platformMove = Vector3.zero;
             if (_platformObject != null) {
                 RecallPlatform platform = _platformObject.GetComponent<RecallPlatform>();
-                
-                //TODO: accumulate this and apply in FixedUpdate?
                 platformMove = platform.move;
             }
 
@@ -226,12 +229,13 @@ namespace aeric.rewind_plugin_demos {
 
                 var moveAmount = actualMove - gravity * Time.deltaTime;
                 
+                //Jumping
                 if (Input.GetKeyDown(KeyCode.Space) && groundedPlayer) {
                     _animator.SetTrigger(Jump);
                     jumpVelocity = actualMove + Vector3.up*0.3f;
                     moveState = MoveState.Jumping;
                     _controller.enabled = true;
-                    ctimer = 0.5f;
+                    _controllerEnableTimer = 0.5f;
                 }
                 
                 _controller.Move(moveAmount);

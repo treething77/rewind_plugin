@@ -4,8 +4,6 @@ using UnityEngine;
 namespace aeric.rewind_plugin_demos {
     /// <summary>
     /// Handles the AI and player behavior/controls in the Rewind and Replay demos
-    ///
-    /// TODO: split into Robot and PlayerRobot
     /// </summary>
     public class Robot : RewindCustomMonoBehaviourAttributes {
         private static readonly int Blend = Animator.StringToHash("Blend");
@@ -47,6 +45,7 @@ namespace aeric.rewind_plugin_demos {
         }
 
         public void Step(int i) {
+            //Play footstep sounds for the player
             if (playerControlled) {
                 float vol = 0.7f;
                 if (i == 1) vol = 0.4f;
@@ -65,65 +64,73 @@ namespace aeric.rewind_plugin_demos {
         // Update is called once per frame
         private void Update() {
             if (playerControlled) {
-                var keyFwd = Input.GetKey(KeyCode.W);
-                var keyLeft = Input.GetKey(KeyCode.A);
-                var keyRight = Input.GetKey(KeyCode.D);
-
-                if (keyFwd) {
-                    _playerSpeed += Time.deltaTime * 4.0f;
-                    _playerSpeed = Mathf.Min(_playerSpeed, 1.0f);
-                }
-                else {
-                    _playerSpeed -= Time.deltaTime * 2.0f;
-                }
-
-                _playerSpeed = Mathf.Clamp01(_playerSpeed);
-
-                if (playerCamera != null) {
-                    float targetFOV = Mathf.Lerp(55.0f, 65.0f, _playerSpeed);
-                    playerCamera.fieldOfView = Mathf.Lerp(playerCamera.fieldOfView, targetFOV, Time.deltaTime * 2.0f);
-                }
-
-                _animator.SetFloat(Blend, _playerSpeed);
-
-                if (keyLeft) _transform.Rotate(Vector3.up, -100.0f * Time.deltaTime);
-                if (keyRight) _transform.Rotate(Vector3.up, 100.0f * Time.deltaTime);
+                UpdatePlayerControls();
             }
             else {
-                //pick a target to move towards
-                if (moveTargetIndex == -1)
-                    ChooseTarget();
-
-                var position = moveTargetPt;
-                var lookAt = position;
-                var position1 = _transform.position;
-                lookAt.y = position1.y;
-
-                var ogRot = _transform.rotation;
-                _transform.LookAt(lookAt);
-                _transform.rotation = Quaternion.Lerp(ogRot, _transform.rotation, 0.1f);
-
-                var moveT = (position1 - moveStartPt).magnitude / (position - moveStartPt).magnitude;
-                var moveBlend = Mathf.Lerp(moveBlendStart, moveBlendEnd, moveT);
-                _animator.SetFloat(Blend, moveBlend);
+                UpdateAIControls();
             }
         }
 
+        private void UpdatePlayerControls() {
+            var keyFwd = Input.GetKey(KeyCode.W);
+            var keyLeft = Input.GetKey(KeyCode.A);
+            var keyRight = Input.GetKey(KeyCode.D);
+
+            if (keyFwd) {
+                _playerSpeed += Time.deltaTime * 4.0f;
+                _playerSpeed = Mathf.Min(_playerSpeed, 1.0f);
+            }
+            else {
+                _playerSpeed -= Time.deltaTime * 2.0f;
+            }
+
+            _playerSpeed = Mathf.Clamp01(_playerSpeed);
+
+            if (playerCamera != null) {
+                float targetFOV = Mathf.Lerp(55.0f, 65.0f, _playerSpeed);
+                playerCamera.fieldOfView = Mathf.Lerp(playerCamera.fieldOfView, targetFOV, Time.deltaTime * 2.0f);
+            }
+
+            _animator.SetFloat(Blend, _playerSpeed);
+
+            if (keyLeft) _transform.Rotate(Vector3.up, -100.0f * Time.deltaTime);
+            if (keyRight) _transform.Rotate(Vector3.up, 100.0f * Time.deltaTime);
+        }
+
+        private void UpdateAIControls() {
+            //pick a target to move towards
+            if (moveTargetIndex == -1)
+                ChooseTarget();
+
+            var position = moveTargetPt;
+            var lookAt = position;
+            var position1 = _transform.position;
+            lookAt.y = position1.y;
+
+            var ogRot = _transform.rotation;
+            _transform.LookAt(lookAt);
+            _transform.rotation = Quaternion.Lerp(ogRot, _transform.rotation, 0.1f);
+
+            var moveT = (position1 - moveStartPt).magnitude / (position - moveStartPt).magnitude;
+            var moveBlend = Mathf.Lerp(moveBlendStart, moveBlendEnd, moveT);
+            _animator.SetFloat(Blend, moveBlend);
+        }
+
         private void OnAnimatorMove() {
+            //Called from Unity root motion system
             var gravity = Vector3.up * 5.0f;
             var animMove = _animator.deltaPosition;
             animMove.y = 0.0f;//ignore vertical motion from animation
 
             //move forward
-            {
-                var moveDirection = _transform.forward;
-                moveDirection.y = 0.0f;
+            var moveDirection = _transform.forward;
+            moveDirection.y = 0.0f;
 
-                var actualMove = moveDirection.normalized * animMove.magnitude;
+            var actualMove = moveDirection.normalized * animMove.magnitude;
 
-                var moveAmount = actualMove - gravity * Time.deltaTime;
-                _controller.Move(moveAmount);
-            }
+            //Move the character controller to match the animation movement
+            var moveAmount = actualMove - gravity * Time.deltaTime;
+            _controller.Move(moveAmount);
 
             if (playerControlled) {
                 _level.CaptureTargetsWithinRange(_transform.position, 1.5f, this);
