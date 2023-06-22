@@ -8,7 +8,7 @@ using Bloom = UnityEngine.Rendering.Universal.Bloom;
 #endif
 
 namespace aeric.rewind_plugin_demos {
-    public class SportsRewind : MonoBehaviour {
+    public class RewindDemo : MonoBehaviour {
         //inspector references
         public GameObject stackParent;
         public GameObject targetParent;

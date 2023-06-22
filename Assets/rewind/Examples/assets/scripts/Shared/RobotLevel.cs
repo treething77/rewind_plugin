@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 
 namespace aeric.rewind_plugin_demos {
+    //Used in the Replay and Rewind demos
     public class RobotLevel : MonoBehaviour {
         public static RobotLevel _instance;
 
@@ -78,10 +79,10 @@ namespace aeric.rewind_plugin_demos {
             if (moveTargetIndex < 0 || moveTargetIndex >= _targets.Count) return;
             _targets[moveTargetIndex].Capture(robot);
 
-            if (SportsDemo._instance != null) {
+            if (ReplayDemo._instance != null) {
                 //Record the capture event so we can query the list during replays
-                CaptureEvent capEvent = new CaptureEvent(moveTargetIndex, robot, SportsDemo._instance._recorder.RecordingTime);
-                SportsDemo._instance.AddCaptureEvent(capEvent);
+                CaptureEvent capEvent = new CaptureEvent(moveTargetIndex, robot, ReplayDemo._instance._recorder.RecordingTime);
+                ReplayDemo._instance.AddCaptureEvent(capEvent);
             }
         }
 

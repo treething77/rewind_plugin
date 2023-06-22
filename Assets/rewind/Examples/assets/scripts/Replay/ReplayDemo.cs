@@ -20,8 +20,8 @@ namespace aeric.rewind_plugin_demos {
         public float CaptureTime => _capturetime;
     }
     
-    public class SportsDemo : MonoBehaviour {
-        public static SportsDemo _instance;
+    public class ReplayDemo : MonoBehaviour {
+        public static ReplayDemo _instance;
 
         
         //inspector references

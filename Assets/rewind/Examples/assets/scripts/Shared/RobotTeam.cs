@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace aeric.rewind_plugin_demos {
+    //used in the Rewind and Replay demos
     public class RobotTeam : MonoBehaviour {
         public List<Robot> _robots;
 

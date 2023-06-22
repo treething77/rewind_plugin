@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace aeric.rewind_plugin_demos {
     /// <summary>
-    /// Handles the AI and player behavior/controls in the rewind/replay demos
+    /// Handles the AI and player behavior/controls in the Rewind and Replay demos
     ///
     /// TODO: split into Robot and PlayerRobot
     /// </summary>
