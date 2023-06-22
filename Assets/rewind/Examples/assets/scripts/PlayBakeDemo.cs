@@ -6,7 +6,7 @@ using UnityEngine;
 namespace aeric.rewind_plugin_demos {
     /// <summary>
     /// Handles the playback of the baked state data.
-    /// Spins the camera around and plays with timeScale for "cinematic" effect
+    /// Spins the camera around and plays with timeScale for cinematic effect
     /// </summary>
     public class PlayBakeDemo : MonoBehaviour {
         public GameObject stackParent;

@@ -2,7 +2,7 @@ using aeric.rewind_plugin;
 using UnityEngine;
 
 namespace aeric.rewind_plugin_demos {
-    //Maybe separate for rewind/replay demos
+    //TODO: separate for rewind/replay demos
     public class MoveTarget : RewindCustomMonoBehaviourAttributes {
         [Rewind(Lerp = false)] public int CapturedTeamIndex;
         [Rewind] public float captureIndicatorTimer;

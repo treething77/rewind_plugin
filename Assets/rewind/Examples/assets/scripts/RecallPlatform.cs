@@ -12,9 +12,13 @@ namespace aeric.rewind_plugin_demos {
 
         [HideInInspector] public Vector3 move;
 
+        //Value that moves from 0-2 and wraps, controls all movement of the platform
+        //By rewinding this value we rewind the motion of the platform
         [Rewind] private float moveT;
 
         public AnimationCurve moveCurve;
+        public LineRenderer lineRenderer;
+        public TrailRenderer trailRenderer;
 
         private Transform _transform;
 
@@ -30,8 +34,6 @@ namespace aeric.rewind_plugin_demos {
         private int pathIndex;
         private int pathLength;
 
-        public LineRenderer lineRenderer;
-        public TrailRenderer trailRenderer;
 
         private new void Awake() {
             _transform = transform;
@@ -118,12 +120,15 @@ namespace aeric.rewind_plugin_demos {
         private void Update() {
             while (moveT >= 2.0f) moveT -= 2.0f;
 
+            //We feed the moveT linear value into a curve to get better movement
             float lerpT = moveCurve.Evaluate(moveT);
 
             //ping pong between the two points
             Vector3 newPos = Vector3.Lerp(startPt.position, endPt.position, lerpT);
 
+            //Store the amount we are moving this frame. The character uses this to stay attached to the platform
             move = newPos - _transform.position;
+            
             _transform.position = newPos;
 
             if (_platformState == PlatformState.Recording) {
@@ -138,12 +143,11 @@ namespace aeric.rewind_plugin_demos {
                 newPlaybackTime = currentTime - Time.deltaTime * 1.0f;
                 if (newPlaybackTime < startTime) newPlaybackTime = startTime;
 
-                {
-                    _playback.SetPlaybackTime(newPlaybackTime);
-                    _playback.restoreFrameAtCurrentTime();
-                }
+                _playback.SetPlaybackTime(newPlaybackTime);
+                _playback.restoreFrameAtCurrentTime();
 
                 //Get all the points in the platforms rewind path
+                //TODO: encapsulate this
                 {
                     pathIndex = 0;
                     var frameInfo = _rewindStorage.findPlaybackFrames(newPlaybackTime);
@@ -162,25 +166,21 @@ namespace aeric.rewind_plugin_demos {
 
                     lineRenderer.positionCount = pathLength;
                     lineRenderer.SetPositions(rewindPath);
-                    //   trailRenderer.positionCount = pathLength;
                     trailRenderer.SetPositions(rewindPath);
                 }
 
-                var endTime = _playback.endTime;
                 var fillTime = currentTime - startTime;
-                //    rewindBar.fillAmount = fillTime / 5.0f;
 
                 if (fillTime < 0.1f) {
                     stopRewinding();
                 }
             }
-
         }
 
         public void RewindHandlerData(IRewindHandler rewindHandler, NativeByteArrayReader nativeByteArrayReader) {
             if (ReferenceEquals(rewindHandler, this)) {
-                float moveT = nativeByteArrayReader.readFloat();
-                float lerpT = moveCurve.Evaluate(moveT);
+                float t = nativeByteArrayReader.readFloat();
+                float lerpT = moveCurve.Evaluate(t);
 
                 //ping pong between the two points
                 Vector3 newPos = Vector3.Lerp(startPt.position, endPt.position, lerpT);

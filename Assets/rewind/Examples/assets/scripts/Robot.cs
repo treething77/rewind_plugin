@@ -4,6 +4,8 @@ using UnityEngine;
 namespace aeric.rewind_plugin_demos {
     /// <summary>
     /// Handles the AI and player behavior/controls in the rewind/replay demos
+    ///
+    /// TODO: split into Robot and PlayerRobot
     /// </summary>
     public class Robot : RewindCustomMonoBehaviourAttributes {
         private static readonly int Blend = Animator.StringToHash("Blend");
