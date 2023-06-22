@@ -4,9 +4,7 @@ namespace aeric.rewind_plugin {
     public class RewindCamera : RewindComponentBase {
         private Camera _camera;
 
-       public override RewindDataSchema makeDataSchema() {
-           return new RewindDataSchema().addFloat(5);
-       }
+       public override RewindDataSchema makeDataSchema() => new RewindDataSchema().addFloat(5);
 
        public override uint HandlerTypeID => 8;
 

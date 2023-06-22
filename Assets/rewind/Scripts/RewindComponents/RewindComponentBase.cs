@@ -2,7 +2,6 @@ using UnityEngine;
 
 namespace aeric.rewind_plugin {
     public abstract class RewindComponentBase : MonoBehaviour, IRewindHandler {
-        //[HideInInspector] 
         [SerializeField] private uint id;
 
         public virtual bool ShouldStayEnabledDuringReplay => false;
@@ -14,8 +13,7 @@ namespace aeric.rewind_plugin {
 
         //Required to be implemented by sub-classes
         public abstract void rewindStore(NativeByteArrayWriter writer);
-
-   //     public abstract int RequiredBufferSizeBytes { get; }
+        
         public abstract RewindDataSchema makeDataSchema();
 
         public abstract uint HandlerTypeID { get; }

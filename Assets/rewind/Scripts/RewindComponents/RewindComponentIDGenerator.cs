@@ -8,11 +8,9 @@ namespace aeric.rewind_plugin {
         public static uint generateID(IRewindHandler rewindHandler) {
             if (_idRandom == null) _idRandom = new Random();
 
+            //Pack a random value and the handler type into the id
             var id = (uint)_idRandom.Next(0, 2 << 24) << 8;
-
             id |= rewindHandler.HandlerTypeID;
-            Debug.Log($"Generated id {id}");
-
             return id;
         }
     }

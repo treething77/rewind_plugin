@@ -4,7 +4,7 @@ using Unity.Collections.LowLevel.Unsafe;
 namespace aeric.rewind_plugin {
     public class NativeByteArray {
         private NativeArray<byte> _nativeBuffer;
-        public bool isDisposed;
+        public bool _isDisposed;
 
         public NativeByteArray(int bufferSizeBytes) {
             _nativeBuffer = new NativeArray<byte>(bufferSizeBytes, Allocator.Persistent);
@@ -14,7 +14,7 @@ namespace aeric.rewind_plugin {
 
         public void Dispose() {
             _nativeBuffer.Dispose();
-            isDisposed = true;
+            _isDisposed = true;
         }
 
         public unsafe void* GetUnsafeWritePtr() {

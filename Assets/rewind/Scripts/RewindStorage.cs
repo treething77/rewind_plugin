@@ -114,11 +114,11 @@ namespace aeric.rewind_plugin {
 
         // Destructor
         ~RewindStorage() {
-            if (!_nativeStorage.isDisposed) _nativeStorage.Dispose();
+            if (!_nativeStorage._isDisposed) _nativeStorage.Dispose();
         }
 
         public void Dispose() {
-            if (!_nativeStorage.isDisposed) _nativeStorage.Dispose();
+            if (!_nativeStorage._isDisposed) _nativeStorage.Dispose();
         }
 
         public RewindHandlerStorage getHandlerStorage(uint rewindHandlerID) {

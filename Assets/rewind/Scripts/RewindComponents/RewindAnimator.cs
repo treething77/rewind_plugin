@@ -6,20 +6,20 @@ namespace aeric.rewind_plugin {
 
         private AnimationStoredState _animStateA;
         private AnimationStoredState _animStateB;
-        private int animParamCount;
-        private AnimatorControllerParameter[] animParams;
-        private int animStateCount;
+        private int _animParamCount;
+        private AnimatorControllerParameter[] _animParams;
+        private int _animStateCount;
 
         public override RewindDataSchema makeDataSchema() {
             RewindDataSchema schema = new RewindDataSchema();
 
             schema.addInt().addInt();//state count, param count
             
-            for (int i=0;i<animStateCount;i++)
+            for (int i=0;i<_animStateCount;i++)
                 schema.addInt().addFloat();//hash, time
 
-            for (var i = 0; i < animParamCount; i++) {
-                var animParam = animParams[i];
+            for (var i = 0; i < _animParamCount; i++) {
+                var animParam = _animParams[i];
          
                 schema.addInt().addInt();//hash, type
 
@@ -51,25 +51,25 @@ namespace aeric.rewind_plugin {
 
             //Cache the AnimatorControllerParameter objects because the GetParameter calls
             //are actually VERY expensive
-            animParams = new AnimatorControllerParameter[_animator.parameterCount];
+            _animParams = new AnimatorControllerParameter[_animator.parameterCount];
             for (var i = 0; i < _animator.parameterCount; i++)
                 // Get the observed animator parameter info
-                animParams[i] = _animator.GetParameter(i);
+                _animParams[i] = _animator.GetParameter(i);
 
-            animStateCount = _animator.layerCount;
-            animParamCount = _animator.parameterCount;
+            _animStateCount = _animator.layerCount;
+            _animParamCount = _animator.parameterCount;
 
-            _animStateA.stateInfos = new AnimationStateInfo[animStateCount];
-            _animStateB.stateInfos = new AnimationStateInfo[animStateCount];
-            _animStateA.parameterInfos = new AnimationParameterInfo[animParamCount];
-            _animStateB.parameterInfos = new AnimationParameterInfo[animParamCount];
+            _animStateA.stateInfos = new AnimationStateInfo[_animStateCount];
+            _animStateB.stateInfos = new AnimationStateInfo[_animStateCount];
+            _animStateA.parameterInfos = new AnimationParameterInfo[_animParamCount];
+            _animStateB.parameterInfos = new AnimationParameterInfo[_animParamCount];
         }
 
         public override void rewindStore(NativeByteArrayWriter writer) {
-            writer.writeInt(animStateCount);
-            writer.writeInt(animParamCount);
+            writer.writeInt(_animStateCount);
+            writer.writeInt(_animParamCount);
 
-            for (var i = 0; i < animStateCount; i++) {
+            for (var i = 0; i < _animStateCount; i++) {
                 //hash, time
                 var animState = _animator.GetCurrentAnimatorStateInfo(i);
 
@@ -78,9 +78,9 @@ namespace aeric.rewind_plugin {
                 writer.writeFloat(animState.normalizedTime);
             }
 
-            for (var i = 0; i < animParamCount; i++) {
+            for (var i = 0; i < _animParamCount; i++) {
                 //hash, type, value - all 4 bytes
-                var animParam = animParams[i];
+                var animParam = _animParams[i];
                 var paramHash = animParam.nameHash;
                 var paramType = (int)animParam.type;
 

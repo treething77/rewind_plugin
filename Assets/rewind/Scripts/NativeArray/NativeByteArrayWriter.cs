@@ -65,8 +65,6 @@ namespace aeric.rewind_plugin {
 
         public void setWriteHead(int writeOffset) {
             _writeHead = writeOffset;
-
-            //TODO: validate its within the buffer
         }
     }
 }

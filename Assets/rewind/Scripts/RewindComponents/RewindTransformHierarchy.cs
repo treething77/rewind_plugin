@@ -4,31 +4,24 @@ using Unity.Burst;
 #endif
 
 namespace aeric.rewind_plugin {
+    /// <summary>
+    /// Stores and restores all transforms in a hierarchy.
+    /// </summary>
     public class RewindTransformHierarchy : RewindComponentBase {
         private Transform[] _transforms;
 
-    /*    public override int RequiredBufferSizeBytes {
-            get {
-                var transformCount = _transforms.Length;
-                var boneCost = 4 * (3 + 4 + 3);
-                var totalSizeBytes = boneCost * transformCount;
-                return totalSizeBytes;
-            }
+        public override RewindDataSchema makeDataSchema() {
+            var transformCount = _transforms.Length;
+            return new RewindDataSchema().addVector3(transformCount)//position
+                                         .addQuaternion(transformCount)//rotation
+                                         .addVector3(transformCount); //scale
         }
-        */
 
-    public override RewindDataSchema makeDataSchema() {
-        var transformCount = _transforms.Length;
-        return new RewindDataSchema().addVector3(transformCount)//position
-                                     .addQuaternion(transformCount)//rotation
-                                     .addVector3(transformCount); //scale
-    }
-
-    public override uint HandlerTypeID => 2;
+        public override uint HandlerTypeID => 2;
 
         private void Awake() {
             //Get all transforms in the hierarchy
-            _transforms = GetComponentsInChildren<Transform>();
+            _transforms = GetComponentsInChildren<Transform>(true);
         }
 
 #if USE_BURST_FOR_REWIND_COMPONENTS

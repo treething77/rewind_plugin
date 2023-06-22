@@ -3,8 +3,7 @@ using UnityEngine;
 namespace aeric.rewind_plugin {
     public class RewindParticleSystem : RewindComponentBase {
         private ParticleSystem _particles;
-
-        //   public override int RequiredBufferSizeBytes => 4*4 + 4;
+        
         public override RewindDataSchema makeDataSchema() => new RewindDataSchema().addBool(4).addFloat();
 
         public override uint HandlerTypeID => 6;
@@ -18,7 +17,6 @@ namespace aeric.rewind_plugin {
         //Starting state
         private float _startTime;
         private bool _startIsPlaying;
-        private bool _startEmitting;
 
         private bool _prevPlaying = false;
         private float _prevParticlesTime;
@@ -32,10 +30,7 @@ namespace aeric.rewind_plugin {
             //set the duration of the system to match the lifetime of its particles
             //this way we can rewind the system to any point in time
             _startTime = Time.time;
-            
             _startIsPlaying = _particles.isPlaying;
-            _startEmitting = _particles.isEmitting;
-
             _prevPlaying = _startIsPlaying;
         }
         
@@ -73,9 +68,7 @@ namespace aeric.rewind_plugin {
             writer.writeBool(_prevPlaying);
             writer.writeBool(_particles.isEmitting);
             writer.writeBool(systemIsAlive);
-            
-        //    Debug.Log("t : " + _simulationTime);
-            
+
             //the particles.time is not enough to fully re-simulate the particle system because it is clamped
             //at the particles duration
             
@@ -87,7 +80,6 @@ namespace aeric.rewind_plugin {
 
         public override void rewindRestoreInterpolated(NativeByteArrayReader frameReaderA, NativeByteArrayReader frameReaderB, float frameT) {
             /////////////////////////////
-            //TODO: if we dont use any of this data then dont store it
             bool systemIsPlayingA = frameReaderA.readBool();
             bool systemIsPlayingB = frameReaderB.readBool();
             bool prevIsPlayingA = frameReaderA.readBool();
@@ -106,8 +98,6 @@ namespace aeric.rewind_plugin {
             if (systemIsAliveA) {
                 _particles.Simulate(simulationTime, true, true);
                 _particles.Play();
-
-          //      Debug.Log("r : " + _particles.isPlaying);
             }
 
             if (!systemIsAliveA && !systemIsAliveB) {

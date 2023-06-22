@@ -4,7 +4,6 @@ namespace aeric.rewind_plugin {
 
         RewindDataSchema makeDataSchema();
 
-       // int RequiredBufferSizeBytes { get; }
         uint HandlerTypeID { get; }
 
         void startRecording();

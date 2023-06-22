@@ -1,12 +1,13 @@
 using UnityEngine;
 
 namespace aeric.rewind_plugin {
+    /// <summary>
+    /// Stores the enabled state for a GameObject
+    /// </summary>
     public class RewindGameObjectEnabled : RewindComponentBase {
         private GameObject _gameObject;
 
-       public override RewindDataSchema makeDataSchema() {
-           return new RewindDataSchema().addBool();
-       }
+       public override RewindDataSchema makeDataSchema() => new RewindDataSchema().addBool();
 
        public override uint HandlerTypeID => 10;
 

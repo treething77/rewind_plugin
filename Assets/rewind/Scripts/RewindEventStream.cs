@@ -8,25 +8,25 @@ namespace aeric.rewind_plugin {
     /// <typeparam name="T"></typeparam>
     public class RewindEventStream<T> where T: struct {
         public RewindEventStream(int maxEvents) {
-            eventList = new List<T>(maxEvents);
-            timesList = new List<float>(maxEvents);
+            _eventList = new List<T>(maxEvents);
+            _timesList = new List<float>(maxEvents);
         }
 
-        private List<T> eventList;
-        private List<float> timesList;
+        private List<T> _eventList;
+        private List<float> _timesList;
 
         public void addEvent(T anEvent, float time) {
-            eventList.Add(anEvent);
-            timesList.Add(time);
+            _eventList.Add(anEvent);
+            _timesList.Add(time);
         }
 
         public void ClearEvents() {
-            eventList.Clear();
-            timesList.Clear();
+            _eventList.Clear();
+            _timesList.Clear();
         }
 
         public T getEvent(int eventIndex) {
-            return eventList[eventIndex];
+            return _eventList[eventIndex];
         }
         
         //the end index is exclusive
@@ -34,9 +34,9 @@ namespace aeric.rewind_plugin {
             //find the indices for all events where the corresponding time is >=startTime and < endtime 
             int eventIndexStart = -1;
             
-            for (int i = 0; i < timesList.Count; i++) {
-                if (timesList[i] < startTime) continue;
-                if (timesList[i] < endTime) {
+            for (int i = 0; i < _timesList.Count; i++) {
+                if (_timesList[i] < startTime) continue;
+                if (_timesList[i] < endTime) {
                     eventIndexStart = i;
                 }
                 break;
@@ -44,8 +44,8 @@ namespace aeric.rewind_plugin {
 
             int eventIndexEnd = eventIndexStart+1;
             if (eventIndexStart != -1) {
-                for (int i = eventIndexStart; i < timesList.Count; i++) {
-                    if (timesList[i] < endTime) continue;
+                for (int i = eventIndexStart; i < _timesList.Count; i++) {
+                    if (_timesList[i] < endTime) continue;
                     eventIndexEnd = i;
                     break;
                 }

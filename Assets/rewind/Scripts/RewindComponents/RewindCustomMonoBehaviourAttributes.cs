@@ -1,10 +1,10 @@
 using System.Reflection;
-using System.Runtime.InteropServices;
 using UnityEngine;
-#if UNITY_EDITOR
-#endif
 
 namespace aeric.rewind_plugin {
+    /// <summary>
+    /// Stores changes on any fields on this component that use the Rewind attribute.
+    /// </summary>
     public class RewindCustomMonoBehaviourAttributes : RewindComponentBase {
         private bool[] rewindFieldLerp;
         private FieldInfo[] rewindFields;
@@ -58,8 +58,6 @@ namespace aeric.rewind_plugin {
                 else if (rewindField.FieldType == typeof(bool)) writer.writeBool((bool)rewindField.GetValue(this));
             }
         }
-
-     //   public override int RequiredBufferSizeBytes { get; }
 
         public override void rewindRestoreInterpolated(NativeByteArrayReader frameReaderA, NativeByteArrayReader frameReaderB, float frameT) {
             for (var i = 0; i < rewindFields.Length; i++) {

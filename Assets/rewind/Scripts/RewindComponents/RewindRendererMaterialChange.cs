@@ -2,16 +2,16 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace aeric.rewind_plugin {
-    //TODO: require component?
+    /// <summary>
+    /// Stores material changes for a Renderer
+    /// </summary>
     public class RewindRendererMaterialChange : RewindComponentBase {
         
         //does not support baking
         //make a list of material that we've seen and store indices into that list
-        private List<Material> _materials = new List<Material>();
-        
+        private List<Material> _materials = new();
         private Renderer _renderer;
-
-        //   public override int RequiredBufferSizeBytes => 4;
+        
         public override RewindDataSchema makeDataSchema() => new RewindDataSchema().addInt();
 
         public override uint HandlerTypeID => 7;
@@ -36,7 +36,7 @@ namespace aeric.rewind_plugin {
             
             int newMaterialIndex = RewindUtilities.LerpInt(materialIndex1, materialIndex2, frameT);
             if (newMaterialIndex < 0 || newMaterialIndex >= _materials.Count)
-                Debug.LogError("Material index out of bounds!");
+                Debug.LogError("Material index out of bounds.");
             else {
                 Material mat = _materials[newMaterialIndex];
                 if (mat != _renderer.material) {
