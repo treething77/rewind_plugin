@@ -1,4 +1,3 @@
-using UnityEngine;
 using Random = System.Random;
 
 namespace aeric.rewind_plugin {

@@ -6,7 +6,7 @@ namespace aeric.rewind_plugin {
     ///     all objects in the RewindScene.
     /// </summary>
     public class RewindRecorder {
-        private readonly bool _continuous;
+        private readonly bool _loopRecordingWhenFull;
         private readonly int _recordFPS;
         private readonly RewindScene _rewindScene;
         private readonly RewindStorage _rewindStorage;
@@ -16,15 +16,15 @@ namespace aeric.rewind_plugin {
 
         public float RecordingTime => _recordingTime;
         
-        public RewindRecorder(RewindScene rewindScene, RewindStorage rewindStorage, int recordFPS, bool continuousRecording) {
+        public RewindRecorder(RewindScene rewindScene, RewindStorage rewindStorage, int recordFPS, bool loopRecordingWhenFullRecording) {
             _rewindScene = rewindScene;
             _rewindStorage = rewindStorage;
             _recordFPS = recordFPS;
-            _continuous = continuousRecording;
+            _loopRecordingWhenFull = loopRecordingWhenFullRecording;
         }
 
         public void updateRecording() {
-            if (!_continuous)
+            if (!_loopRecordingWhenFull)
                 //check if we are full and don't allow any more recording
                 if (_rewindStorage.isFull)
                     return;

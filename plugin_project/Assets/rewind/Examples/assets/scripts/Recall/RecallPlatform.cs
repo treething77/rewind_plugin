@@ -27,7 +27,7 @@ namespace aeric.rewind_plugin_demos {
         private RewindStorage _rewindStorage;
         private RewindPlayback _playback;
         private RewindRecorder _recorder;
-        public RewindPlaybackPreparer playbackPreparer;
+        private RewindPlaybackPreparer playbackPreparer;
         private float newPlaybackTime = -1.0f;
 
         Vector3[] rewindPath = new Vector3[101];
@@ -45,6 +45,7 @@ namespace aeric.rewind_plugin_demos {
         }
 
         private void Start() {
+            playbackPreparer = GetComponent<RewindPlaybackPreparer>();
             _rewindScene = new RewindScene();
             _rewindScene.addRewindHandler(this);
 
