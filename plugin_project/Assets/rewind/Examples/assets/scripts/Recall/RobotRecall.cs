@@ -72,7 +72,7 @@ namespace aeric.rewind_plugin_demos {
                 //If entering scan mode set all platforms to scanning
                 //so they stop moving and recording move data
                 foreach (var platform in platforms) {
-                    platform.changeState(RecallPlatform.PlatformState.Scanning);
+                    platform.changeState(RecallObject.RecallObjectState.Paused);
                 }
             }
 
@@ -131,8 +131,8 @@ namespace aeric.rewind_plugin_demos {
                 }
 
                 foreach (var platform in platforms) {
-                    if (_scanningEnabled) platform.changeState( RecallPlatform.PlatformState.Scanning );
-                    else platform.changeState( RecallPlatform.PlatformState.Recording );
+                    if (_scanningEnabled) platform.changeState( RecallObject.RecallObjectState.Paused );
+                    else platform.changeState( RecallObject.RecallObjectState.Recording );
                 }
                 
                 _rewinding = false;
@@ -180,9 +180,9 @@ namespace aeric.rewind_plugin_demos {
                     //If we are scanning go back to scan mode
                     //otherwise go to recording
                     if (_scanningEnabled)
-                        highlightedPlatform.changeState( RecallPlatform.PlatformState.Scanning );
+                        highlightedPlatform.changeState( RecallObject.RecallObjectState.Paused );
                     else
-                        highlightedPlatform.changeState( RecallPlatform.PlatformState.Recording );
+                        highlightedPlatform.changeState( RecallObject.RecallObjectState.Recording );
                     
                     //clear the material changes
                     var meshRenderers = highlightedPlatform.GetComponentsInChildren<MeshRenderer>();
