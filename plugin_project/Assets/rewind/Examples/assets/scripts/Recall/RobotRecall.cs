@@ -90,25 +90,29 @@ namespace aeric.rewind_plugin_demos {
             }
 
             if (_scanningEnabled) {
-                //scan for platforms
-                RecallPlatform closestPlatform = null;
-                float closestDP = -1.0f;
-                
-                foreach (var platform in platforms) {
-                    //check if the platform is in front of the player
-                    var playerPos = _transform.position;
-                    var platformPos = platform.transform.position;
-                    var platformOffset = platformPos - playerPos;
-                    platformOffset.y = 0.0f;
-                    var platformOffsetN = platformOffset.normalized;
-                    float dp = Vector3.Dot(platformOffsetN, _transform.forward);
-                    if (dp > 0.8f && dp > closestDP) {
-                        closestPlatform = platform;
-                        closestDP = dp;
-                    }
-                }
+                //if we have a platform we are rewinding that dont scan because that can change the platform while
+                //rewinding and thats annoying
+                if (!(_rewinding && highlightedPlatform)) {
+                    //scan for platforms
+                    RecallPlatform closestPlatform = null;
+                    float closestDP = -1.0f;
 
-                SetHightlightedPlatform(closestPlatform);
+                    foreach (var platform in platforms) {
+                        //check if the platform is in front of the player
+                        var playerPos = _transform.position;
+                        var platformPos = platform.transform.position;
+                        var platformOffset = platformPos - playerPos;
+                        platformOffset.y = 0.0f;
+                        var platformOffsetN = platformOffset.normalized;
+                        float dp = Vector3.Dot(platformOffsetN, _transform.forward);
+                        if (dp > 0.8f && dp > closestDP) {
+                            closestPlatform = platform;
+                            closestDP = dp;
+                        }
+                    }
+
+                    SetHightlightedPlatform(closestPlatform);
+                }
             }
             else {
                 SetHightlightedPlatform(null);

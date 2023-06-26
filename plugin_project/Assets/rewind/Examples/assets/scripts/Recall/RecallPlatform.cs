@@ -5,19 +5,20 @@ using UnityEngine;
 namespace aeric.rewind_plugin_demos {
 
     public class RecallObject {
-        //TODO: encapsulate this stuff
-        public RewindScene _rewindScene;
-        public RewindStorage _rewindStorage;
-        public RewindPlayback _playback;
-        public RewindRecorder _recorder;
-        public float newPlaybackTime = -1.0f;
+        private RewindScene _rewindScene;
+        private RewindStorage _rewindStorage;
+        private RewindPlayback _playback;
+        private RewindRecorder _recorder;
+        private float newPlaybackTime = -1.0f;
         
         private IRewindHandler _rewindHandler;
- 
-        public void Initialize(IRewindHandler handler) {
+        private IRewindDataHandler _dataHandler;
+
+        public void Initialize(IRewindHandler handler, IRewindDataHandler dataHandler) {
             _rewindScene = new RewindScene();
             _rewindScene.addRewindHandler(handler);
             _rewindHandler = handler;
+            _dataHandler = dataHandler;
 
             _rewindStorage = new RewindStorage(_rewindScene, 100);
             _recorder = new RewindRecorder(_rewindScene, _rewindStorage, 10, true);
@@ -40,6 +41,50 @@ namespace aeric.rewind_plugin_demos {
             //start at the end
             _playback.SetPlaybackTime(endTime);
             newPlaybackTime = endTime;
+        }
+
+        public void StartRecording() {
+            _playback.stopPlayback();
+            _recorder.startRecording();
+        }
+
+        public void StopRewind() {
+            //When we are done rewinding we call into the storage to reset the write state to that point
+            //so we can move forwards from there
+            var frameInfo = _rewindStorage.findPlaybackFrames(newPlaybackTime);
+
+            var currentFrameCount = _rewindStorage.RecordedFrameCount;
+            var newUnmappedEndFrame = frameInfo.frameUnmappedB;
+
+            _rewindStorage.rewindFrames(currentFrameCount - newUnmappedEndFrame);
+            _recorder.setRecordTime(newPlaybackTime);
+        }
+
+        public float GetRecallTimeLeft() {
+            var currentTime = _playback.currentTime;
+            var startTime = _playback.startTime;
+            return currentTime - startTime;
+        }
+
+        public void RewindByTime(float deltaTime) {
+            var currentTime = _playback.currentTime;
+            var startTime = _playback.startTime;
+
+            newPlaybackTime = currentTime - deltaTime;
+            if (newPlaybackTime < startTime) newPlaybackTime = startTime;
+
+            _playback.SetPlaybackTime(newPlaybackTime);
+            _playback.restoreFrameAtCurrentTime();
+
+            //Get all the points in the platforms rewind path
+            var frameInfo = _rewindStorage.findPlaybackFrames(newPlaybackTime);
+
+            int startPathFrame = 0;
+            int endPathFrame = frameInfo.frameUnmappedB;
+
+            for (int i = startPathFrame; i <= endPathFrame; i++) {
+                _rewindStorage.getUnmappedFrameData(i, _rewindHandler, _dataHandler);
+            }
         }
     }
 
@@ -83,17 +128,16 @@ namespace aeric.rewind_plugin_demos {
         private void Start() {
             _playbackPreparer = GetComponent<RewindPlaybackPreparer>();
             
-            _recall.Initialize(this);
+            _recall.Initialize(this, this);
 
             lineRenderer.gameObject.SetActive(false);
             trailRenderer.gameObject.SetActive(false);
         }
 
         public enum PlatformState {
-            None,
-            Recording,
-            Scanning,
-            Rewinding
+            Recording,//moving forwards in time, recording data
+            Scanning,//object is paused, not recording or playing back
+            Rewinding//moving backwards in time, playing back data
         }
 
         private PlatformState _platformState = PlatformState.Recording;
@@ -102,30 +146,21 @@ namespace aeric.rewind_plugin_demos {
             switch (newState) {
             case PlatformState.Recording: {
                 _playbackPreparer.stopPlayback();
-                {
-                    _recall._playback.stopPlayback();
-                   _recall._recorder.startRecording();
-                }
-                lineRenderer.gameObject.SetActive(false);
-                trailRenderer.gameObject.SetActive(false);
+                _recall.StartRecording();
                 break;
             }
             case PlatformState.Scanning: {
-                lineRenderer.gameObject.SetActive(false);
-                trailRenderer.gameObject.SetActive(false);
                 break;
             }
             case PlatformState.Rewinding: {
                 _playbackPreparer.startPlayback();
-
                 _recall.StartPlayback();
-
-                lineRenderer.gameObject.SetActive(true);
-                trailRenderer.gameObject.SetActive(true);
-
                 break;
             }
             }
+
+            lineRenderer.gameObject.SetActive(newState == PlatformState.Rewinding);
+            trailRenderer.gameObject.SetActive(newState == PlatformState.Rewinding);
 
             _platformState = newState;
         }
@@ -135,18 +170,8 @@ namespace aeric.rewind_plugin_demos {
         }
 
         public void stopRewinding() {
-            //When we are done rewinding we call into the storage to reset the write state to that point
-            //so we can move forwards from there
-            var frameInfo = _recall._rewindStorage.findPlaybackFrames(_recall.newPlaybackTime);
-
-            var currentFrameCount = _recall._rewindStorage.RecordedFrameCount;
-            var newUnmappedEndFrame = frameInfo.frameUnmappedB;
-
-            _recall._rewindStorage.rewindFrames(currentFrameCount - newUnmappedEndFrame);
-
+            _recall.StopRewind();
             changeState(PlatformState.Recording);
-
-            _recall._recorder.setRecordTime(_recall.newPlaybackTime);
         }
 
         private void Update() {
@@ -168,41 +193,18 @@ namespace aeric.rewind_plugin_demos {
                 _recall.UpdateRecording();
             }
             else if (_platformState == PlatformState.Rewinding) {
-                var currentTime = _recall._playback.currentTime;
-                var startTime = _recall._playback.startTime;
+                pathIndex = 0;
+                 
+                _recall.RewindByTime(Time.deltaTime);
 
-                _recall.newPlaybackTime = currentTime - Time.deltaTime * 1.0f;
-                if (_recall.newPlaybackTime < startTime) _recall.newPlaybackTime = startTime;
-
-                _recall._playback.SetPlaybackTime(_recall.newPlaybackTime);
-                _recall._playback.restoreFrameAtCurrentTime();
-
-                //Get all the points in the platforms rewind path
-                //TODO: encapsulate this
-                {
-                    pathIndex = 0;
-                    var frameInfo = _recall._rewindStorage.findPlaybackFrames(_recall.newPlaybackTime);
-
-                    int startPathFrame = 0;
-                    int endPathFrame = frameInfo.frameUnmappedB;
-
-                    for (int i = startPathFrame; i <= endPathFrame; i++) {
-                        _recall._rewindStorage.getUnmappedFrameData(i, this, this);
-                        pathIndex++;
-                    }
-
-                    rewindPath[pathIndex - 1] = newPos;
-
-                    pathLength = endPathFrame + 1;
-
-                    lineRenderer.positionCount = pathLength;
-                    lineRenderer.SetPositions(rewindPath);
-                    trailRenderer.SetPositions(rewindPath);
-                }
-
-                var fillTime = currentTime - startTime;
-
-                if (fillTime < 0.1f) {
+                //Update the path rendering
+                rewindPath[pathIndex - 1] = newPos;
+                pathLength = pathIndex + 1;
+                lineRenderer.positionCount = pathLength;
+                lineRenderer.SetPositions(rewindPath);
+                trailRenderer.SetPositions(rewindPath);
+                
+                if (_recall.GetRecallTimeLeft() < 0.1f) {
                     stopRewinding();
                 }
             }
@@ -216,6 +218,7 @@ namespace aeric.rewind_plugin_demos {
                 //ping pong between the two points
                 Vector3 newPos = Vector3.Lerp(startPt.position, endPt.position, lerpT);
                 rewindPath[pathIndex] = newPos;
+                pathIndex++;
             }
         }
     }
