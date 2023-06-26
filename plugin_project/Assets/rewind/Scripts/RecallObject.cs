@@ -1,7 +1,10 @@
 using UnityEngine;
 
 namespace aeric.rewind_plugin {
-
+    /// <summary>
+    /// Encapsulates the entire rewind/playback system for adding rewind capability to a single object.
+    /// Used when you want to be able to pause the scene and rewind a single object.
+    /// </summary>
     public class RecallObject {
         
         public enum RecallObjectState {
@@ -9,17 +12,14 @@ namespace aeric.rewind_plugin {
             Paused,//object is paused, not recording or playing back
             Rewinding//moving backwards in time, playing back data
         }
-        private RecallObjectState recallObjectState = RecallObjectState.Recording;
-        public RecallObjectState RecallState {
-            get => recallObjectState;
-            set => recallObjectState = value;
-        }
+
+        public RecallObjectState RecallState { get; set; }= RecallObjectState.Recording;
 
         private RewindScene _rewindScene;
         private RewindStorage _rewindStorage;
         private RewindPlayback _playback;
         private RewindRecorder _recorder;
-        private float newPlaybackTime = -1.0f;
+        private float _newPlaybackTime = -1.0f;
         
         private IRewindHandler _rewindHandler;
         private IRewindDataHandler _dataHandler;
@@ -50,7 +50,7 @@ namespace aeric.rewind_plugin {
             _playback.startPlayback();
             //start at the end
             _playback.SetPlaybackTime(endTime);
-            newPlaybackTime = endTime;
+            _newPlaybackTime = endTime;
         }
 
         public void StartRecording() {
@@ -61,13 +61,13 @@ namespace aeric.rewind_plugin {
         public void StopRewind() {
             //When we are done rewinding we call into the storage to reset the write state to that point
             //so we can move forwards from there
-            var frameInfo = _rewindStorage.findPlaybackFrames(newPlaybackTime);
+            var frameInfo = _rewindStorage.findPlaybackFrames(_newPlaybackTime);
 
             var currentFrameCount = _rewindStorage.RecordedFrameCount;
             var newUnmappedEndFrame = frameInfo.frameUnmappedB;
 
             _rewindStorage.rewindFrames(currentFrameCount - newUnmappedEndFrame);
-            _recorder.setRecordTime(newPlaybackTime);
+            _recorder.setRecordTime(_newPlaybackTime);
         }
 
         public float GetRecallTimeLeft() {
@@ -80,14 +80,14 @@ namespace aeric.rewind_plugin {
             var currentTime = _playback.currentTime;
             var startTime = _playback.startTime;
 
-            newPlaybackTime = currentTime - deltaTime;
-            if (newPlaybackTime < startTime) newPlaybackTime = startTime;
+            _newPlaybackTime = currentTime - deltaTime;
+            if (_newPlaybackTime < startTime) _newPlaybackTime = startTime;
 
-            _playback.SetPlaybackTime(newPlaybackTime);
+            _playback.SetPlaybackTime(_newPlaybackTime);
             _playback.restoreFrameAtCurrentTime();
 
             //Get all the points in the platforms rewind path
-            var frameInfo = _rewindStorage.findPlaybackFrames(newPlaybackTime);
+            var frameInfo = _rewindStorage.findPlaybackFrames(_newPlaybackTime);
 
             int startPathFrame = 0;
             int endPathFrame = frameInfo.frameUnmappedB;
