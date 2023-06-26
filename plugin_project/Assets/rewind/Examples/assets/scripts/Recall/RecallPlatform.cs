@@ -4,31 +4,67 @@ using UnityEngine;
 
 namespace aeric.rewind_plugin_demos {
 
+    public class RecallObject {
+        //TODO: encapsulate this stuff
+        public RewindScene _rewindScene;
+        public RewindStorage _rewindStorage;
+        public RewindPlayback _playback;
+        public RewindRecorder _recorder;
+        public float newPlaybackTime = -1.0f;
+        
+        private IRewindHandler _rewindHandler;
+ 
+        public void Initialize(IRewindHandler handler) {
+            _rewindScene = new RewindScene();
+            _rewindScene.addRewindHandler(handler);
+            _rewindHandler = handler;
+
+            _rewindStorage = new RewindStorage(_rewindScene, 100);
+            _recorder = new RewindRecorder(_rewindScene, _rewindStorage, 10, true);
+            _playback = new RewindPlayback(_rewindScene, _rewindStorage);
+            _recorder.startRecording();
+        }
+
+        public void UpdateRecording() {
+            _recorder.updateRecording();
+            _recorder.advanceRecordingTime();
+        }
+
+        public void Dispose() {
+            _rewindStorage.Dispose();
+        }
+
+        public void StartPlayback() {
+            var endTime = _playback.endTime;
+            _playback.startPlayback();
+            //start at the end
+            _playback.SetPlaybackTime(endTime);
+            newPlaybackTime = endTime;
+        }
+    }
+
     public class RecallPlatform : RewindCustomMonoBehaviourAttributes, IRewindDataHandler {
         public Transform startPt;
         public Transform endPt;
 
         public float speed;
 
+        //This value is used to control movement of the character when standing on a moving platform
         [HideInInspector] public Vector3 move;
 
         //Value that moves from 0-2 and wraps, controls all movement of the platform
         //By rewinding this value we rewind the motion of the platform
         [Rewind] private float moveT;
 
+        //We feed the linear moveT into an animation curve to get a smoother motion
         public AnimationCurve moveCurve;
         public LineRenderer lineRenderer;
         public TrailRenderer trailRenderer;
 
         private Transform _transform;
 
-        //TODO: encapsulate this stuff
-        private RewindScene _rewindScene;
-        private RewindStorage _rewindStorage;
-        private RewindPlayback _playback;
-        private RewindRecorder _recorder;
-        private RewindPlaybackPreparer playbackPreparer;
-        private float newPlaybackTime = -1.0f;
+        private RecallObject _recall = new();
+        private RewindPlaybackPreparer _playbackPreparer;
 
         Vector3[] rewindPath = new Vector3[101];
         private int pathIndex;
@@ -41,18 +77,14 @@ namespace aeric.rewind_plugin_demos {
         }
 
         private void OnDestroy() {
-            _rewindStorage.Dispose();
+            _recall.Dispose();
         }
 
         private void Start() {
-            playbackPreparer = GetComponent<RewindPlaybackPreparer>();
-            _rewindScene = new RewindScene();
-            _rewindScene.addRewindHandler(this);
+            _playbackPreparer = GetComponent<RewindPlaybackPreparer>();
+            
+            _recall.Initialize(this);
 
-            _rewindStorage = new RewindStorage(_rewindScene, 100);
-            _recorder = new RewindRecorder(_rewindScene, _rewindStorage, 10, true);
-            _playback = new RewindPlayback(_rewindScene, _rewindStorage);
-            _recorder.startRecording();
             lineRenderer.gameObject.SetActive(false);
             trailRenderer.gameObject.SetActive(false);
         }
@@ -69,10 +101,11 @@ namespace aeric.rewind_plugin_demos {
         public void changeState(PlatformState newState) {
             switch (newState) {
             case PlatformState.Recording: {
-                _playback.stopPlayback();
-                playbackPreparer.stopPlayback();
-
-                _recorder.startRecording();
+                _playbackPreparer.stopPlayback();
+                {
+                    _recall._playback.stopPlayback();
+                   _recall._recorder.startRecording();
+                }
                 lineRenderer.gameObject.SetActive(false);
                 trailRenderer.gameObject.SetActive(false);
                 break;
@@ -83,14 +116,10 @@ namespace aeric.rewind_plugin_demos {
                 break;
             }
             case PlatformState.Rewinding: {
-                var endTime = _playback.endTime;
+                _playbackPreparer.startPlayback();
 
-                playbackPreparer.startPlayback();
-                _playback.startPlayback();
+                _recall.StartPlayback();
 
-                //start at the end
-                _playback.SetPlaybackTime(endTime);
-                newPlaybackTime = endTime;
                 lineRenderer.gameObject.SetActive(true);
                 trailRenderer.gameObject.SetActive(true);
 
@@ -106,16 +135,18 @@ namespace aeric.rewind_plugin_demos {
         }
 
         public void stopRewinding() {
-            var frameInfo = _rewindStorage.findPlaybackFrames(newPlaybackTime);
+            //When we are done rewinding we call into the storage to reset the write state to that point
+            //so we can move forwards from there
+            var frameInfo = _recall._rewindStorage.findPlaybackFrames(_recall.newPlaybackTime);
 
-            var currentFrameCount = _rewindStorage.RecordedFrameCount;
+            var currentFrameCount = _recall._rewindStorage.RecordedFrameCount;
             var newUnmappedEndFrame = frameInfo.frameUnmappedB;
 
-            _rewindStorage.rewindFrames(currentFrameCount - newUnmappedEndFrame);
+            _recall._rewindStorage.rewindFrames(currentFrameCount - newUnmappedEndFrame);
 
             changeState(PlatformState.Recording);
 
-            _recorder.setRecordTime(newPlaybackTime);
+            _recall._recorder.setRecordTime(_recall.newPlaybackTime);
         }
 
         private void Update() {
@@ -134,30 +165,29 @@ namespace aeric.rewind_plugin_demos {
 
             if (_platformState == PlatformState.Recording) {
                 moveT += Time.deltaTime * speed;
-                _recorder.updateRecording();
-                _recorder.advanceRecordingTime();
+                _recall.UpdateRecording();
             }
             else if (_platformState == PlatformState.Rewinding) {
-                var currentTime = _playback.currentTime;
-                var startTime = _playback.startTime;
+                var currentTime = _recall._playback.currentTime;
+                var startTime = _recall._playback.startTime;
 
-                newPlaybackTime = currentTime - Time.deltaTime * 1.0f;
-                if (newPlaybackTime < startTime) newPlaybackTime = startTime;
+                _recall.newPlaybackTime = currentTime - Time.deltaTime * 1.0f;
+                if (_recall.newPlaybackTime < startTime) _recall.newPlaybackTime = startTime;
 
-                _playback.SetPlaybackTime(newPlaybackTime);
-                _playback.restoreFrameAtCurrentTime();
+                _recall._playback.SetPlaybackTime(_recall.newPlaybackTime);
+                _recall._playback.restoreFrameAtCurrentTime();
 
                 //Get all the points in the platforms rewind path
                 //TODO: encapsulate this
                 {
                     pathIndex = 0;
-                    var frameInfo = _rewindStorage.findPlaybackFrames(newPlaybackTime);
+                    var frameInfo = _recall._rewindStorage.findPlaybackFrames(_recall.newPlaybackTime);
 
                     int startPathFrame = 0;
                     int endPathFrame = frameInfo.frameUnmappedB;
 
                     for (int i = startPathFrame; i <= endPathFrame; i++) {
-                        _rewindStorage.getUnmappedFrameData(i, this, this);
+                        _recall._rewindStorage.getUnmappedFrameData(i, this, this);
                         pathIndex++;
                     }
 
