@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using aeric.rewind_plugin;
 using UnityEngine;
@@ -27,10 +28,10 @@ namespace aeric.rewind_plugin_demos {
         private CharacterController _controller;
         private Transform _transform;
 
-        private RecallPlatform highlightedPlatform;
+        private RecallPlatform _highlightedPlatform;
         
-        private Vector3 motion;
-        private float playerSpeed;
+        private Vector3 _motion;
+        private float _playerSpeed;
         private GameObject _platformObject;
         
                 
@@ -60,7 +61,7 @@ namespace aeric.rewind_plugin_demos {
 
         private void Update() {
             var keyFwd = Input.GetKey(KeyCode.W);
-            
+            var keyBkwd = Input.GetKey(KeyCode.S);
             var keyLeft = Input.GetKey(KeyCode.A);
             var keyRight = Input.GetKey(KeyCode.D);
 
@@ -77,23 +78,37 @@ namespace aeric.rewind_plugin_demos {
                 }
             }
 
-            scanningUI.SetScanningState(_scanningEnabled, highlightedPlatform, _rewinding);
+            scanningUI.SetScanningState(_scanningEnabled, _highlightedPlatform, _rewinding);
 
-            if (keyFwd) {
+            if (keyFwd || keyBkwd) {
                 _controller.enabled = true;
                 _controllerEnableTimer = 0.5f;
 
-                playerSpeed += Time.deltaTime * 3.0f;
-                playerSpeed = Mathf.Min(playerSpeed, 1.0f);
+                if (keyFwd) {
+                    _playerSpeed += Time.deltaTime * 3.0f;
+                    _playerSpeed = Mathf.Min(_playerSpeed, 1.5f);
+                }
+                else {
+                    _playerSpeed -= Time.deltaTime * 1.0f;
+                    _playerSpeed = Mathf.Max(_playerSpeed, -0.3f);
+                }
             }
             else {
-                playerSpeed -= Time.deltaTime * 2.0f;
+                //Not moving, reduce speed
+                if (_playerSpeed > 0.0f) {
+                    _playerSpeed -= Time.deltaTime * 2.0f;
+                    _playerSpeed = Mathf.Max(_playerSpeed, 0.0f);
+                }
+                else if (_playerSpeed < 0.0f) {
+                    _playerSpeed += Time.deltaTime * 2.0f;
+                    _playerSpeed = Mathf.Min(_playerSpeed, 0.0f);
+                }
             }
 
             if (_scanningEnabled) {
                 //if we have a platform we are rewinding that dont scan because that can change the platform while
                 //rewinding and thats annoying
-                if (!(_rewinding && highlightedPlatform)) {
+                if (!(_rewinding && _highlightedPlatform)) {
                     //scan for platforms
                     RecallPlatform closestPlatform = null;
                     float closestDP = -1.0f;
@@ -119,16 +134,16 @@ namespace aeric.rewind_plugin_demos {
                 SetHightlightedPlatform(null);
             }
 
-            if (keyQ && highlightedPlatform != null) {
+            if (keyQ && _highlightedPlatform != null) {
                 if (!_rewinding) {
                     _rewinding = true;
-                    highlightedPlatform.startRewinding();
+                    _highlightedPlatform.startRewinding();
                 }
             }
             else {
                 if (_rewinding) {
-                    if (highlightedPlatform != null)
-                        highlightedPlatform.stopRewinding();
+                    if (_highlightedPlatform != null)
+                        _highlightedPlatform.stopRewinding();
                 }
 
                 foreach (var platform in platforms) {
@@ -139,9 +154,7 @@ namespace aeric.rewind_plugin_demos {
                 _rewinding = false;
             }
 
-            playerSpeed = Mathf.Clamp01(playerSpeed);
-
-            _animator.SetFloat(Blend, playerSpeed);
+            _animator.SetFloat(Blend, _playerSpeed);
 
             if (keyLeft) _transform.Rotate(Vector3.up, -100.0f * Time.deltaTime);
             if (keyRight) _transform.Rotate(Vector3.up, 100.0f * Time.deltaTime);
@@ -176,17 +189,17 @@ namespace aeric.rewind_plugin_demos {
         }
 
         private void SetHightlightedPlatform(RecallPlatform platform) {
-            if (highlightedPlatform != platform) {
-                if (highlightedPlatform != null) {
+            if (_highlightedPlatform != platform) {
+                if (_highlightedPlatform != null) {
                     //If we are scanning go back to scan mode
                     //otherwise go to recording
                     if (_scanningEnabled)
-                        highlightedPlatform.changeState( RecallObject.RecallObjectState.Paused );
+                        _highlightedPlatform.changeState( RecallObject.RecallObjectState.Paused );
                     else
-                        highlightedPlatform.changeState( RecallObject.RecallObjectState.Recording );
+                        _highlightedPlatform.changeState( RecallObject.RecallObjectState.Recording );
                     
                     //clear the material changes
-                    var meshRenderers = highlightedPlatform.GetComponentsInChildren<MeshRenderer>();
+                    var meshRenderers = _highlightedPlatform.GetComponentsInChildren<MeshRenderer>();
                     foreach (var meshRenderer in meshRenderers) {
                         var materials = meshRenderer.materials;
                         materials[0] = platformMaterials[0];
@@ -196,10 +209,10 @@ namespace aeric.rewind_plugin_demos {
                     }
                 }
             }
-            highlightedPlatform = platform;
+            _highlightedPlatform = platform;
 
-            if (highlightedPlatform != null) {
-                var meshRenderers = highlightedPlatform.GetComponentsInChildren<MeshRenderer>();
+            if (_highlightedPlatform != null) {
+                var meshRenderers = _highlightedPlatform.GetComponentsInChildren<MeshRenderer>();
                 foreach (var meshRenderer in meshRenderers) {
                     var materials = meshRenderer.materials;
                     materials[0] = scanningMaterial;
@@ -207,6 +220,13 @@ namespace aeric.rewind_plugin_demos {
                     materials[2] = scanningMaterial;
                     meshRenderer.materials = materials;
                 }
+            }
+        }
+
+        private void OnControllerColliderHit(ControllerColliderHit hit) {
+            Rigidbody rb = hit.collider.attachedRigidbody;
+            if (rb != null && !rb.isKinematic) {
+                rb.velocity = hit.moveDirection * 2.0f;
             }
         }
 
@@ -221,12 +241,14 @@ namespace aeric.rewind_plugin_demos {
                 platformMove = platform.move;
             }
 
-            //move forward
+            //move forward  
             if (moveState == MoveState.Moving) {
                 var moveDirection = _transform.forward;
                 moveDirection.y = 0.0f;
 
-                var actualMove = moveDirection.normalized * animMove.magnitude + platformMove;
+                var actualMove = moveDirection.normalized * animMove.magnitude;
+                if (_playerSpeed < 0.0f) actualMove = -actualMove;
+                actualMove += platformMove;
 
                 var gravity = Vector3.up * 5.0f;
                 bool groundedPlayer = _controller.isGrounded;
