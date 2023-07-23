@@ -1,0 +1,89 @@
+\doxysection{aeric.\+rewind\+\_\+plugin.\+Rewind\+Event\+Stream\texorpdfstring{$<$}{<} T \texorpdfstring{$>$}{>} Class Template Reference}
+\hypertarget{classaeric_1_1rewind__plugin_1_1_rewind_event_stream}{}\label{classaeric_1_1rewind__plugin_1_1_rewind_event_stream}\index{aeric.rewind\_plugin.RewindEventStream$<$ T $>$@{aeric.rewind\_plugin.RewindEventStream$<$ T $>$}}
+
+
+A list of events each with an associated time. We have logic to find the events within a time range for playback.  
+
+
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{classaeric_1_1rewind__plugin_1_1_rewind_event_stream_a0b717fc12adde94b640a73d963d2df9b}{Rewind\+Event\+Stream}} (int max\+Events)
+\item 
+void \mbox{\hyperlink{classaeric_1_1rewind__plugin_1_1_rewind_event_stream_af868f6a2cf0d6b314bb55d33cf87d582}{add\+Event}} (T an\+Event, float time)
+\item 
+void \mbox{\hyperlink{classaeric_1_1rewind__plugin_1_1_rewind_event_stream_aa60a30e4902314afbfbe84fb5767bbc7}{Clear\+Events}} ()
+\item 
+T \mbox{\hyperlink{classaeric_1_1rewind__plugin_1_1_rewind_event_stream_aaadfc97a9d09188945952553a2bae11e}{get\+Event}} (int event\+Index)
+\item 
+int int event\+Index\+End \mbox{\hyperlink{classaeric_1_1rewind__plugin_1_1_rewind_event_stream_a34b2f00028bb9d68319abab1ba88a13e}{find\+Events\+In\+Range}} (float start\+Time, float end\+Time)
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+int \mbox{\hyperlink{classaeric_1_1rewind__plugin_1_1_rewind_event_stream_a814daaf80dd5e732e993984603e449c6}{event\+Index\+Start}}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+A list of events each with an associated time. We have logic to find the events within a time range for playback. 
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em T} & \\
+\hline
+\end{DoxyTemplParams}
+\begin{Desc}
+\item[Type Constraints]\begin{description}
+\item[{\em T} : {\em struct}]\end{description}
+\end{Desc}
+
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\Hypertarget{classaeric_1_1rewind__plugin_1_1_rewind_event_stream_a0b717fc12adde94b640a73d963d2df9b}\label{classaeric_1_1rewind__plugin_1_1_rewind_event_stream_a0b717fc12adde94b640a73d963d2df9b} 
+\index{aeric.rewind\_plugin.RewindEventStream$<$ T $>$@{aeric.rewind\_plugin.RewindEventStream$<$ T $>$}!RewindEventStream@{RewindEventStream}}
+\index{RewindEventStream@{RewindEventStream}!aeric.rewind\_plugin.RewindEventStream$<$ T $>$@{aeric.rewind\_plugin.RewindEventStream$<$ T $>$}}
+\doxysubsubsection{\texorpdfstring{RewindEventStream()}{RewindEventStream()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{classaeric_1_1rewind__plugin_1_1_rewind_event_stream}{aeric.\+rewind\+\_\+plugin.\+Rewind\+Event\+Stream}}$<$ T $>$.\mbox{\hyperlink{classaeric_1_1rewind__plugin_1_1_rewind_event_stream}{Rewind\+Event\+Stream}} (\begin{DoxyParamCaption}\item[{int}]{max\+Events }\end{DoxyParamCaption})}
+
+
+
+\doxysubsection{Member Function Documentation}
+\Hypertarget{classaeric_1_1rewind__plugin_1_1_rewind_event_stream_af868f6a2cf0d6b314bb55d33cf87d582}\label{classaeric_1_1rewind__plugin_1_1_rewind_event_stream_af868f6a2cf0d6b314bb55d33cf87d582} 
+\index{aeric.rewind\_plugin.RewindEventStream$<$ T $>$@{aeric.rewind\_plugin.RewindEventStream$<$ T $>$}!addEvent@{addEvent}}
+\index{addEvent@{addEvent}!aeric.rewind\_plugin.RewindEventStream$<$ T $>$@{aeric.rewind\_plugin.RewindEventStream$<$ T $>$}}
+\doxysubsubsection{\texorpdfstring{addEvent()}{addEvent()}}
+{\footnotesize\ttfamily void \mbox{\hyperlink{classaeric_1_1rewind__plugin_1_1_rewind_event_stream}{aeric.\+rewind\+\_\+plugin.\+Rewind\+Event\+Stream}}$<$ T $>$.add\+Event (\begin{DoxyParamCaption}\item[{T}]{an\+Event,  }\item[{float}]{time }\end{DoxyParamCaption})}
+
+\Hypertarget{classaeric_1_1rewind__plugin_1_1_rewind_event_stream_aa60a30e4902314afbfbe84fb5767bbc7}\label{classaeric_1_1rewind__plugin_1_1_rewind_event_stream_aa60a30e4902314afbfbe84fb5767bbc7} 
+\index{aeric.rewind\_plugin.RewindEventStream$<$ T $>$@{aeric.rewind\_plugin.RewindEventStream$<$ T $>$}!ClearEvents@{ClearEvents}}
+\index{ClearEvents@{ClearEvents}!aeric.rewind\_plugin.RewindEventStream$<$ T $>$@{aeric.rewind\_plugin.RewindEventStream$<$ T $>$}}
+\doxysubsubsection{\texorpdfstring{ClearEvents()}{ClearEvents()}}
+{\footnotesize\ttfamily void \mbox{\hyperlink{classaeric_1_1rewind__plugin_1_1_rewind_event_stream}{aeric.\+rewind\+\_\+plugin.\+Rewind\+Event\+Stream}}$<$ T $>$.Clear\+Events (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+\Hypertarget{classaeric_1_1rewind__plugin_1_1_rewind_event_stream_a34b2f00028bb9d68319abab1ba88a13e}\label{classaeric_1_1rewind__plugin_1_1_rewind_event_stream_a34b2f00028bb9d68319abab1ba88a13e} 
+\index{aeric.rewind\_plugin.RewindEventStream$<$ T $>$@{aeric.rewind\_plugin.RewindEventStream$<$ T $>$}!findEventsInRange@{findEventsInRange}}
+\index{findEventsInRange@{findEventsInRange}!aeric.rewind\_plugin.RewindEventStream$<$ T $>$@{aeric.rewind\_plugin.RewindEventStream$<$ T $>$}}
+\doxysubsubsection{\texorpdfstring{findEventsInRange()}{findEventsInRange()}}
+{\footnotesize\ttfamily int int event\+Index\+End \mbox{\hyperlink{classaeric_1_1rewind__plugin_1_1_rewind_event_stream}{aeric.\+rewind\+\_\+plugin.\+Rewind\+Event\+Stream}}$<$ T $>$.find\+Events\+In\+Range (\begin{DoxyParamCaption}\item[{float}]{start\+Time,  }\item[{float}]{end\+Time }\end{DoxyParamCaption})}
+
+\Hypertarget{classaeric_1_1rewind__plugin_1_1_rewind_event_stream_aaadfc97a9d09188945952553a2bae11e}\label{classaeric_1_1rewind__plugin_1_1_rewind_event_stream_aaadfc97a9d09188945952553a2bae11e} 
+\index{aeric.rewind\_plugin.RewindEventStream$<$ T $>$@{aeric.rewind\_plugin.RewindEventStream$<$ T $>$}!getEvent@{getEvent}}
+\index{getEvent@{getEvent}!aeric.rewind\_plugin.RewindEventStream$<$ T $>$@{aeric.rewind\_plugin.RewindEventStream$<$ T $>$}}
+\doxysubsubsection{\texorpdfstring{getEvent()}{getEvent()}}
+{\footnotesize\ttfamily T \mbox{\hyperlink{classaeric_1_1rewind__plugin_1_1_rewind_event_stream}{aeric.\+rewind\+\_\+plugin.\+Rewind\+Event\+Stream}}$<$ T $>$.get\+Event (\begin{DoxyParamCaption}\item[{int}]{event\+Index }\end{DoxyParamCaption})}
+
+
+
+\doxysubsection{Member Data Documentation}
+\Hypertarget{classaeric_1_1rewind__plugin_1_1_rewind_event_stream_a814daaf80dd5e732e993984603e449c6}\label{classaeric_1_1rewind__plugin_1_1_rewind_event_stream_a814daaf80dd5e732e993984603e449c6} 
+\index{aeric.rewind\_plugin.RewindEventStream$<$ T $>$@{aeric.rewind\_plugin.RewindEventStream$<$ T $>$}!eventIndexStart@{eventIndexStart}}
+\index{eventIndexStart@{eventIndexStart}!aeric.rewind\_plugin.RewindEventStream$<$ T $>$@{aeric.rewind\_plugin.RewindEventStream$<$ T $>$}}
+\doxysubsubsection{\texorpdfstring{eventIndexStart}{eventIndexStart}}
+{\footnotesize\ttfamily int \mbox{\hyperlink{classaeric_1_1rewind__plugin_1_1_rewind_event_stream}{aeric.\+rewind\+\_\+plugin.\+Rewind\+Event\+Stream}}$<$ T $>$.event\+Index\+Start}
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{_rewind_event_stream_8cs}{Rewind\+Event\+Stream.\+cs}}\end{DoxyCompactItemize}

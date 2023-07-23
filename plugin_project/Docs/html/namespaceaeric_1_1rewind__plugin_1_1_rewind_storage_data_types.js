@@ -1,0 +1,6 @@
+var namespaceaeric_1_1rewind__plugin_1_1_rewind_storage_data_types =
+[
+    [ "RewindStorageData", "classaeric_1_1rewind__plugin_1_1_rewind_storage_data_types_1_1_rewind_storage_data.html", "classaeric_1_1rewind__plugin_1_1_rewind_storage_data_types_1_1_rewind_storage_data" ],
+    [ "RewindStorageData_Handler", "classaeric_1_1rewind__plugin_1_1_rewind_storage_data_types_1_1_rewind_storage_data___handler.html", "classaeric_1_1rewind__plugin_1_1_rewind_storage_data_types_1_1_rewind_storage_data___handler" ],
+    [ "RewindStorageData_Value", "classaeric_1_1rewind__plugin_1_1_rewind_storage_data_types_1_1_rewind_storage_data___value.html", "classaeric_1_1rewind__plugin_1_1_rewind_storage_data_types_1_1_rewind_storage_data___value" ]
+];

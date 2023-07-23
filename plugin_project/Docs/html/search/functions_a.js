@@ -1,0 +1,5 @@
+var searchData=
+[
+  ['postrestore_0',['postRestore',['../interfaceaeric_1_1rewind__plugin_1_1_i_rewind_handler.html#ae066909531d352888722e3136fd8398d',1,'aeric.rewind_plugin.IRewindHandler.postRestore()'],['../classaeric_1_1rewind__plugin_1_1_rewind_component_base.html#aa8235d57d51c93dc15b044ddf78f703f',1,'aeric.rewind_plugin.RewindComponentBase.postRestore()'],['../classaeric_1_1rewind__plugin_1_1_rewind_transform.html#ae56e33f5165402bb1adc53e23fb78c63',1,'aeric.rewind_plugin.RewindTransform.postRestore()']]],
+  ['prerestore_1',['preRestore',['../interfaceaeric_1_1rewind__plugin_1_1_i_rewind_handler.html#a556019931d401d788f2c6a9bf3ea6d90',1,'aeric.rewind_plugin.IRewindHandler.preRestore()'],['../classaeric_1_1rewind__plugin_1_1_rewind_component_base.html#a190c7fb5528e84a2659ef24ef803ec6e',1,'aeric.rewind_plugin.RewindComponentBase.preRestore()'],['../classaeric_1_1rewind__plugin_1_1_rewind_transform.html#aa8508d8aca21c5b9c770c6247ae892ca',1,'aeric.rewind_plugin.RewindTransform.preRestore()']]]
+];

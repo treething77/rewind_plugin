@@ -1,0 +1,256 @@
+\doxysection{aeric.\+rewind\+\_\+plugin.\+Rewind\+Storage Class Reference}
+\hypertarget{classaeric_1_1rewind__plugin_1_1_rewind_storage}{}\label{classaeric_1_1rewind__plugin_1_1_rewind_storage}\index{aeric.rewind\_plugin.RewindStorage@{aeric.rewind\_plugin.RewindStorage}}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{classaeric_1_1rewind__plugin_1_1_rewind_storage_a569929da7e7dfc17e10dbb2853c64c2b}{write\+To\+Raw\+Binary\+File}} (string file\+Name)
+\item 
+void \mbox{\hyperlink{classaeric_1_1rewind__plugin_1_1_rewind_storage_ab1d37d2b19cbd59af7242209adcedd12}{load\+From\+Raw\+Binary\+File}} (string file\+Name)
+\item 
+void \mbox{\hyperlink{classaeric_1_1rewind__plugin_1_1_rewind_storage_a9ce73925aa6208f1467a3052e4a6e2da}{write\+To\+Binary\+Stream\+File}} (string file\+Name)
+\item 
+void \mbox{\hyperlink{classaeric_1_1rewind__plugin_1_1_rewind_storage_adffc658796f5403be126b054ccabba1c}{load\+From\+Binary\+Stream\+File}} (string full\+Path)
+\item 
+string \mbox{\hyperlink{classaeric_1_1rewind__plugin_1_1_rewind_storage_ab2229cd31e338a64760f9d91e95a0288}{write\+To\+Json}} ()
+\item 
+void \mbox{\hyperlink{classaeric_1_1rewind__plugin_1_1_rewind_storage_aaf0d476774ad60cb1e0c40a75ce036fb}{load\+From\+Json\+File}} (string full\+Path)
+\item 
+void \mbox{\hyperlink{classaeric_1_1rewind__plugin_1_1_rewind_storage_a2b0f7a05b9efb5e9b25c219a3775f311}{write\+To\+Json\+File}} (string file\+Name)
+\item 
+\mbox{\hyperlink{classaeric_1_1rewind__plugin_1_1_rewind_storage_a664c1f4238dec1acfa8b509750b74fc5}{Rewind\+Storage}} (\mbox{\hyperlink{classaeric_1_1rewind__plugin_1_1_rewind_scene}{Rewind\+Scene}} rewind\+Scene, int max\+Frame\+Count)
+\item 
+void \mbox{\hyperlink{classaeric_1_1rewind__plugin_1_1_rewind_storage_a71527c966f93104fcd806955e872bc79}{Dispose}} ()
+\item 
+\mbox{\hyperlink{classaeric_1_1rewind__plugin_1_1_rewind_handler_storage}{Rewind\+Handler\+Storage}} \mbox{\hyperlink{classaeric_1_1rewind__plugin_1_1_rewind_storage_aa50b78637aaa60efbf20d18314ecb563}{get\+Handler\+Storage}} (uint rewind\+Handler\+ID)
+\item 
+void \mbox{\hyperlink{classaeric_1_1rewind__plugin_1_1_rewind_storage_a23ffd0819393a924dde16343565f8e1c}{write\+Handler\+Frame}} (\mbox{\hyperlink{interfaceaeric_1_1rewind__plugin_1_1_i_rewind_handler}{IRewind\+Handler}} rewind\+Handler)
+\item 
+void \mbox{\hyperlink{classaeric_1_1rewind__plugin_1_1_rewind_storage_a6936f90b02f999b753b351ab20104133}{write\+Frame\+Start}} (float frame\+Time\+Relative\+To\+Start)
+\item 
+void \mbox{\hyperlink{classaeric_1_1rewind__plugin_1_1_rewind_storage_a5ef2ff0e61de9306fe5302cc54fc7413}{write\+Frame\+End}} ()
+\item 
+\mbox{\hyperlink{namespaceaeric_1_1rewind__plugin_a11ac05cf52f94e067e955c459f220d0f}{Rewind\+Mapped\+Frame}} \mbox{\hyperlink{namespaceaeric_1_1rewind__plugin_a11ac05cf52f94e067e955c459f220d0f}{Rewind\+Mapped\+Frame}} float int int frame\+UnmappedB \mbox{\hyperlink{classaeric_1_1rewind__plugin_1_1_rewind_storage_a702ed145ca9e9962a2710f6724e69661}{find\+Playback\+Frames}} (float playback\+Time)
+\item 
+void \mbox{\hyperlink{classaeric_1_1rewind__plugin_1_1_rewind_storage_ab96a144f81b4ea008032c01380de4b44}{restore\+Handler\+Interpolated}} (\mbox{\hyperlink{interfaceaeric_1_1rewind__plugin_1_1_i_rewind_handler}{IRewind\+Handler}} rewind\+Handler, \mbox{\hyperlink{namespaceaeric_1_1rewind__plugin_a11ac05cf52f94e067e955c459f220d0f}{Rewind\+Mapped\+Frame}} frameA, \mbox{\hyperlink{namespaceaeric_1_1rewind__plugin_a11ac05cf52f94e067e955c459f220d0f}{Rewind\+Mapped\+Frame}} frameB, float \mbox{\hyperlink{classaeric_1_1rewind__plugin_1_1_rewind_storage_a51e28e1cbd15d44262905f89b2460291}{frameT}})
+\item 
+float \mbox{\hyperlink{classaeric_1_1rewind__plugin_1_1_rewind_storage_aa5fb8716762f0c74754dbe59348cb6a2}{get\+Time}} (int time\+Frame\+Index)
+\item 
+void \mbox{\hyperlink{classaeric_1_1rewind__plugin_1_1_rewind_storage_ab49bb6daec2aaad88e0795cda6154736}{rewind\+Frames}} (int frame\+Count\+To\+Rewind)
+\item 
+float \mbox{\hyperlink{classaeric_1_1rewind__plugin_1_1_rewind_storage_a047f413408f3bc5ec42dc94c267023ca}{get\+Frame\+Time}} (int unmapped\+Frame\+Index)
+\item 
+Vector3 \mbox{\hyperlink{classaeric_1_1rewind__plugin_1_1_rewind_storage_a903b2305c3eb36a5972dfaa0a9dfa47b}{get\+Frame\+Position}} (int unmapped\+Frame\+Index, \mbox{\hyperlink{interfaceaeric_1_1rewind__plugin_1_1_i_rewind_handler}{IRewind\+Handler}} rewind\+Handler)
+\item 
+void \mbox{\hyperlink{classaeric_1_1rewind__plugin_1_1_rewind_storage_a7516a5409e0d557d181c3ea07304aca8}{get\+Unmapped\+Frame\+Data}} (int unmapped\+Frame\+Index, \mbox{\hyperlink{interfaceaeric_1_1rewind__plugin_1_1_i_rewind_handler}{IRewind\+Handler}} rewind\+Handler, \mbox{\hyperlink{interfaceaeric_1_1rewind__plugin_1_1_i_rewind_data_handler}{IRewind\+Data\+Handler}} data\+Handler)
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{namespaceaeric_1_1rewind__plugin_a11ac05cf52f94e067e955c459f220d0f}{Rewind\+Mapped\+Frame}} \mbox{\hyperlink{classaeric_1_1rewind__plugin_1_1_rewind_storage_a991e0c63c360a907f00d8b9a6cadaa35}{frame\+MappedA}}
+\item 
+\mbox{\hyperlink{namespaceaeric_1_1rewind__plugin_a11ac05cf52f94e067e955c459f220d0f}{Rewind\+Mapped\+Frame}} \mbox{\hyperlink{namespaceaeric_1_1rewind__plugin_a11ac05cf52f94e067e955c459f220d0f}{Rewind\+Mapped\+Frame}} \mbox{\hyperlink{classaeric_1_1rewind__plugin_1_1_rewind_storage_a5cbfe637f98ac5d4800f7ec1f210de78}{frame\+MappedB}}
+\item 
+\mbox{\hyperlink{namespaceaeric_1_1rewind__plugin_a11ac05cf52f94e067e955c459f220d0f}{Rewind\+Mapped\+Frame}} \mbox{\hyperlink{namespaceaeric_1_1rewind__plugin_a11ac05cf52f94e067e955c459f220d0f}{Rewind\+Mapped\+Frame}} float \mbox{\hyperlink{classaeric_1_1rewind__plugin_1_1_rewind_storage_a51e28e1cbd15d44262905f89b2460291}{frameT}}
+\item 
+\mbox{\hyperlink{namespaceaeric_1_1rewind__plugin_a11ac05cf52f94e067e955c459f220d0f}{Rewind\+Mapped\+Frame}} \mbox{\hyperlink{namespaceaeric_1_1rewind__plugin_a11ac05cf52f94e067e955c459f220d0f}{Rewind\+Mapped\+Frame}} float int \mbox{\hyperlink{classaeric_1_1rewind__plugin_1_1_rewind_storage_afeae6532b413a17f553c1d53047145d0}{frame\+UnmappedA}}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Properties}
+\begin{DoxyCompactItemize}
+\item 
+bool \mbox{\hyperlink{classaeric_1_1rewind__plugin_1_1_rewind_storage_a000d984b0fceea2a4b9ffb9852063528}{is\+Full}}\hspace{0.3cm}{\ttfamily  \mbox{[}get\mbox{]}}
+\item 
+int \mbox{\hyperlink{classaeric_1_1rewind__plugin_1_1_rewind_storage_af0a39692473a084036d45a43ddabaa9c}{Recorded\+Frame\+Count}}\hspace{0.3cm}{\ttfamily  \mbox{[}get\mbox{]}}
+\item 
+int \mbox{\hyperlink{classaeric_1_1rewind__plugin_1_1_rewind_storage_a7512bc2c0a2560b1b6e0b4376c1fe9fb}{Frame\+Read\+Index}}\hspace{0.3cm}{\ttfamily  \mbox{[}get\mbox{]}}
+\item 
+int \mbox{\hyperlink{classaeric_1_1rewind__plugin_1_1_rewind_storage_aa7ac159f0669800a7f7643191ae79959}{Frame\+Write\+Index}}\hspace{0.3cm}{\ttfamily  \mbox{[}get\mbox{]}}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\Hypertarget{classaeric_1_1rewind__plugin_1_1_rewind_storage_a664c1f4238dec1acfa8b509750b74fc5}\label{classaeric_1_1rewind__plugin_1_1_rewind_storage_a664c1f4238dec1acfa8b509750b74fc5} 
+\index{aeric.rewind\_plugin.RewindStorage@{aeric.rewind\_plugin.RewindStorage}!RewindStorage@{RewindStorage}}
+\index{RewindStorage@{RewindStorage}!aeric.rewind\_plugin.RewindStorage@{aeric.rewind\_plugin.RewindStorage}}
+\doxysubsubsection{\texorpdfstring{RewindStorage()}{RewindStorage()}}
+{\footnotesize\ttfamily aeric.\+rewind\+\_\+plugin.\+Rewind\+Storage.\+Rewind\+Storage (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classaeric_1_1rewind__plugin_1_1_rewind_scene}{Rewind\+Scene}}}]{rewind\+Scene,  }\item[{int}]{max\+Frame\+Count }\end{DoxyParamCaption})}
+
+
+
+\doxysubsection{Member Function Documentation}
+\Hypertarget{classaeric_1_1rewind__plugin_1_1_rewind_storage_a71527c966f93104fcd806955e872bc79}\label{classaeric_1_1rewind__plugin_1_1_rewind_storage_a71527c966f93104fcd806955e872bc79} 
+\index{aeric.rewind\_plugin.RewindStorage@{aeric.rewind\_plugin.RewindStorage}!Dispose@{Dispose}}
+\index{Dispose@{Dispose}!aeric.rewind\_plugin.RewindStorage@{aeric.rewind\_plugin.RewindStorage}}
+\doxysubsubsection{\texorpdfstring{Dispose()}{Dispose()}}
+{\footnotesize\ttfamily void aeric.\+rewind\+\_\+plugin.\+Rewind\+Storage.\+Dispose (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+\Hypertarget{classaeric_1_1rewind__plugin_1_1_rewind_storage_a702ed145ca9e9962a2710f6724e69661}\label{classaeric_1_1rewind__plugin_1_1_rewind_storage_a702ed145ca9e9962a2710f6724e69661} 
+\index{aeric.rewind\_plugin.RewindStorage@{aeric.rewind\_plugin.RewindStorage}!findPlaybackFrames@{findPlaybackFrames}}
+\index{findPlaybackFrames@{findPlaybackFrames}!aeric.rewind\_plugin.RewindStorage@{aeric.rewind\_plugin.RewindStorage}}
+\doxysubsubsection{\texorpdfstring{findPlaybackFrames()}{findPlaybackFrames()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{namespaceaeric_1_1rewind__plugin_a11ac05cf52f94e067e955c459f220d0f}{Rewind\+Mapped\+Frame}} \mbox{\hyperlink{namespaceaeric_1_1rewind__plugin_a11ac05cf52f94e067e955c459f220d0f}{Rewind\+Mapped\+Frame}} float int int frame\+UnmappedB aeric.\+rewind\+\_\+plugin.\+Rewind\+Storage.\+find\+Playback\+Frames (\begin{DoxyParamCaption}\item[{float}]{playback\+Time }\end{DoxyParamCaption})}
+
+\Hypertarget{classaeric_1_1rewind__plugin_1_1_rewind_storage_a903b2305c3eb36a5972dfaa0a9dfa47b}\label{classaeric_1_1rewind__plugin_1_1_rewind_storage_a903b2305c3eb36a5972dfaa0a9dfa47b} 
+\index{aeric.rewind\_plugin.RewindStorage@{aeric.rewind\_plugin.RewindStorage}!getFramePosition@{getFramePosition}}
+\index{getFramePosition@{getFramePosition}!aeric.rewind\_plugin.RewindStorage@{aeric.rewind\_plugin.RewindStorage}}
+\doxysubsubsection{\texorpdfstring{getFramePosition()}{getFramePosition()}}
+{\footnotesize\ttfamily Vector3 aeric.\+rewind\+\_\+plugin.\+Rewind\+Storage.\+get\+Frame\+Position (\begin{DoxyParamCaption}\item[{int}]{unmapped\+Frame\+Index,  }\item[{\mbox{\hyperlink{interfaceaeric_1_1rewind__plugin_1_1_i_rewind_handler}{IRewind\+Handler}}}]{rewind\+Handler }\end{DoxyParamCaption})}
+
+\Hypertarget{classaeric_1_1rewind__plugin_1_1_rewind_storage_a047f413408f3bc5ec42dc94c267023ca}\label{classaeric_1_1rewind__plugin_1_1_rewind_storage_a047f413408f3bc5ec42dc94c267023ca} 
+\index{aeric.rewind\_plugin.RewindStorage@{aeric.rewind\_plugin.RewindStorage}!getFrameTime@{getFrameTime}}
+\index{getFrameTime@{getFrameTime}!aeric.rewind\_plugin.RewindStorage@{aeric.rewind\_plugin.RewindStorage}}
+\doxysubsubsection{\texorpdfstring{getFrameTime()}{getFrameTime()}}
+{\footnotesize\ttfamily float aeric.\+rewind\+\_\+plugin.\+Rewind\+Storage.\+get\+Frame\+Time (\begin{DoxyParamCaption}\item[{int}]{unmapped\+Frame\+Index }\end{DoxyParamCaption})}
+
+\Hypertarget{classaeric_1_1rewind__plugin_1_1_rewind_storage_aa50b78637aaa60efbf20d18314ecb563}\label{classaeric_1_1rewind__plugin_1_1_rewind_storage_aa50b78637aaa60efbf20d18314ecb563} 
+\index{aeric.rewind\_plugin.RewindStorage@{aeric.rewind\_plugin.RewindStorage}!getHandlerStorage@{getHandlerStorage}}
+\index{getHandlerStorage@{getHandlerStorage}!aeric.rewind\_plugin.RewindStorage@{aeric.rewind\_plugin.RewindStorage}}
+\doxysubsubsection{\texorpdfstring{getHandlerStorage()}{getHandlerStorage()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{classaeric_1_1rewind__plugin_1_1_rewind_handler_storage}{Rewind\+Handler\+Storage}} aeric.\+rewind\+\_\+plugin.\+Rewind\+Storage.\+get\+Handler\+Storage (\begin{DoxyParamCaption}\item[{uint}]{rewind\+Handler\+ID }\end{DoxyParamCaption})}
+
+\Hypertarget{classaeric_1_1rewind__plugin_1_1_rewind_storage_aa5fb8716762f0c74754dbe59348cb6a2}\label{classaeric_1_1rewind__plugin_1_1_rewind_storage_aa5fb8716762f0c74754dbe59348cb6a2} 
+\index{aeric.rewind\_plugin.RewindStorage@{aeric.rewind\_plugin.RewindStorage}!getTime@{getTime}}
+\index{getTime@{getTime}!aeric.rewind\_plugin.RewindStorage@{aeric.rewind\_plugin.RewindStorage}}
+\doxysubsubsection{\texorpdfstring{getTime()}{getTime()}}
+{\footnotesize\ttfamily float aeric.\+rewind\+\_\+plugin.\+Rewind\+Storage.\+get\+Time (\begin{DoxyParamCaption}\item[{int}]{time\+Frame\+Index }\end{DoxyParamCaption})}
+
+\Hypertarget{classaeric_1_1rewind__plugin_1_1_rewind_storage_a7516a5409e0d557d181c3ea07304aca8}\label{classaeric_1_1rewind__plugin_1_1_rewind_storage_a7516a5409e0d557d181c3ea07304aca8} 
+\index{aeric.rewind\_plugin.RewindStorage@{aeric.rewind\_plugin.RewindStorage}!getUnmappedFrameData@{getUnmappedFrameData}}
+\index{getUnmappedFrameData@{getUnmappedFrameData}!aeric.rewind\_plugin.RewindStorage@{aeric.rewind\_plugin.RewindStorage}}
+\doxysubsubsection{\texorpdfstring{getUnmappedFrameData()}{getUnmappedFrameData()}}
+{\footnotesize\ttfamily void aeric.\+rewind\+\_\+plugin.\+Rewind\+Storage.\+get\+Unmapped\+Frame\+Data (\begin{DoxyParamCaption}\item[{int}]{unmapped\+Frame\+Index,  }\item[{\mbox{\hyperlink{interfaceaeric_1_1rewind__plugin_1_1_i_rewind_handler}{IRewind\+Handler}}}]{rewind\+Handler,  }\item[{\mbox{\hyperlink{interfaceaeric_1_1rewind__plugin_1_1_i_rewind_data_handler}{IRewind\+Data\+Handler}}}]{data\+Handler }\end{DoxyParamCaption})}
+
+\Hypertarget{classaeric_1_1rewind__plugin_1_1_rewind_storage_adffc658796f5403be126b054ccabba1c}\label{classaeric_1_1rewind__plugin_1_1_rewind_storage_adffc658796f5403be126b054ccabba1c} 
+\index{aeric.rewind\_plugin.RewindStorage@{aeric.rewind\_plugin.RewindStorage}!loadFromBinaryStreamFile@{loadFromBinaryStreamFile}}
+\index{loadFromBinaryStreamFile@{loadFromBinaryStreamFile}!aeric.rewind\_plugin.RewindStorage@{aeric.rewind\_plugin.RewindStorage}}
+\doxysubsubsection{\texorpdfstring{loadFromBinaryStreamFile()}{loadFromBinaryStreamFile()}}
+{\footnotesize\ttfamily void aeric.\+rewind\+\_\+plugin.\+Rewind\+Storage.\+load\+From\+Binary\+Stream\+File (\begin{DoxyParamCaption}\item[{string}]{full\+Path }\end{DoxyParamCaption})}
+
+\Hypertarget{classaeric_1_1rewind__plugin_1_1_rewind_storage_aaf0d476774ad60cb1e0c40a75ce036fb}\label{classaeric_1_1rewind__plugin_1_1_rewind_storage_aaf0d476774ad60cb1e0c40a75ce036fb} 
+\index{aeric.rewind\_plugin.RewindStorage@{aeric.rewind\_plugin.RewindStorage}!loadFromJsonFile@{loadFromJsonFile}}
+\index{loadFromJsonFile@{loadFromJsonFile}!aeric.rewind\_plugin.RewindStorage@{aeric.rewind\_plugin.RewindStorage}}
+\doxysubsubsection{\texorpdfstring{loadFromJsonFile()}{loadFromJsonFile()}}
+{\footnotesize\ttfamily void aeric.\+rewind\+\_\+plugin.\+Rewind\+Storage.\+load\+From\+Json\+File (\begin{DoxyParamCaption}\item[{string}]{full\+Path }\end{DoxyParamCaption})}
+
+\Hypertarget{classaeric_1_1rewind__plugin_1_1_rewind_storage_ab1d37d2b19cbd59af7242209adcedd12}\label{classaeric_1_1rewind__plugin_1_1_rewind_storage_ab1d37d2b19cbd59af7242209adcedd12} 
+\index{aeric.rewind\_plugin.RewindStorage@{aeric.rewind\_plugin.RewindStorage}!loadFromRawBinaryFile@{loadFromRawBinaryFile}}
+\index{loadFromRawBinaryFile@{loadFromRawBinaryFile}!aeric.rewind\_plugin.RewindStorage@{aeric.rewind\_plugin.RewindStorage}}
+\doxysubsubsection{\texorpdfstring{loadFromRawBinaryFile()}{loadFromRawBinaryFile()}}
+{\footnotesize\ttfamily void aeric.\+rewind\+\_\+plugin.\+Rewind\+Storage.\+load\+From\+Raw\+Binary\+File (\begin{DoxyParamCaption}\item[{string}]{file\+Name }\end{DoxyParamCaption})}
+
+\Hypertarget{classaeric_1_1rewind__plugin_1_1_rewind_storage_ab96a144f81b4ea008032c01380de4b44}\label{classaeric_1_1rewind__plugin_1_1_rewind_storage_ab96a144f81b4ea008032c01380de4b44} 
+\index{aeric.rewind\_plugin.RewindStorage@{aeric.rewind\_plugin.RewindStorage}!restoreHandlerInterpolated@{restoreHandlerInterpolated}}
+\index{restoreHandlerInterpolated@{restoreHandlerInterpolated}!aeric.rewind\_plugin.RewindStorage@{aeric.rewind\_plugin.RewindStorage}}
+\doxysubsubsection{\texorpdfstring{restoreHandlerInterpolated()}{restoreHandlerInterpolated()}}
+{\footnotesize\ttfamily void aeric.\+rewind\+\_\+plugin.\+Rewind\+Storage.\+restore\+Handler\+Interpolated (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{interfaceaeric_1_1rewind__plugin_1_1_i_rewind_handler}{IRewind\+Handler}}}]{rewind\+Handler,  }\item[{\mbox{\hyperlink{namespaceaeric_1_1rewind__plugin_a11ac05cf52f94e067e955c459f220d0f}{Rewind\+Mapped\+Frame}}}]{frameA,  }\item[{\mbox{\hyperlink{namespaceaeric_1_1rewind__plugin_a11ac05cf52f94e067e955c459f220d0f}{Rewind\+Mapped\+Frame}}}]{frameB,  }\item[{float}]{frameT }\end{DoxyParamCaption})}
+
+\Hypertarget{classaeric_1_1rewind__plugin_1_1_rewind_storage_ab49bb6daec2aaad88e0795cda6154736}\label{classaeric_1_1rewind__plugin_1_1_rewind_storage_ab49bb6daec2aaad88e0795cda6154736} 
+\index{aeric.rewind\_plugin.RewindStorage@{aeric.rewind\_plugin.RewindStorage}!rewindFrames@{rewindFrames}}
+\index{rewindFrames@{rewindFrames}!aeric.rewind\_plugin.RewindStorage@{aeric.rewind\_plugin.RewindStorage}}
+\doxysubsubsection{\texorpdfstring{rewindFrames()}{rewindFrames()}}
+{\footnotesize\ttfamily void aeric.\+rewind\+\_\+plugin.\+Rewind\+Storage.\+rewind\+Frames (\begin{DoxyParamCaption}\item[{int}]{frame\+Count\+To\+Rewind }\end{DoxyParamCaption})}
+
+\Hypertarget{classaeric_1_1rewind__plugin_1_1_rewind_storage_a5ef2ff0e61de9306fe5302cc54fc7413}\label{classaeric_1_1rewind__plugin_1_1_rewind_storage_a5ef2ff0e61de9306fe5302cc54fc7413} 
+\index{aeric.rewind\_plugin.RewindStorage@{aeric.rewind\_plugin.RewindStorage}!writeFrameEnd@{writeFrameEnd}}
+\index{writeFrameEnd@{writeFrameEnd}!aeric.rewind\_plugin.RewindStorage@{aeric.rewind\_plugin.RewindStorage}}
+\doxysubsubsection{\texorpdfstring{writeFrameEnd()}{writeFrameEnd()}}
+{\footnotesize\ttfamily void aeric.\+rewind\+\_\+plugin.\+Rewind\+Storage.\+write\+Frame\+End (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+\Hypertarget{classaeric_1_1rewind__plugin_1_1_rewind_storage_a6936f90b02f999b753b351ab20104133}\label{classaeric_1_1rewind__plugin_1_1_rewind_storage_a6936f90b02f999b753b351ab20104133} 
+\index{aeric.rewind\_plugin.RewindStorage@{aeric.rewind\_plugin.RewindStorage}!writeFrameStart@{writeFrameStart}}
+\index{writeFrameStart@{writeFrameStart}!aeric.rewind\_plugin.RewindStorage@{aeric.rewind\_plugin.RewindStorage}}
+\doxysubsubsection{\texorpdfstring{writeFrameStart()}{writeFrameStart()}}
+{\footnotesize\ttfamily void aeric.\+rewind\+\_\+plugin.\+Rewind\+Storage.\+write\+Frame\+Start (\begin{DoxyParamCaption}\item[{float}]{frame\+Time\+Relative\+To\+Start }\end{DoxyParamCaption})}
+
+\Hypertarget{classaeric_1_1rewind__plugin_1_1_rewind_storage_a23ffd0819393a924dde16343565f8e1c}\label{classaeric_1_1rewind__plugin_1_1_rewind_storage_a23ffd0819393a924dde16343565f8e1c} 
+\index{aeric.rewind\_plugin.RewindStorage@{aeric.rewind\_plugin.RewindStorage}!writeHandlerFrame@{writeHandlerFrame}}
+\index{writeHandlerFrame@{writeHandlerFrame}!aeric.rewind\_plugin.RewindStorage@{aeric.rewind\_plugin.RewindStorage}}
+\doxysubsubsection{\texorpdfstring{writeHandlerFrame()}{writeHandlerFrame()}}
+{\footnotesize\ttfamily void aeric.\+rewind\+\_\+plugin.\+Rewind\+Storage.\+write\+Handler\+Frame (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{interfaceaeric_1_1rewind__plugin_1_1_i_rewind_handler}{IRewind\+Handler}}}]{rewind\+Handler }\end{DoxyParamCaption})}
+
+\Hypertarget{classaeric_1_1rewind__plugin_1_1_rewind_storage_a9ce73925aa6208f1467a3052e4a6e2da}\label{classaeric_1_1rewind__plugin_1_1_rewind_storage_a9ce73925aa6208f1467a3052e4a6e2da} 
+\index{aeric.rewind\_plugin.RewindStorage@{aeric.rewind\_plugin.RewindStorage}!writeToBinaryStreamFile@{writeToBinaryStreamFile}}
+\index{writeToBinaryStreamFile@{writeToBinaryStreamFile}!aeric.rewind\_plugin.RewindStorage@{aeric.rewind\_plugin.RewindStorage}}
+\doxysubsubsection{\texorpdfstring{writeToBinaryStreamFile()}{writeToBinaryStreamFile()}}
+{\footnotesize\ttfamily void aeric.\+rewind\+\_\+plugin.\+Rewind\+Storage.\+write\+To\+Binary\+Stream\+File (\begin{DoxyParamCaption}\item[{string}]{file\+Name }\end{DoxyParamCaption})}
+
+\Hypertarget{classaeric_1_1rewind__plugin_1_1_rewind_storage_ab2229cd31e338a64760f9d91e95a0288}\label{classaeric_1_1rewind__plugin_1_1_rewind_storage_ab2229cd31e338a64760f9d91e95a0288} 
+\index{aeric.rewind\_plugin.RewindStorage@{aeric.rewind\_plugin.RewindStorage}!writeToJson@{writeToJson}}
+\index{writeToJson@{writeToJson}!aeric.rewind\_plugin.RewindStorage@{aeric.rewind\_plugin.RewindStorage}}
+\doxysubsubsection{\texorpdfstring{writeToJson()}{writeToJson()}}
+{\footnotesize\ttfamily string aeric.\+rewind\+\_\+plugin.\+Rewind\+Storage.\+write\+To\+Json (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+\Hypertarget{classaeric_1_1rewind__plugin_1_1_rewind_storage_a2b0f7a05b9efb5e9b25c219a3775f311}\label{classaeric_1_1rewind__plugin_1_1_rewind_storage_a2b0f7a05b9efb5e9b25c219a3775f311} 
+\index{aeric.rewind\_plugin.RewindStorage@{aeric.rewind\_plugin.RewindStorage}!writeToJsonFile@{writeToJsonFile}}
+\index{writeToJsonFile@{writeToJsonFile}!aeric.rewind\_plugin.RewindStorage@{aeric.rewind\_plugin.RewindStorage}}
+\doxysubsubsection{\texorpdfstring{writeToJsonFile()}{writeToJsonFile()}}
+{\footnotesize\ttfamily void aeric.\+rewind\+\_\+plugin.\+Rewind\+Storage.\+write\+To\+Json\+File (\begin{DoxyParamCaption}\item[{string}]{file\+Name }\end{DoxyParamCaption})}
+
+\Hypertarget{classaeric_1_1rewind__plugin_1_1_rewind_storage_a569929da7e7dfc17e10dbb2853c64c2b}\label{classaeric_1_1rewind__plugin_1_1_rewind_storage_a569929da7e7dfc17e10dbb2853c64c2b} 
+\index{aeric.rewind\_plugin.RewindStorage@{aeric.rewind\_plugin.RewindStorage}!writeToRawBinaryFile@{writeToRawBinaryFile}}
+\index{writeToRawBinaryFile@{writeToRawBinaryFile}!aeric.rewind\_plugin.RewindStorage@{aeric.rewind\_plugin.RewindStorage}}
+\doxysubsubsection{\texorpdfstring{writeToRawBinaryFile()}{writeToRawBinaryFile()}}
+{\footnotesize\ttfamily void aeric.\+rewind\+\_\+plugin.\+Rewind\+Storage.\+write\+To\+Raw\+Binary\+File (\begin{DoxyParamCaption}\item[{string}]{file\+Name }\end{DoxyParamCaption})}
+
+
+
+\doxysubsection{Member Data Documentation}
+\Hypertarget{classaeric_1_1rewind__plugin_1_1_rewind_storage_a991e0c63c360a907f00d8b9a6cadaa35}\label{classaeric_1_1rewind__plugin_1_1_rewind_storage_a991e0c63c360a907f00d8b9a6cadaa35} 
+\index{aeric.rewind\_plugin.RewindStorage@{aeric.rewind\_plugin.RewindStorage}!frameMappedA@{frameMappedA}}
+\index{frameMappedA@{frameMappedA}!aeric.rewind\_plugin.RewindStorage@{aeric.rewind\_plugin.RewindStorage}}
+\doxysubsubsection{\texorpdfstring{frameMappedA}{frameMappedA}}
+{\footnotesize\ttfamily \mbox{\hyperlink{namespaceaeric_1_1rewind__plugin_a11ac05cf52f94e067e955c459f220d0f}{Rewind\+Mapped\+Frame}} aeric.\+rewind\+\_\+plugin.\+Rewind\+Storage.\+frame\+MappedA}
+
+\Hypertarget{classaeric_1_1rewind__plugin_1_1_rewind_storage_a5cbfe637f98ac5d4800f7ec1f210de78}\label{classaeric_1_1rewind__plugin_1_1_rewind_storage_a5cbfe637f98ac5d4800f7ec1f210de78} 
+\index{aeric.rewind\_plugin.RewindStorage@{aeric.rewind\_plugin.RewindStorage}!frameMappedB@{frameMappedB}}
+\index{frameMappedB@{frameMappedB}!aeric.rewind\_plugin.RewindStorage@{aeric.rewind\_plugin.RewindStorage}}
+\doxysubsubsection{\texorpdfstring{frameMappedB}{frameMappedB}}
+{\footnotesize\ttfamily \mbox{\hyperlink{namespaceaeric_1_1rewind__plugin_a11ac05cf52f94e067e955c459f220d0f}{Rewind\+Mapped\+Frame}} \mbox{\hyperlink{namespaceaeric_1_1rewind__plugin_a11ac05cf52f94e067e955c459f220d0f}{Rewind\+Mapped\+Frame}} aeric.\+rewind\+\_\+plugin.\+Rewind\+Storage.\+frame\+MappedB}
+
+\Hypertarget{classaeric_1_1rewind__plugin_1_1_rewind_storage_a51e28e1cbd15d44262905f89b2460291}\label{classaeric_1_1rewind__plugin_1_1_rewind_storage_a51e28e1cbd15d44262905f89b2460291} 
+\index{aeric.rewind\_plugin.RewindStorage@{aeric.rewind\_plugin.RewindStorage}!frameT@{frameT}}
+\index{frameT@{frameT}!aeric.rewind\_plugin.RewindStorage@{aeric.rewind\_plugin.RewindStorage}}
+\doxysubsubsection{\texorpdfstring{frameT}{frameT}}
+{\footnotesize\ttfamily \mbox{\hyperlink{namespaceaeric_1_1rewind__plugin_a11ac05cf52f94e067e955c459f220d0f}{Rewind\+Mapped\+Frame}} \mbox{\hyperlink{namespaceaeric_1_1rewind__plugin_a11ac05cf52f94e067e955c459f220d0f}{Rewind\+Mapped\+Frame}} float aeric.\+rewind\+\_\+plugin.\+Rewind\+Storage.\+frameT}
+
+\Hypertarget{classaeric_1_1rewind__plugin_1_1_rewind_storage_afeae6532b413a17f553c1d53047145d0}\label{classaeric_1_1rewind__plugin_1_1_rewind_storage_afeae6532b413a17f553c1d53047145d0} 
+\index{aeric.rewind\_plugin.RewindStorage@{aeric.rewind\_plugin.RewindStorage}!frameUnmappedA@{frameUnmappedA}}
+\index{frameUnmappedA@{frameUnmappedA}!aeric.rewind\_plugin.RewindStorage@{aeric.rewind\_plugin.RewindStorage}}
+\doxysubsubsection{\texorpdfstring{frameUnmappedA}{frameUnmappedA}}
+{\footnotesize\ttfamily \mbox{\hyperlink{namespaceaeric_1_1rewind__plugin_a11ac05cf52f94e067e955c459f220d0f}{Rewind\+Mapped\+Frame}} \mbox{\hyperlink{namespaceaeric_1_1rewind__plugin_a11ac05cf52f94e067e955c459f220d0f}{Rewind\+Mapped\+Frame}} float int aeric.\+rewind\+\_\+plugin.\+Rewind\+Storage.\+frame\+UnmappedA}
+
+
+
+\doxysubsection{Property Documentation}
+\Hypertarget{classaeric_1_1rewind__plugin_1_1_rewind_storage_a7512bc2c0a2560b1b6e0b4376c1fe9fb}\label{classaeric_1_1rewind__plugin_1_1_rewind_storage_a7512bc2c0a2560b1b6e0b4376c1fe9fb} 
+\index{aeric.rewind\_plugin.RewindStorage@{aeric.rewind\_plugin.RewindStorage}!FrameReadIndex@{FrameReadIndex}}
+\index{FrameReadIndex@{FrameReadIndex}!aeric.rewind\_plugin.RewindStorage@{aeric.rewind\_plugin.RewindStorage}}
+\doxysubsubsection{\texorpdfstring{FrameReadIndex}{FrameReadIndex}}
+{\footnotesize\ttfamily int aeric.\+rewind\+\_\+plugin.\+Rewind\+Storage.\+Frame\+Read\+Index\hspace{0.3cm}{\ttfamily [get]}}
+
+\Hypertarget{classaeric_1_1rewind__plugin_1_1_rewind_storage_aa7ac159f0669800a7f7643191ae79959}\label{classaeric_1_1rewind__plugin_1_1_rewind_storage_aa7ac159f0669800a7f7643191ae79959} 
+\index{aeric.rewind\_plugin.RewindStorage@{aeric.rewind\_plugin.RewindStorage}!FrameWriteIndex@{FrameWriteIndex}}
+\index{FrameWriteIndex@{FrameWriteIndex}!aeric.rewind\_plugin.RewindStorage@{aeric.rewind\_plugin.RewindStorage}}
+\doxysubsubsection{\texorpdfstring{FrameWriteIndex}{FrameWriteIndex}}
+{\footnotesize\ttfamily int aeric.\+rewind\+\_\+plugin.\+Rewind\+Storage.\+Frame\+Write\+Index\hspace{0.3cm}{\ttfamily [get]}}
+
+\Hypertarget{classaeric_1_1rewind__plugin_1_1_rewind_storage_a000d984b0fceea2a4b9ffb9852063528}\label{classaeric_1_1rewind__plugin_1_1_rewind_storage_a000d984b0fceea2a4b9ffb9852063528} 
+\index{aeric.rewind\_plugin.RewindStorage@{aeric.rewind\_plugin.RewindStorage}!isFull@{isFull}}
+\index{isFull@{isFull}!aeric.rewind\_plugin.RewindStorage@{aeric.rewind\_plugin.RewindStorage}}
+\doxysubsubsection{\texorpdfstring{isFull}{isFull}}
+{\footnotesize\ttfamily bool aeric.\+rewind\+\_\+plugin.\+Rewind\+Storage.\+is\+Full\hspace{0.3cm}{\ttfamily [get]}}
+
+\Hypertarget{classaeric_1_1rewind__plugin_1_1_rewind_storage_af0a39692473a084036d45a43ddabaa9c}\label{classaeric_1_1rewind__plugin_1_1_rewind_storage_af0a39692473a084036d45a43ddabaa9c} 
+\index{aeric.rewind\_plugin.RewindStorage@{aeric.rewind\_plugin.RewindStorage}!RecordedFrameCount@{RecordedFrameCount}}
+\index{RecordedFrameCount@{RecordedFrameCount}!aeric.rewind\_plugin.RewindStorage@{aeric.rewind\_plugin.RewindStorage}}
+\doxysubsubsection{\texorpdfstring{RecordedFrameCount}{RecordedFrameCount}}
+{\footnotesize\ttfamily int aeric.\+rewind\+\_\+plugin.\+Rewind\+Storage.\+Recorded\+Frame\+Count\hspace{0.3cm}{\ttfamily [get]}}
+
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+Serialization/\mbox{\hyperlink{_rewind_storage_binary_raw_8cs}{Rewind\+Storage\+Binary\+Raw.\+cs}}\item 
+Storage/\mbox{\hyperlink{_rewind_storage_8cs}{Rewind\+Storage.\+cs}}\item 
+Serialization/\mbox{\hyperlink{_rewind_storage_binary_stream_8cs}{Rewind\+Storage\+Binary\+Stream.\+cs}}\item 
+Serialization/\mbox{\hyperlink{_rewind_storage_convert_8cs}{Rewind\+Storage\+Convert.\+cs}}\item 
+Serialization/\mbox{\hyperlink{_rewind_storage_json_8cs}{Rewind\+Storage\+Json.\+cs}}\end{DoxyCompactItemize}

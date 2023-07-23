@@ -1,0 +1,259 @@
+\doxysection{aeric.\+rewind\+\_\+plugin.\+Rewind\+Component\+Base Class Reference}
+\hypertarget{classaeric_1_1rewind__plugin_1_1_rewind_component_base}{}\label{classaeric_1_1rewind__plugin_1_1_rewind_component_base}\index{aeric.rewind\_plugin.RewindComponentBase@{aeric.rewind\_plugin.RewindComponentBase}}
+Inheritance diagram for aeric.\+rewind\+\_\+plugin.\+Rewind\+Component\+Base\+:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=5.687904cm]{classaeric_1_1rewind__plugin_1_1_rewind_component_base}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+abstract void \mbox{\hyperlink{classaeric_1_1rewind__plugin_1_1_rewind_component_base_aee63595bb80a18b37984cdadd0804009}{rewind\+Store}} (\mbox{\hyperlink{classaeric_1_1rewind__plugin_1_1_native_byte_array_writer}{Native\+Byte\+Array\+Writer}} writer)
+\begin{DoxyCompactList}\small\item\em Store a frames worth of game state for this handler. \end{DoxyCompactList}\item 
+abstract \mbox{\hyperlink{classaeric_1_1rewind__plugin_1_1_rewind_data_schema}{Rewind\+Data\+Schema}} \mbox{\hyperlink{classaeric_1_1rewind__plugin_1_1_rewind_component_base_a2f989596edcb280406293ace4fdf1c92}{make\+Data\+Schema}} ()
+\begin{DoxyCompactList}\small\item\em Constructs the data schema that defines the storage needs for this components data. \end{DoxyCompactList}\item 
+abstract void \mbox{\hyperlink{classaeric_1_1rewind__plugin_1_1_rewind_component_base_a9372e3bda19e8385f5903df94ec6320f}{rewind\+Restore\+Interpolated}} (\mbox{\hyperlink{classaeric_1_1rewind__plugin_1_1_native_byte_array_reader}{Native\+Byte\+Array\+Reader}} frame\+ReaderA, \mbox{\hyperlink{classaeric_1_1rewind__plugin_1_1_native_byte_array_reader}{Native\+Byte\+Array\+Reader}} frame\+ReaderB, float frameT)
+\begin{DoxyCompactList}\small\item\em Restore game state by reading from 2 frame readers and interpolating the results based on frameT. \end{DoxyCompactList}\item 
+virtual void \mbox{\hyperlink{classaeric_1_1rewind__plugin_1_1_rewind_component_base_a190c7fb5528e84a2659ef24ef803ec6e}{pre\+Restore}} ()
+\begin{DoxyCompactList}\small\item\em Called before each restore operation. \end{DoxyCompactList}\item 
+virtual void \mbox{\hyperlink{classaeric_1_1rewind__plugin_1_1_rewind_component_base_aa8235d57d51c93dc15b044ddf78f703f}{post\+Restore}} ()
+\begin{DoxyCompactList}\small\item\em Called after each restore operation. \end{DoxyCompactList}\item 
+virtual void \mbox{\hyperlink{classaeric_1_1rewind__plugin_1_1_rewind_component_base_ada205218cd443d0ff46bb9459e432cc9}{start\+Recording}} ()
+\begin{DoxyCompactList}\small\item\em Called before we start recording. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{classaeric_1_1rewind__plugin_1_1_rewind_component_base_aab05cace4edfa3e0c7f7df5c3ee9a048}{On\+Before\+Serialize}} ()
+\item 
+virtual bool \mbox{\hyperlink{classaeric_1_1rewind__plugin_1_1_rewind_component_base_a1425e2a55c7a9729a491c9aaee8540a9}{should\+Disable\+Component}} (Component component)
+\item 
+virtual void \mbox{\hyperlink{classaeric_1_1rewind__plugin_1_1_rewind_component_base_a3ad0dc855ed73d20a9758703cb70aa5d}{start\+Playback}} ()
+\item 
+virtual void \mbox{\hyperlink{classaeric_1_1rewind__plugin_1_1_rewind_component_base_a15e7b95d85025906d6508e31d016c41c}{stop\+Playback}} ()
+\end{DoxyCompactItemize}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{classaeric_1_1rewind__plugin_1_1_rewind_data_schema}{Rewind\+Data\+Schema}} \mbox{\hyperlink{interfaceaeric_1_1rewind__plugin_1_1_i_rewind_handler_a7149450105cc7cca6b89f36f4af8a1e2}{make\+Data\+Schema}} ()
+\begin{DoxyCompactList}\small\item\em Constructs the data schema that defines the storage needs for this components data. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{interfaceaeric_1_1rewind__plugin_1_1_i_rewind_handler_a7a14399be02c5a852ca5a6552afc456f}{start\+Recording}} ()
+\begin{DoxyCompactList}\small\item\em Allows handlers to implement custom logic to prepare for the recording of game state. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{interfaceaeric_1_1rewind__plugin_1_1_i_rewind_handler_a3080cf87fca023b6ec7c0701d428dfab}{rewind\+Store}} (\mbox{\hyperlink{classaeric_1_1rewind__plugin_1_1_native_byte_array_writer}{Native\+Byte\+Array\+Writer}} writer)
+\begin{DoxyCompactList}\small\item\em Store a frames worth of game state for this handler. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{interfaceaeric_1_1rewind__plugin_1_1_i_rewind_handler_ab544d93e20883d0eefcc3a575192606d}{rewind\+Restore\+Interpolated}} (\mbox{\hyperlink{classaeric_1_1rewind__plugin_1_1_native_byte_array_reader}{Native\+Byte\+Array\+Reader}} frame\+ReaderA, \mbox{\hyperlink{classaeric_1_1rewind__plugin_1_1_native_byte_array_reader}{Native\+Byte\+Array\+Reader}} frame\+ReaderB, float frameT)
+\begin{DoxyCompactList}\small\item\em Restore game state by reading from 2 frame readers and interpolating the results based on frameT. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{interfaceaeric_1_1rewind__plugin_1_1_i_rewind_handler_a556019931d401d788f2c6a9bf3ea6d90}{pre\+Restore}} ()
+\begin{DoxyCompactList}\small\item\em callback when values have been restored \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{interfaceaeric_1_1rewind__plugin_1_1_i_rewind_handler_ae066909531d352888722e3136fd8398d}{post\+Restore}} ()
+\begin{DoxyCompactList}\small\item\em callback when values have been restored \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Properties}
+\begin{DoxyCompactItemize}
+\item 
+virtual bool \mbox{\hyperlink{classaeric_1_1rewind__plugin_1_1_rewind_component_base_a85776346de4d43a183e7b662e950c8f9}{Should\+Stay\+Enabled\+During\+Replay}}\hspace{0.3cm}{\ttfamily  \mbox{[}get\mbox{]}}
+\item 
+uint \mbox{\hyperlink{classaeric_1_1rewind__plugin_1_1_rewind_component_base_ae795cd0d44c5b96f6abd94109500fa57}{ID}}\hspace{0.3cm}{\ttfamily  \mbox{[}get, set\mbox{]}}
+\begin{DoxyCompactList}\small\item\em ID value that uniquely identifies a rewind handler within a Rewind\+Scene. \end{DoxyCompactList}\item 
+abstract uint \mbox{\hyperlink{classaeric_1_1rewind__plugin_1_1_rewind_component_base_a57e1c18cedb063c1cf16f87c46758162}{Handler\+Type\+ID}}\hspace{0.3cm}{\ttfamily  \mbox{[}get\mbox{]}}
+\begin{DoxyCompactList}\small\item\em Each IRewind\+Handler implementation must have a unique Handler\+Type\+ID. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Properties inherited from \mbox{\hyperlink{interfaceaeric_1_1rewind__plugin_1_1_i_rewind_handler}{aeric.\+rewind\+\_\+plugin.\+IRewind\+Handler}}}
+\begin{DoxyCompactItemize}
+\item 
+uint \mbox{\hyperlink{interfaceaeric_1_1rewind__plugin_1_1_i_rewind_handler_ac11ced07ac61069ab4d80c24136de8fc}{ID}}\hspace{0.3cm}{\ttfamily  \mbox{[}get, set\mbox{]}}
+\begin{DoxyCompactList}\small\item\em ID value that uniquely identifies a rewind handler within a Rewind\+Scene. \end{DoxyCompactList}\item 
+uint \mbox{\hyperlink{interfaceaeric_1_1rewind__plugin_1_1_i_rewind_handler_a2e751337bbc8cf830d46651eb70e62b4}{Handler\+Type\+ID}}\hspace{0.3cm}{\ttfamily  \mbox{[}get\mbox{]}}
+\begin{DoxyCompactList}\small\item\em Each IRewind\+Handler implementation must have a unique Handler\+Type\+ID. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Member Function Documentation}
+\Hypertarget{classaeric_1_1rewind__plugin_1_1_rewind_component_base_a2f989596edcb280406293ace4fdf1c92}\label{classaeric_1_1rewind__plugin_1_1_rewind_component_base_a2f989596edcb280406293ace4fdf1c92} 
+\index{aeric.rewind\_plugin.RewindComponentBase@{aeric.rewind\_plugin.RewindComponentBase}!makeDataSchema@{makeDataSchema}}
+\index{makeDataSchema@{makeDataSchema}!aeric.rewind\_plugin.RewindComponentBase@{aeric.rewind\_plugin.RewindComponentBase}}
+\doxysubsubsection{\texorpdfstring{makeDataSchema()}{makeDataSchema()}}
+{\footnotesize\ttfamily abstract \mbox{\hyperlink{classaeric_1_1rewind__plugin_1_1_rewind_data_schema}{Rewind\+Data\+Schema}} aeric.\+rewind\+\_\+plugin.\+Rewind\+Component\+Base.\+make\+Data\+Schema (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+
+
+Constructs the data schema that defines the storage needs for this components data. 
+
+\begin{DoxyReturn}{Returns}
+
+\end{DoxyReturn}
+
+
+Implements \mbox{\hyperlink{interfaceaeric_1_1rewind__plugin_1_1_i_rewind_handler_a7149450105cc7cca6b89f36f4af8a1e2}{aeric.\+rewind\+\_\+plugin.\+IRewind\+Handler}}.
+
+
+
+Implemented in \mbox{\hyperlink{classaeric_1_1rewind__plugin_1_1_rewind_animator_abfa45bc01d21e189ac75a08416477ce2}{aeric.\+rewind\+\_\+plugin.\+Rewind\+Animator}}, \mbox{\hyperlink{classaeric_1_1rewind__plugin_1_1_rewind_camera_a2623815324775659ff5e69c79ab3338c}{aeric.\+rewind\+\_\+plugin.\+Rewind\+Camera}}, \mbox{\hyperlink{classaeric_1_1rewind__plugin_1_1_rewind_custom_mono_behaviour_attributes_acaad138da1ea942367ae55404e68c1c3}{aeric.\+rewind\+\_\+plugin.\+Rewind\+Custom\+Mono\+Behaviour\+Attributes}}, \mbox{\hyperlink{classaeric_1_1rewind__plugin_1_1_rewind_game_object_enabled_add1361980058de6855bea01091952d05}{aeric.\+rewind\+\_\+plugin.\+Rewind\+Game\+Object\+Enabled}}, \mbox{\hyperlink{classaeric_1_1rewind__plugin_1_1_rewind_material_color_a6d8ea5545a15620b252fb18c179d7a56}{aeric.\+rewind\+\_\+plugin.\+Rewind\+Material\+Color}}, \mbox{\hyperlink{classaeric_1_1rewind__plugin_1_1_rewind_particle_system_a5f741166971d54d1171a0cc96ff77a1f}{aeric.\+rewind\+\_\+plugin.\+Rewind\+Particle\+System}}, \mbox{\hyperlink{classaeric_1_1rewind__plugin_1_1_rewind_renderer_material_change_aad26b6e058df844834a3a82da539631f}{aeric.\+rewind\+\_\+plugin.\+Rewind\+Renderer\+Material\+Change}}, \mbox{\hyperlink{classaeric_1_1rewind__plugin_1_1_rewind_transform_ab60a6339bdc336560e1ddb1d03ec774e}{aeric.\+rewind\+\_\+plugin.\+Rewind\+Transform}}, and \mbox{\hyperlink{classaeric_1_1rewind__plugin_1_1_rewind_transform_hierarchy_a5eec208ac2247887ad3e3d9529be6632}{aeric.\+rewind\+\_\+plugin.\+Rewind\+Transform\+Hierarchy}}.
+
+\Hypertarget{classaeric_1_1rewind__plugin_1_1_rewind_component_base_aab05cace4edfa3e0c7f7df5c3ee9a048}\label{classaeric_1_1rewind__plugin_1_1_rewind_component_base_aab05cace4edfa3e0c7f7df5c3ee9a048} 
+\index{aeric.rewind\_plugin.RewindComponentBase@{aeric.rewind\_plugin.RewindComponentBase}!OnBeforeSerialize@{OnBeforeSerialize}}
+\index{OnBeforeSerialize@{OnBeforeSerialize}!aeric.rewind\_plugin.RewindComponentBase@{aeric.rewind\_plugin.RewindComponentBase}}
+\doxysubsubsection{\texorpdfstring{OnBeforeSerialize()}{OnBeforeSerialize()}}
+{\footnotesize\ttfamily void aeric.\+rewind\+\_\+plugin.\+Rewind\+Component\+Base.\+On\+Before\+Serialize (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+\Hypertarget{classaeric_1_1rewind__plugin_1_1_rewind_component_base_aa8235d57d51c93dc15b044ddf78f703f}\label{classaeric_1_1rewind__plugin_1_1_rewind_component_base_aa8235d57d51c93dc15b044ddf78f703f} 
+\index{aeric.rewind\_plugin.RewindComponentBase@{aeric.rewind\_plugin.RewindComponentBase}!postRestore@{postRestore}}
+\index{postRestore@{postRestore}!aeric.rewind\_plugin.RewindComponentBase@{aeric.rewind\_plugin.RewindComponentBase}}
+\doxysubsubsection{\texorpdfstring{postRestore()}{postRestore()}}
+{\footnotesize\ttfamily virtual void aeric.\+rewind\+\_\+plugin.\+Rewind\+Component\+Base.\+post\+Restore (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [virtual]}}
+
+
+
+Called after each restore operation. 
+
+
+
+Implements \mbox{\hyperlink{interfaceaeric_1_1rewind__plugin_1_1_i_rewind_handler_ae066909531d352888722e3136fd8398d}{aeric.\+rewind\+\_\+plugin.\+IRewind\+Handler}}.
+
+
+
+Reimplemented in \mbox{\hyperlink{classaeric_1_1rewind__plugin_1_1_rewind_transform_ae56e33f5165402bb1adc53e23fb78c63}{aeric.\+rewind\+\_\+plugin.\+Rewind\+Transform}}.
+
+\Hypertarget{classaeric_1_1rewind__plugin_1_1_rewind_component_base_a190c7fb5528e84a2659ef24ef803ec6e}\label{classaeric_1_1rewind__plugin_1_1_rewind_component_base_a190c7fb5528e84a2659ef24ef803ec6e} 
+\index{aeric.rewind\_plugin.RewindComponentBase@{aeric.rewind\_plugin.RewindComponentBase}!preRestore@{preRestore}}
+\index{preRestore@{preRestore}!aeric.rewind\_plugin.RewindComponentBase@{aeric.rewind\_plugin.RewindComponentBase}}
+\doxysubsubsection{\texorpdfstring{preRestore()}{preRestore()}}
+{\footnotesize\ttfamily virtual void aeric.\+rewind\+\_\+plugin.\+Rewind\+Component\+Base.\+pre\+Restore (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [virtual]}}
+
+
+
+Called before each restore operation. 
+
+
+
+Implements \mbox{\hyperlink{interfaceaeric_1_1rewind__plugin_1_1_i_rewind_handler_a556019931d401d788f2c6a9bf3ea6d90}{aeric.\+rewind\+\_\+plugin.\+IRewind\+Handler}}.
+
+
+
+Reimplemented in \mbox{\hyperlink{classaeric_1_1rewind__plugin_1_1_rewind_transform_aa8508d8aca21c5b9c770c6247ae892ca}{aeric.\+rewind\+\_\+plugin.\+Rewind\+Transform}}.
+
+\Hypertarget{classaeric_1_1rewind__plugin_1_1_rewind_component_base_a9372e3bda19e8385f5903df94ec6320f}\label{classaeric_1_1rewind__plugin_1_1_rewind_component_base_a9372e3bda19e8385f5903df94ec6320f} 
+\index{aeric.rewind\_plugin.RewindComponentBase@{aeric.rewind\_plugin.RewindComponentBase}!rewindRestoreInterpolated@{rewindRestoreInterpolated}}
+\index{rewindRestoreInterpolated@{rewindRestoreInterpolated}!aeric.rewind\_plugin.RewindComponentBase@{aeric.rewind\_plugin.RewindComponentBase}}
+\doxysubsubsection{\texorpdfstring{rewindRestoreInterpolated()}{rewindRestoreInterpolated()}}
+{\footnotesize\ttfamily abstract void aeric.\+rewind\+\_\+plugin.\+Rewind\+Component\+Base.\+rewind\+Restore\+Interpolated (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classaeric_1_1rewind__plugin_1_1_native_byte_array_reader}{Native\+Byte\+Array\+Reader}}}]{frame\+ReaderA,  }\item[{\mbox{\hyperlink{classaeric_1_1rewind__plugin_1_1_native_byte_array_reader}{Native\+Byte\+Array\+Reader}}}]{frame\+ReaderB,  }\item[{float}]{frameT }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+
+
+Restore game state by reading from 2 frame readers and interpolating the results based on frameT. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em frame\+ReaderA} & frame reader for the first frame\\
+\hline
+{\em frame\+ReaderB} & frame reader for the next frame\\
+\hline
+{\em frameT} & value is between 0 and 1\\
+\hline
+\end{DoxyParams}
+
+
+Implements \mbox{\hyperlink{interfaceaeric_1_1rewind__plugin_1_1_i_rewind_handler_ab544d93e20883d0eefcc3a575192606d}{aeric.\+rewind\+\_\+plugin.\+IRewind\+Handler}}.
+
+
+
+Implemented in \mbox{\hyperlink{classaeric_1_1rewind__plugin_1_1_rewind_animator_a7c8167a5ced88cba93f9e447e59072ee}{aeric.\+rewind\+\_\+plugin.\+Rewind\+Animator}}, \mbox{\hyperlink{classaeric_1_1rewind__plugin_1_1_rewind_camera_a7148570751d15a8614b3be2089852c86}{aeric.\+rewind\+\_\+plugin.\+Rewind\+Camera}}, \mbox{\hyperlink{classaeric_1_1rewind__plugin_1_1_rewind_custom_mono_behaviour_attributes_a9d2a779273ac1174a3b275c56efc7070}{aeric.\+rewind\+\_\+plugin.\+Rewind\+Custom\+Mono\+Behaviour\+Attributes}}, \mbox{\hyperlink{classaeric_1_1rewind__plugin_1_1_rewind_game_object_enabled_a8969486850aa4b1abf3926a1a3b49e3f}{aeric.\+rewind\+\_\+plugin.\+Rewind\+Game\+Object\+Enabled}}, \mbox{\hyperlink{classaeric_1_1rewind__plugin_1_1_rewind_material_color_a1b024b54e0de1dc8712cc6bcc32b1f5a}{aeric.\+rewind\+\_\+plugin.\+Rewind\+Material\+Color}}, \mbox{\hyperlink{classaeric_1_1rewind__plugin_1_1_rewind_particle_system_a332a7df2074bbbe2a0a246cf11ec64fd}{aeric.\+rewind\+\_\+plugin.\+Rewind\+Particle\+System}}, \mbox{\hyperlink{classaeric_1_1rewind__plugin_1_1_rewind_renderer_material_change_ad9321edf2853ad6404b40c0160a8c4ab}{aeric.\+rewind\+\_\+plugin.\+Rewind\+Renderer\+Material\+Change}}, \mbox{\hyperlink{classaeric_1_1rewind__plugin_1_1_rewind_transform_a9ebac3ea5a56537cdda0f1ae0e7303c4}{aeric.\+rewind\+\_\+plugin.\+Rewind\+Transform}}, and \mbox{\hyperlink{classaeric_1_1rewind__plugin_1_1_rewind_transform_hierarchy_afe0e96acca7166feeaf46e17cd566083}{aeric.\+rewind\+\_\+plugin.\+Rewind\+Transform\+Hierarchy}}.
+
+\Hypertarget{classaeric_1_1rewind__plugin_1_1_rewind_component_base_aee63595bb80a18b37984cdadd0804009}\label{classaeric_1_1rewind__plugin_1_1_rewind_component_base_aee63595bb80a18b37984cdadd0804009} 
+\index{aeric.rewind\_plugin.RewindComponentBase@{aeric.rewind\_plugin.RewindComponentBase}!rewindStore@{rewindStore}}
+\index{rewindStore@{rewindStore}!aeric.rewind\_plugin.RewindComponentBase@{aeric.rewind\_plugin.RewindComponentBase}}
+\doxysubsubsection{\texorpdfstring{rewindStore()}{rewindStore()}}
+{\footnotesize\ttfamily abstract void aeric.\+rewind\+\_\+plugin.\+Rewind\+Component\+Base.\+rewind\+Store (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classaeric_1_1rewind__plugin_1_1_native_byte_array_writer}{Native\+Byte\+Array\+Writer}}}]{writer }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+
+
+Store a frames worth of game state for this handler. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em writer} & \\
+\hline
+\end{DoxyParams}
+
+
+Implements \mbox{\hyperlink{interfaceaeric_1_1rewind__plugin_1_1_i_rewind_handler_a3080cf87fca023b6ec7c0701d428dfab}{aeric.\+rewind\+\_\+plugin.\+IRewind\+Handler}}.
+
+
+
+Implemented in \mbox{\hyperlink{classaeric_1_1rewind__plugin_1_1_rewind_animator_a3117b841c3e2abf42f177c2a996593d5}{aeric.\+rewind\+\_\+plugin.\+Rewind\+Animator}}, \mbox{\hyperlink{classaeric_1_1rewind__plugin_1_1_rewind_camera_adb58bb07ea84a43df98b85a5b511e794}{aeric.\+rewind\+\_\+plugin.\+Rewind\+Camera}}, \mbox{\hyperlink{classaeric_1_1rewind__plugin_1_1_rewind_custom_mono_behaviour_attributes_a8b472c9df219ede26aa52b39275d5752}{aeric.\+rewind\+\_\+plugin.\+Rewind\+Custom\+Mono\+Behaviour\+Attributes}}, \mbox{\hyperlink{classaeric_1_1rewind__plugin_1_1_rewind_game_object_enabled_a74854048a2c8f52477286fc39beb0200}{aeric.\+rewind\+\_\+plugin.\+Rewind\+Game\+Object\+Enabled}}, \mbox{\hyperlink{classaeric_1_1rewind__plugin_1_1_rewind_material_color_a7d87349330f44e62fea98e1b134df9cd}{aeric.\+rewind\+\_\+plugin.\+Rewind\+Material\+Color}}, \mbox{\hyperlink{classaeric_1_1rewind__plugin_1_1_rewind_particle_system_a1fb40176ab26a486f264d0166cfe2c4a}{aeric.\+rewind\+\_\+plugin.\+Rewind\+Particle\+System}}, \mbox{\hyperlink{classaeric_1_1rewind__plugin_1_1_rewind_renderer_material_change_ac755f18d0ce9f3c62d72cd66ac9df33f}{aeric.\+rewind\+\_\+plugin.\+Rewind\+Renderer\+Material\+Change}}, \mbox{\hyperlink{classaeric_1_1rewind__plugin_1_1_rewind_transform_a5f66429b36aa5759766d9d31e198628f}{aeric.\+rewind\+\_\+plugin.\+Rewind\+Transform}}, and \mbox{\hyperlink{classaeric_1_1rewind__plugin_1_1_rewind_transform_hierarchy_a465e48c306d6ec5398e52639f7e12065}{aeric.\+rewind\+\_\+plugin.\+Rewind\+Transform\+Hierarchy}}.
+
+\Hypertarget{classaeric_1_1rewind__plugin_1_1_rewind_component_base_a1425e2a55c7a9729a491c9aaee8540a9}\label{classaeric_1_1rewind__plugin_1_1_rewind_component_base_a1425e2a55c7a9729a491c9aaee8540a9} 
+\index{aeric.rewind\_plugin.RewindComponentBase@{aeric.rewind\_plugin.RewindComponentBase}!shouldDisableComponent@{shouldDisableComponent}}
+\index{shouldDisableComponent@{shouldDisableComponent}!aeric.rewind\_plugin.RewindComponentBase@{aeric.rewind\_plugin.RewindComponentBase}}
+\doxysubsubsection{\texorpdfstring{shouldDisableComponent()}{shouldDisableComponent()}}
+{\footnotesize\ttfamily virtual bool aeric.\+rewind\+\_\+plugin.\+Rewind\+Component\+Base.\+should\+Disable\+Component (\begin{DoxyParamCaption}\item[{Component}]{component }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [virtual]}}
+
+
+
+Reimplemented in \mbox{\hyperlink{classaeric_1_1rewind__plugin_1_1_rewind_animator_a7a814959e8cd0ea1af15c54727d9b668}{aeric.\+rewind\+\_\+plugin.\+Rewind\+Animator}}.
+
+\Hypertarget{classaeric_1_1rewind__plugin_1_1_rewind_component_base_a3ad0dc855ed73d20a9758703cb70aa5d}\label{classaeric_1_1rewind__plugin_1_1_rewind_component_base_a3ad0dc855ed73d20a9758703cb70aa5d} 
+\index{aeric.rewind\_plugin.RewindComponentBase@{aeric.rewind\_plugin.RewindComponentBase}!startPlayback@{startPlayback}}
+\index{startPlayback@{startPlayback}!aeric.rewind\_plugin.RewindComponentBase@{aeric.rewind\_plugin.RewindComponentBase}}
+\doxysubsubsection{\texorpdfstring{startPlayback()}{startPlayback()}}
+{\footnotesize\ttfamily virtual void aeric.\+rewind\+\_\+plugin.\+Rewind\+Component\+Base.\+start\+Playback (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [virtual]}}
+
+\Hypertarget{classaeric_1_1rewind__plugin_1_1_rewind_component_base_ada205218cd443d0ff46bb9459e432cc9}\label{classaeric_1_1rewind__plugin_1_1_rewind_component_base_ada205218cd443d0ff46bb9459e432cc9} 
+\index{aeric.rewind\_plugin.RewindComponentBase@{aeric.rewind\_plugin.RewindComponentBase}!startRecording@{startRecording}}
+\index{startRecording@{startRecording}!aeric.rewind\_plugin.RewindComponentBase@{aeric.rewind\_plugin.RewindComponentBase}}
+\doxysubsubsection{\texorpdfstring{startRecording()}{startRecording()}}
+{\footnotesize\ttfamily virtual void aeric.\+rewind\+\_\+plugin.\+Rewind\+Component\+Base.\+start\+Recording (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [virtual]}}
+
+
+
+Called before we start recording. 
+
+
+
+Implements \mbox{\hyperlink{interfaceaeric_1_1rewind__plugin_1_1_i_rewind_handler_a7a14399be02c5a852ca5a6552afc456f}{aeric.\+rewind\+\_\+plugin.\+IRewind\+Handler}}.
+
+
+
+Reimplemented in \mbox{\hyperlink{classaeric_1_1rewind__plugin_1_1_rewind_particle_system_a15fd6f697b7daf2ff307e7438de856ba}{aeric.\+rewind\+\_\+plugin.\+Rewind\+Particle\+System}}.
+
+\Hypertarget{classaeric_1_1rewind__plugin_1_1_rewind_component_base_a15e7b95d85025906d6508e31d016c41c}\label{classaeric_1_1rewind__plugin_1_1_rewind_component_base_a15e7b95d85025906d6508e31d016c41c} 
+\index{aeric.rewind\_plugin.RewindComponentBase@{aeric.rewind\_plugin.RewindComponentBase}!stopPlayback@{stopPlayback}}
+\index{stopPlayback@{stopPlayback}!aeric.rewind\_plugin.RewindComponentBase@{aeric.rewind\_plugin.RewindComponentBase}}
+\doxysubsubsection{\texorpdfstring{stopPlayback()}{stopPlayback()}}
+{\footnotesize\ttfamily virtual void aeric.\+rewind\+\_\+plugin.\+Rewind\+Component\+Base.\+stop\+Playback (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [virtual]}}
+
+
+
+\doxysubsection{Property Documentation}
+\Hypertarget{classaeric_1_1rewind__plugin_1_1_rewind_component_base_a57e1c18cedb063c1cf16f87c46758162}\label{classaeric_1_1rewind__plugin_1_1_rewind_component_base_a57e1c18cedb063c1cf16f87c46758162} 
+\index{aeric.rewind\_plugin.RewindComponentBase@{aeric.rewind\_plugin.RewindComponentBase}!HandlerTypeID@{HandlerTypeID}}
+\index{HandlerTypeID@{HandlerTypeID}!aeric.rewind\_plugin.RewindComponentBase@{aeric.rewind\_plugin.RewindComponentBase}}
+\doxysubsubsection{\texorpdfstring{HandlerTypeID}{HandlerTypeID}}
+{\footnotesize\ttfamily abstract uint aeric.\+rewind\+\_\+plugin.\+Rewind\+Component\+Base.\+Handler\+Type\+ID\hspace{0.3cm}{\ttfamily [get]}}
+
+
+
+Each IRewind\+Handler implementation must have a unique Handler\+Type\+ID. 
+
+
+
+Implements \mbox{\hyperlink{interfaceaeric_1_1rewind__plugin_1_1_i_rewind_handler_a2e751337bbc8cf830d46651eb70e62b4}{aeric.\+rewind\+\_\+plugin.\+IRewind\+Handler}}.
+
+\Hypertarget{classaeric_1_1rewind__plugin_1_1_rewind_component_base_ae795cd0d44c5b96f6abd94109500fa57}\label{classaeric_1_1rewind__plugin_1_1_rewind_component_base_ae795cd0d44c5b96f6abd94109500fa57} 
+\index{aeric.rewind\_plugin.RewindComponentBase@{aeric.rewind\_plugin.RewindComponentBase}!ID@{ID}}
+\index{ID@{ID}!aeric.rewind\_plugin.RewindComponentBase@{aeric.rewind\_plugin.RewindComponentBase}}
+\doxysubsubsection{\texorpdfstring{ID}{ID}}
+{\footnotesize\ttfamily uint aeric.\+rewind\+\_\+plugin.\+Rewind\+Component\+Base.\+ID\hspace{0.3cm}{\ttfamily [get]}, {\ttfamily [set]}}
+
+
+
+ID value that uniquely identifies a rewind handler within a Rewind\+Scene. 
+
+
+
+Implements \mbox{\hyperlink{interfaceaeric_1_1rewind__plugin_1_1_i_rewind_handler_ac11ced07ac61069ab4d80c24136de8fc}{aeric.\+rewind\+\_\+plugin.\+IRewind\+Handler}}.
+
+\Hypertarget{classaeric_1_1rewind__plugin_1_1_rewind_component_base_a85776346de4d43a183e7b662e950c8f9}\label{classaeric_1_1rewind__plugin_1_1_rewind_component_base_a85776346de4d43a183e7b662e950c8f9} 
+\index{aeric.rewind\_plugin.RewindComponentBase@{aeric.rewind\_plugin.RewindComponentBase}!ShouldStayEnabledDuringReplay@{ShouldStayEnabledDuringReplay}}
+\index{ShouldStayEnabledDuringReplay@{ShouldStayEnabledDuringReplay}!aeric.rewind\_plugin.RewindComponentBase@{aeric.rewind\_plugin.RewindComponentBase}}
+\doxysubsubsection{\texorpdfstring{ShouldStayEnabledDuringReplay}{ShouldStayEnabledDuringReplay}}
+{\footnotesize\ttfamily virtual bool aeric.\+rewind\+\_\+plugin.\+Rewind\+Component\+Base.\+Should\+Stay\+Enabled\+During\+Replay\hspace{0.3cm}{\ttfamily [get]}}
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+Rewind\+Components/\mbox{\hyperlink{_rewind_component_base_8cs}{Rewind\+Component\+Base.\+cs}}\end{DoxyCompactItemize}

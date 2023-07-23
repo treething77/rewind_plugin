@@ -1,0 +1,101 @@
+\doxysection{aeric.\+rewind\+\_\+plugin.\+Rewind\+Scene Class Reference}
+\hypertarget{classaeric_1_1rewind__plugin_1_1_rewind_scene}{}\label{classaeric_1_1rewind__plugin_1_1_rewind_scene}\index{aeric.rewind\_plugin.RewindScene@{aeric.rewind\_plugin.RewindScene}}
+
+
+Represents a list of IRewind\+Handlers where each handler in the list has a unique id.  
+
+
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{classaeric_1_1rewind__plugin_1_1_rewind_scene_a705fb4fcc89ff43049416cfad3d2eac7}{add\+Rewind\+Handler}} (\mbox{\hyperlink{interfaceaeric_1_1rewind__plugin_1_1_i_rewind_handler}{IRewind\+Handler}} rewind\+Handler)
+\item 
+void \mbox{\hyperlink{classaeric_1_1rewind__plugin_1_1_rewind_scene_a3ac9bdd2ab547e46e8e76aab9e87bee0}{add\+Rewind\+Object}} (Game\+Object rewind\+Object)
+\item 
+void \mbox{\hyperlink{classaeric_1_1rewind__plugin_1_1_rewind_scene_a8a511fcff8894581a718c5005dbe2492}{ensure\+Unique\+ID}} (\mbox{\hyperlink{interfaceaeric_1_1rewind__plugin_1_1_i_rewind_handler}{IRewind\+Handler}} rewind\+Handler)
+\begin{DoxyCompactList}\small\item\em Ensure that the ID of this handler doesn\textquotesingle{}t conflict with anything already in the scene. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{classaeric_1_1rewind__plugin_1_1_rewind_scene_a3154687322d01de656b1296a695817a6}{ensure\+Unique\+IDFor\+All\+Children}} (Game\+Object parent\+Obj)
+\item 
+void \mbox{\hyperlink{classaeric_1_1rewind__plugin_1_1_rewind_scene_a33cf636bf0507206e25d9d41d05eb3a8}{add\+All\+Children}} (Game\+Object parent\+Obj)
+\begin{DoxyCompactList}\small\item\em Helpful method to add all the childs of a parent object as rewind handlers. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{interfaceaeric_1_1rewind__plugin_1_1_i_rewind_handler}{IRewind\+Handler}} \mbox{\hyperlink{classaeric_1_1rewind__plugin_1_1_rewind_scene_ab7bd68a5cd8aa78c8844c2e265303e75}{get\+Handler}} (uint handler\+ID)
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Properties}
+\begin{DoxyCompactItemize}
+\item 
+List$<$ \mbox{\hyperlink{interfaceaeric_1_1rewind__plugin_1_1_i_rewind_handler}{IRewind\+Handler}} $>$ \mbox{\hyperlink{classaeric_1_1rewind__plugin_1_1_rewind_scene_a53901fd5308daa220ef5d1b81f9261f3}{Rewind\+Handlers}} = new()\hspace{0.3cm}{\ttfamily  \mbox{[}get\mbox{]}}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Represents a list of IRewind\+Handlers where each handler in the list has a unique id. 
+
+\doxysubsection{Member Function Documentation}
+\Hypertarget{classaeric_1_1rewind__plugin_1_1_rewind_scene_a33cf636bf0507206e25d9d41d05eb3a8}\label{classaeric_1_1rewind__plugin_1_1_rewind_scene_a33cf636bf0507206e25d9d41d05eb3a8} 
+\index{aeric.rewind\_plugin.RewindScene@{aeric.rewind\_plugin.RewindScene}!addAllChildren@{addAllChildren}}
+\index{addAllChildren@{addAllChildren}!aeric.rewind\_plugin.RewindScene@{aeric.rewind\_plugin.RewindScene}}
+\doxysubsubsection{\texorpdfstring{addAllChildren()}{addAllChildren()}}
+{\footnotesize\ttfamily void aeric.\+rewind\+\_\+plugin.\+Rewind\+Scene.\+add\+All\+Children (\begin{DoxyParamCaption}\item[{Game\+Object}]{parent\+Obj }\end{DoxyParamCaption})}
+
+
+
+Helpful method to add all the childs of a parent object as rewind handlers. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em parent\+Obj} & \\
+\hline
+\end{DoxyParams}
+\Hypertarget{classaeric_1_1rewind__plugin_1_1_rewind_scene_a705fb4fcc89ff43049416cfad3d2eac7}\label{classaeric_1_1rewind__plugin_1_1_rewind_scene_a705fb4fcc89ff43049416cfad3d2eac7} 
+\index{aeric.rewind\_plugin.RewindScene@{aeric.rewind\_plugin.RewindScene}!addRewindHandler@{addRewindHandler}}
+\index{addRewindHandler@{addRewindHandler}!aeric.rewind\_plugin.RewindScene@{aeric.rewind\_plugin.RewindScene}}
+\doxysubsubsection{\texorpdfstring{addRewindHandler()}{addRewindHandler()}}
+{\footnotesize\ttfamily void aeric.\+rewind\+\_\+plugin.\+Rewind\+Scene.\+add\+Rewind\+Handler (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{interfaceaeric_1_1rewind__plugin_1_1_i_rewind_handler}{IRewind\+Handler}}}]{rewind\+Handler }\end{DoxyParamCaption})}
+
+\Hypertarget{classaeric_1_1rewind__plugin_1_1_rewind_scene_a3ac9bdd2ab547e46e8e76aab9e87bee0}\label{classaeric_1_1rewind__plugin_1_1_rewind_scene_a3ac9bdd2ab547e46e8e76aab9e87bee0} 
+\index{aeric.rewind\_plugin.RewindScene@{aeric.rewind\_plugin.RewindScene}!addRewindObject@{addRewindObject}}
+\index{addRewindObject@{addRewindObject}!aeric.rewind\_plugin.RewindScene@{aeric.rewind\_plugin.RewindScene}}
+\doxysubsubsection{\texorpdfstring{addRewindObject()}{addRewindObject()}}
+{\footnotesize\ttfamily void aeric.\+rewind\+\_\+plugin.\+Rewind\+Scene.\+add\+Rewind\+Object (\begin{DoxyParamCaption}\item[{Game\+Object}]{rewind\+Object }\end{DoxyParamCaption})}
+
+\Hypertarget{classaeric_1_1rewind__plugin_1_1_rewind_scene_a8a511fcff8894581a718c5005dbe2492}\label{classaeric_1_1rewind__plugin_1_1_rewind_scene_a8a511fcff8894581a718c5005dbe2492} 
+\index{aeric.rewind\_plugin.RewindScene@{aeric.rewind\_plugin.RewindScene}!ensureUniqueID@{ensureUniqueID}}
+\index{ensureUniqueID@{ensureUniqueID}!aeric.rewind\_plugin.RewindScene@{aeric.rewind\_plugin.RewindScene}}
+\doxysubsubsection{\texorpdfstring{ensureUniqueID()}{ensureUniqueID()}}
+{\footnotesize\ttfamily void aeric.\+rewind\+\_\+plugin.\+Rewind\+Scene.\+ensure\+Unique\+ID (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{interfaceaeric_1_1rewind__plugin_1_1_i_rewind_handler}{IRewind\+Handler}}}]{rewind\+Handler }\end{DoxyParamCaption})}
+
+
+
+Ensure that the ID of this handler doesn\textquotesingle{}t conflict with anything already in the scene. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em rewind\+Handler} & \\
+\hline
+\end{DoxyParams}
+\Hypertarget{classaeric_1_1rewind__plugin_1_1_rewind_scene_a3154687322d01de656b1296a695817a6}\label{classaeric_1_1rewind__plugin_1_1_rewind_scene_a3154687322d01de656b1296a695817a6} 
+\index{aeric.rewind\_plugin.RewindScene@{aeric.rewind\_plugin.RewindScene}!ensureUniqueIDForAllChildren@{ensureUniqueIDForAllChildren}}
+\index{ensureUniqueIDForAllChildren@{ensureUniqueIDForAllChildren}!aeric.rewind\_plugin.RewindScene@{aeric.rewind\_plugin.RewindScene}}
+\doxysubsubsection{\texorpdfstring{ensureUniqueIDForAllChildren()}{ensureUniqueIDForAllChildren()}}
+{\footnotesize\ttfamily void aeric.\+rewind\+\_\+plugin.\+Rewind\+Scene.\+ensure\+Unique\+IDFor\+All\+Children (\begin{DoxyParamCaption}\item[{Game\+Object}]{parent\+Obj }\end{DoxyParamCaption})}
+
+\Hypertarget{classaeric_1_1rewind__plugin_1_1_rewind_scene_ab7bd68a5cd8aa78c8844c2e265303e75}\label{classaeric_1_1rewind__plugin_1_1_rewind_scene_ab7bd68a5cd8aa78c8844c2e265303e75} 
+\index{aeric.rewind\_plugin.RewindScene@{aeric.rewind\_plugin.RewindScene}!getHandler@{getHandler}}
+\index{getHandler@{getHandler}!aeric.rewind\_plugin.RewindScene@{aeric.rewind\_plugin.RewindScene}}
+\doxysubsubsection{\texorpdfstring{getHandler()}{getHandler()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{interfaceaeric_1_1rewind__plugin_1_1_i_rewind_handler}{IRewind\+Handler}} aeric.\+rewind\+\_\+plugin.\+Rewind\+Scene.\+get\+Handler (\begin{DoxyParamCaption}\item[{uint}]{handler\+ID }\end{DoxyParamCaption})}
+
+
+
+\doxysubsection{Property Documentation}
+\Hypertarget{classaeric_1_1rewind__plugin_1_1_rewind_scene_a53901fd5308daa220ef5d1b81f9261f3}\label{classaeric_1_1rewind__plugin_1_1_rewind_scene_a53901fd5308daa220ef5d1b81f9261f3} 
+\index{aeric.rewind\_plugin.RewindScene@{aeric.rewind\_plugin.RewindScene}!RewindHandlers@{RewindHandlers}}
+\index{RewindHandlers@{RewindHandlers}!aeric.rewind\_plugin.RewindScene@{aeric.rewind\_plugin.RewindScene}}
+\doxysubsubsection{\texorpdfstring{RewindHandlers}{RewindHandlers}}
+{\footnotesize\ttfamily List$<$\mbox{\hyperlink{interfaceaeric_1_1rewind__plugin_1_1_i_rewind_handler}{IRewind\+Handler}}$>$ aeric.\+rewind\+\_\+plugin.\+Rewind\+Scene.\+Rewind\+Handlers = new()\hspace{0.3cm}{\ttfamily [get]}}
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{_rewind_scene_8cs}{Rewind\+Scene.\+cs}}\end{DoxyCompactItemize}

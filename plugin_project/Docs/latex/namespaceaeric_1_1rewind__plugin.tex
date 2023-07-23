@@ -1,0 +1,126 @@
+\doxysection{aeric.\+rewind\+\_\+plugin Namespace Reference}
+\hypertarget{namespaceaeric_1_1rewind__plugin}{}\label{namespaceaeric_1_1rewind__plugin}\index{aeric.rewind\_plugin@{aeric.rewind\_plugin}}
+\doxysubsubsection*{Namespaces}
+\begin{DoxyCompactItemize}
+\item 
+namespace \mbox{\hyperlink{namespaceaeric_1_1rewind__plugin_1_1_rewind_storage_data_types}{Rewind\+Storage\+Data\+Types}}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+interface \mbox{\hyperlink{interfaceaeric_1_1rewind__plugin_1_1_i_rewind_data_handler}{IRewind\+Data\+Handler}}
+\item 
+interface \mbox{\hyperlink{interfaceaeric_1_1rewind__plugin_1_1_i_rewind_handler}{IRewind\+Handler}}
+\begin{DoxyCompactList}\small\item\em Interface for anything that stores and restores game state. \end{DoxyCompactList}\item 
+class \mbox{\hyperlink{classaeric_1_1rewind__plugin_1_1_native_byte_array}{Native\+Byte\+Array}}
+\item 
+class \mbox{\hyperlink{classaeric_1_1rewind__plugin_1_1_native_byte_array_reader}{Native\+Byte\+Array\+Reader}}
+\item 
+class \mbox{\hyperlink{classaeric_1_1rewind__plugin_1_1_native_byte_array_writer}{Native\+Byte\+Array\+Writer}}
+\item 
+class \mbox{\hyperlink{classaeric_1_1rewind__plugin_1_1_rewind_animator}{Rewind\+Animator}}
+\begin{DoxyCompactList}\small\item\em Implementation of Rewind\+Component\+Base for handling the state of the Animator component. \end{DoxyCompactList}\item 
+class \mbox{\hyperlink{classaeric_1_1rewind__plugin_1_1_rewind_attribute}{Rewind\+Attribute}}
+\begin{DoxyCompactList}\small\item\em Attribute that is added to members of a class so their state will be stored/restored by the rewind plugin system. The class the members are in must be derived from Rewind\+Custom\+Mono\+Behaviour\+Attributes. \end{DoxyCompactList}\item 
+class {\bfseries Rewind\+Attribute\+Helper}
+\item 
+class \mbox{\hyperlink{classaeric_1_1rewind__plugin_1_1_rewind_camera}{Rewind\+Camera}}
+\begin{DoxyCompactList}\small\item\em Implementation of Rewind\+Component\+Base for handling the state of the Camera component. \end{DoxyCompactList}\item 
+class \mbox{\hyperlink{classaeric_1_1rewind__plugin_1_1_rewind_component_base}{Rewind\+Component\+Base}}
+\item 
+class {\bfseries Rewind\+Component\+IDGenerator}
+\item 
+class \mbox{\hyperlink{classaeric_1_1rewind__plugin_1_1_rewind_custom_mono_behaviour_attributes}{Rewind\+Custom\+Mono\+Behaviour\+Attributes}}
+\begin{DoxyCompactList}\small\item\em Stores changes on any fields on this component that use the Rewind attribute. \end{DoxyCompactList}\item 
+class \mbox{\hyperlink{classaeric_1_1rewind__plugin_1_1_rewind_data_point}{Rewind\+Data\+Point}}
+\item 
+class \mbox{\hyperlink{classaeric_1_1rewind__plugin_1_1_rewind_data_schema}{Rewind\+Data\+Schema}}
+\item 
+class \mbox{\hyperlink{classaeric_1_1rewind__plugin_1_1_rewind_event_stream}{Rewind\+Event\+Stream}}
+\begin{DoxyCompactList}\small\item\em A list of events each with an associated time. We have logic to find the events within a time range for playback. \end{DoxyCompactList}\item 
+class \mbox{\hyperlink{classaeric_1_1rewind__plugin_1_1_rewind_game_object_enabled}{Rewind\+Game\+Object\+Enabled}}
+\begin{DoxyCompactList}\small\item\em Implementation of Rewind\+Component\+Base for handling the active state of a Game\+Object. \end{DoxyCompactList}\item 
+class \mbox{\hyperlink{classaeric_1_1rewind__plugin_1_1_rewind_handler_storage}{Rewind\+Handler\+Storage}}
+\begin{DoxyCompactList}\small\item\em Stores information about how a handlers data is stored in the native array. \end{DoxyCompactList}\item 
+class \mbox{\hyperlink{classaeric_1_1rewind__plugin_1_1_rewind_material_color}{Rewind\+Material\+Color}}
+\begin{DoxyCompactList}\small\item\em Implementation of Rewind\+Component\+Base for handling material color changes. \end{DoxyCompactList}\item 
+class \mbox{\hyperlink{classaeric_1_1rewind__plugin_1_1_rewind_particle_system}{Rewind\+Particle\+System}}
+\begin{DoxyCompactList}\small\item\em Implementation of Rewind\+Component\+Base for handling the Particle\+System component. \end{DoxyCompactList}\item 
+class \mbox{\hyperlink{classaeric_1_1rewind__plugin_1_1_rewind_playback}{Rewind\+Playback}}
+\item 
+class \mbox{\hyperlink{classaeric_1_1rewind__plugin_1_1_rewind_playback_component}{Rewind\+Playback\+Component}}
+\begin{DoxyCompactList}\small\item\em Helper class that encapsulates the ownership of the Rewind\+Playback and its update logic. \end{DoxyCompactList}\item 
+class \mbox{\hyperlink{classaeric_1_1rewind__plugin_1_1_rewind_playback_preparer}{Rewind\+Playback\+Preparer}}
+\begin{DoxyCompactList}\small\item\em Prepares a scene for playback by enabling/disabling components as needed. \end{DoxyCompactList}\item 
+class \mbox{\hyperlink{classaeric_1_1rewind__plugin_1_1_rewind_recorder}{Rewind\+Recorder}}
+\begin{DoxyCompactList}\small\item\em Records frame data at a specified framerate for all objects in the Rewind\+Scene. \end{DoxyCompactList}\item 
+class \mbox{\hyperlink{classaeric_1_1rewind__plugin_1_1_rewind_recorder_component}{Rewind\+Recorder\+Component}}
+\begin{DoxyCompactList}\small\item\em Helper class that encapsulates the ownership of the Rewind\+Recorder and its update logic. \end{DoxyCompactList}\item 
+class \mbox{\hyperlink{classaeric_1_1rewind__plugin_1_1_rewind_renderer_material_change}{Rewind\+Renderer\+Material\+Change}}
+\begin{DoxyCompactList}\small\item\em Implementation of Rewind\+Component\+Base for handling material changes for a Renderer. Note that this implementation does not support baking/serialization. \end{DoxyCompactList}\item 
+class \mbox{\hyperlink{classaeric_1_1rewind__plugin_1_1_rewind_scene}{Rewind\+Scene}}
+\begin{DoxyCompactList}\small\item\em Represents a list of IRewind\+Handlers where each handler in the list has a unique id. \end{DoxyCompactList}\item 
+class \mbox{\hyperlink{classaeric_1_1rewind__plugin_1_1_rewind_storage}{Rewind\+Storage}}
+\item 
+class \mbox{\hyperlink{classaeric_1_1rewind__plugin_1_1_rewind_transform}{Rewind\+Transform}}
+\begin{DoxyCompactList}\small\item\em Store and restores an individual Transform. Has special logic to handle a Character\+Controller, which must be disabled during the update. \end{DoxyCompactList}\item 
+class \mbox{\hyperlink{classaeric_1_1rewind__plugin_1_1_rewind_transform_hierarchy}{Rewind\+Transform\+Hierarchy}}
+\begin{DoxyCompactList}\small\item\em Stores and restores all transforms within a hierarchy. \end{DoxyCompactList}\item 
+class {\bfseries Rewind\+Utilities}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Enumerations}
+\begin{DoxyCompactItemize}
+\item 
+enum \mbox{\hyperlink{namespaceaeric_1_1rewind__plugin_a9df9fc2ff3925d1b0c3c4a38b0cb6ccd}{Rewind\+Data\+Point\+Type}} \+: int \{ \newline
+\mbox{\hyperlink{namespaceaeric_1_1rewind__plugin_a9df9fc2ff3925d1b0c3c4a38b0cb6ccdae738c26bf4ce1037fa81b039a915cbf6}{FLOAT}}
+, \mbox{\hyperlink{namespaceaeric_1_1rewind__plugin_a9df9fc2ff3925d1b0c3c4a38b0cb6ccda53f93baa3057821107c750323892fa92}{INT}}
+, \mbox{\hyperlink{namespaceaeric_1_1rewind__plugin_a9df9fc2ff3925d1b0c3c4a38b0cb6ccdaa97b2c144243b2b9d2c593ec268b62f5}{BOOL}}
+, \mbox{\hyperlink{namespaceaeric_1_1rewind__plugin_a9df9fc2ff3925d1b0c3c4a38b0cb6ccda742fddb28fdd19c821c68476fca4e85e}{VECTOR3}}
+, \newline
+\mbox{\hyperlink{namespaceaeric_1_1rewind__plugin_a9df9fc2ff3925d1b0c3c4a38b0cb6ccda44d211265e86d6d510e6e3d94557e821}{QUATERNION}}
+, \mbox{\hyperlink{namespaceaeric_1_1rewind__plugin_a9df9fc2ff3925d1b0c3c4a38b0cb6ccda04bd834032febb3fda8c6936ee140949}{COLOR}}
+ \}
+\item 
+enum \mbox{\hyperlink{namespaceaeric_1_1rewind__plugin_a11ac05cf52f94e067e955c459f220d0f}{Rewind\+Mapped\+Frame}} 
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Enumeration Type Documentation}
+\Hypertarget{namespaceaeric_1_1rewind__plugin_a9df9fc2ff3925d1b0c3c4a38b0cb6ccd}\label{namespaceaeric_1_1rewind__plugin_a9df9fc2ff3925d1b0c3c4a38b0cb6ccd} 
+\index{aeric.rewind\_plugin@{aeric.rewind\_plugin}!RewindDataPointType@{RewindDataPointType}}
+\index{RewindDataPointType@{RewindDataPointType}!aeric.rewind\_plugin@{aeric.rewind\_plugin}}
+\doxysubsubsection{\texorpdfstring{RewindDataPointType}{RewindDataPointType}}
+{\footnotesize\ttfamily enum \mbox{\hyperlink{namespaceaeric_1_1rewind__plugin_a9df9fc2ff3925d1b0c3c4a38b0cb6ccd}{aeric.\+rewind\+\_\+plugin.\+Rewind\+Data\+Point\+Type}} \+: int}
+
+\begin{DoxyEnumFields}{Enumerator}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{FLOAT@{FLOAT}!aeric.rewind\_plugin@{aeric.rewind\_plugin}}\index{aeric.rewind\_plugin@{aeric.rewind\_plugin}!FLOAT@{FLOAT}}}\Hypertarget{namespaceaeric_1_1rewind__plugin_a9df9fc2ff3925d1b0c3c4a38b0cb6ccdae738c26bf4ce1037fa81b039a915cbf6}\label{namespaceaeric_1_1rewind__plugin_a9df9fc2ff3925d1b0c3c4a38b0cb6ccdae738c26bf4ce1037fa81b039a915cbf6} 
+FLOAT&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{INT@{INT}!aeric.rewind\_plugin@{aeric.rewind\_plugin}}\index{aeric.rewind\_plugin@{aeric.rewind\_plugin}!INT@{INT}}}\Hypertarget{namespaceaeric_1_1rewind__plugin_a9df9fc2ff3925d1b0c3c4a38b0cb6ccda53f93baa3057821107c750323892fa92}\label{namespaceaeric_1_1rewind__plugin_a9df9fc2ff3925d1b0c3c4a38b0cb6ccda53f93baa3057821107c750323892fa92} 
+INT&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{BOOL@{BOOL}!aeric.rewind\_plugin@{aeric.rewind\_plugin}}\index{aeric.rewind\_plugin@{aeric.rewind\_plugin}!BOOL@{BOOL}}}\Hypertarget{namespaceaeric_1_1rewind__plugin_a9df9fc2ff3925d1b0c3c4a38b0cb6ccdaa97b2c144243b2b9d2c593ec268b62f5}\label{namespaceaeric_1_1rewind__plugin_a9df9fc2ff3925d1b0c3c4a38b0cb6ccdaa97b2c144243b2b9d2c593ec268b62f5} 
+BOOL&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{VECTOR3@{VECTOR3}!aeric.rewind\_plugin@{aeric.rewind\_plugin}}\index{aeric.rewind\_plugin@{aeric.rewind\_plugin}!VECTOR3@{VECTOR3}}}\Hypertarget{namespaceaeric_1_1rewind__plugin_a9df9fc2ff3925d1b0c3c4a38b0cb6ccda742fddb28fdd19c821c68476fca4e85e}\label{namespaceaeric_1_1rewind__plugin_a9df9fc2ff3925d1b0c3c4a38b0cb6ccda742fddb28fdd19c821c68476fca4e85e} 
+VECTOR3&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{QUATERNION@{QUATERNION}!aeric.rewind\_plugin@{aeric.rewind\_plugin}}\index{aeric.rewind\_plugin@{aeric.rewind\_plugin}!QUATERNION@{QUATERNION}}}\Hypertarget{namespaceaeric_1_1rewind__plugin_a9df9fc2ff3925d1b0c3c4a38b0cb6ccda44d211265e86d6d510e6e3d94557e821}\label{namespaceaeric_1_1rewind__plugin_a9df9fc2ff3925d1b0c3c4a38b0cb6ccda44d211265e86d6d510e6e3d94557e821} 
+QUATERNION&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{COLOR@{COLOR}!aeric.rewind\_plugin@{aeric.rewind\_plugin}}\index{aeric.rewind\_plugin@{aeric.rewind\_plugin}!COLOR@{COLOR}}}\Hypertarget{namespaceaeric_1_1rewind__plugin_a9df9fc2ff3925d1b0c3c4a38b0cb6ccda04bd834032febb3fda8c6936ee140949}\label{namespaceaeric_1_1rewind__plugin_a9df9fc2ff3925d1b0c3c4a38b0cb6ccda04bd834032febb3fda8c6936ee140949} 
+COLOR&\\
+\hline
+
+\end{DoxyEnumFields}
+\Hypertarget{namespaceaeric_1_1rewind__plugin_a11ac05cf52f94e067e955c459f220d0f}\label{namespaceaeric_1_1rewind__plugin_a11ac05cf52f94e067e955c459f220d0f} 
+\index{aeric.rewind\_plugin@{aeric.rewind\_plugin}!RewindMappedFrame@{RewindMappedFrame}}
+\index{RewindMappedFrame@{RewindMappedFrame}!aeric.rewind\_plugin@{aeric.rewind\_plugin}}
+\doxysubsubsection{\texorpdfstring{RewindMappedFrame}{RewindMappedFrame}}
+{\footnotesize\ttfamily enum \mbox{\hyperlink{namespaceaeric_1_1rewind__plugin_a11ac05cf52f94e067e955c459f220d0f}{aeric.\+rewind\+\_\+plugin.\+Rewind\+Mapped\+Frame}}}
+
