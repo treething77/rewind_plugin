@@ -1,13 +1,15 @@
 using aeric.rewind_plugin;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace aeric.rewind_plugin_demos {
     /// <summary>
     /// Handles the AI and player behavior/controls in the Rewind and Replay demos
     /// </summary>
     public class Robot : RewindCustomMonoBehaviourAttributes {
-        private static readonly int Blend = Animator.StringToHash("Blend");
-        
+        private static readonly int _animIDMotionBlend = Animator.StringToHash("Speed");
+        private static readonly int _animIDMotionSpeed = Animator.StringToHash("MotionSpeed");
+
         public RobotLevel _level;
         public bool playerControlled;
         public Camera playerCamera;
@@ -20,8 +22,8 @@ namespace aeric.rewind_plugin_demos {
         // Rewind state
         [Rewind] public Vector3 moveStartPt;
         [Rewind] public Vector3 moveTargetPt;
-        [Rewind] public float moveBlendStart;
-        [Rewind] public float moveBlendEnd;
+        [FormerlySerializedAs("moveBlendStart")] [Rewind] public float moveSpeedStart;
+        [FormerlySerializedAs("moveBlendEnd")] [Rewind] public float moveSpeedEnd;
         [Rewind(Lerp = false)] public int moveTargetIndex;
 
         //component reference caching
@@ -38,7 +40,7 @@ namespace aeric.rewind_plugin_demos {
 
         private void Start() {
             _transform = transform;
-            _animator = GetComponent<Animator>();
+            _animator = GetComponentInChildren<Animator>();
             _controller = GetComponent<CharacterController>();
 
             moveTargetIndex = -1;
@@ -91,7 +93,7 @@ namespace aeric.rewind_plugin_demos {
                 playerCamera.fieldOfView = Mathf.Lerp(playerCamera.fieldOfView, targetFOV, Time.deltaTime * 2.0f);
             }
 
-            _animator.SetFloat(Blend, _playerSpeed);
+           // _animator.SetFloat(Blend, _playerSpeed);
 
             if (keyLeft) _transform.Rotate(Vector3.up, -100.0f * Time.deltaTime);
             if (keyRight) _transform.Rotate(Vector3.up, 100.0f * Time.deltaTime);
@@ -112,10 +114,49 @@ namespace aeric.rewind_plugin_demos {
             _transform.rotation = Quaternion.Lerp(ogRot, _transform.rotation, 0.1f);
 
             var moveT = (position1 - moveStartPt).magnitude / (position - moveStartPt).magnitude;
-            var moveBlend = Mathf.Lerp(moveBlendStart, moveBlendEnd, moveT);
-            _animator.SetFloat(Blend, moveBlend);
+            var moveSpeed = Mathf.Lerp(moveSpeedStart, moveSpeedEnd, moveT);
+            
+            //motion blend is 0-6 and controls blend between idle,walk,run
+            _animator.SetFloat(_animIDMotionBlend, moveSpeed * 6.0f);
+            
+            //motion speed is an overall multiplier on the animation speed
+            _animator.SetFloat(_animIDMotionSpeed, 1.0f);
+
+            //TODO: dt
+            Vector3 movement = _transform.forward * _movementCurve.Evaluate(moveSpeed);
+            MoveAI(movement);
         }
 
+        public AnimationCurve _movementCurve;
+
+        private void MoveAI(Vector3 movement) {
+            //Called from Unity root motion system
+            var gravity = Vector3.up * 5.0f;
+            var animMove = movement;
+      
+            //move forward
+            var moveDirection = _transform.forward;
+            moveDirection.y = 0.0f;
+
+            var actualMove = moveDirection.normalized * animMove.magnitude;
+
+            //Move the character controller to match the animation movement
+            var moveAmount = actualMove - gravity * Time.deltaTime;
+            _controller.Move(moveAmount);
+
+            if (playerControlled) {
+                _level.CaptureTargetsWithinRange(_transform.position, 1.5f, this);
+            }
+            else {
+                if ((moveTargetPt - _transform.position).magnitude < 1.5f) {
+                    _level.CaptureTarget(moveTargetIndex, this);
+
+                    //choose new target
+                    ChooseTarget();
+                }
+            }
+        }
+    /*
         private void OnAnimatorMove() {
             //Called from Unity root motion system
             var gravity = Vector3.up * 5.0f;
@@ -144,6 +185,7 @@ namespace aeric.rewind_plugin_demos {
                 }
             }
         }
+        */
 
         public override void startPlayback() {
             _playbackActive = true;
@@ -159,8 +201,8 @@ namespace aeric.rewind_plugin_demos {
             moveTargetPt = _level.GetTargetPosition(moveTargetIndex);
 
             moveStartPt = transform.position;
-            moveBlendStart = Random.Range(0.2f, 1.0f);
-            moveBlendEnd = Random.Range(0.2f, 1.0f);
+            moveSpeedStart = Random.Range(0.4f, 1.0f);
+            moveSpeedEnd = Random.Range(0.4f, 1.0f);
         }
     }
 }

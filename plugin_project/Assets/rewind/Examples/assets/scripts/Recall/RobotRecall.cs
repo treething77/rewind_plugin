@@ -10,9 +10,15 @@ namespace aeric.rewind_plugin_demos {
     /// </summary>
     public class RobotRecall : MonoBehaviour {
         //animation state constants
-        private static readonly int Blend = Animator.StringToHash("Blend");
-        private static readonly int Jump = Animator.StringToHash("Jump");
-        private static readonly int Land = Animator.StringToHash("Land");
+      //  private static readonly int Blend = Animator.StringToHash("Blend");
+      //  private static readonly int Jump = Animator.StringToHash("Jump");
+      //  private static readonly int Land = Animator.StringToHash("Land");
+        private static readonly int _animIDMotionBlend = Animator.StringToHash("Speed");
+        private static readonly int _animIDGrounded = Animator.StringToHash("Grounded");
+        private static readonly int _animIDJump = Animator.StringToHash("Jump");
+        private static readonly int _animIDFreeFall = Animator.StringToHash("FreeFall");
+        private static readonly int _animIDMotionSpeed = Animator.StringToHash("MotionSpeed");
+
 
         //inspector references
         public AudioClip footStepSFX;
@@ -47,7 +53,7 @@ namespace aeric.rewind_plugin_demos {
 
         private void Start() {
             _transform = transform;
-            _animator = GetComponent<Animator>();
+            _animator = GetComponentInChildren<Animator>();
             _controller = GetComponent<CharacterController>();
         }
 
@@ -154,8 +160,14 @@ namespace aeric.rewind_plugin_demos {
                 _rewinding = false;
             }
 
-            _animator.SetFloat(Blend, _playerSpeed);
-
+            //motion blend is 0-6 and controls blend between idle,walk,run
+            _animator.SetFloat(_animIDMotionBlend, _playerSpeed * 6.0f);
+            
+            //motion speed is an overall multiplier on the animation speed
+            _animator.SetFloat(_animIDMotionSpeed, 1.0f);
+            
+            Move(_transform.forward * (_playerSpeed * Time.deltaTime));
+            
             if (keyLeft) _transform.Rotate(Vector3.up, -100.0f * Time.deltaTime);
             if (keyRight) _transform.Rotate(Vector3.up, 100.0f * Time.deltaTime);
             
@@ -230,11 +242,7 @@ namespace aeric.rewind_plugin_demos {
             }
         }
 
-        private void OnAnimatorMove() {
-            //Called from Unity root motion system
-            var animMove = _animator.deltaPosition;
-            animMove.y = 0.0f;//ignore vertical motion from the animation
-
+        private void Move(Vector3 movement) {
             Vector3 platformMove = Vector3.zero;
             if (_platformObject != null) {
                 RecallPlatform platform = _platformObject.GetComponent<RecallPlatform>();
@@ -246,7 +254,7 @@ namespace aeric.rewind_plugin_demos {
                 var moveDirection = _transform.forward;
                 moveDirection.y = 0.0f;
 
-                var actualMove = moveDirection.normalized * animMove.magnitude;
+                var actualMove = moveDirection.normalized * movement.magnitude;
                 if (_playerSpeed < 0.0f) actualMove = -actualMove;
                 actualMove += platformMove;
 
@@ -257,7 +265,7 @@ namespace aeric.rewind_plugin_demos {
                 
                 //Jumping
                 if (Input.GetKeyDown(KeyCode.Space) && groundedPlayer) {
-                    _animator.SetTrigger(Jump);
+             //       _animator.SetTrigger(Jump);
                     jumpVelocity = actualMove + Vector3.up*0.3f;
                     moveState = MoveState.Jumping;
                     _controller.enabled = true;
@@ -272,7 +280,7 @@ namespace aeric.rewind_plugin_demos {
                 _controller.Move(jumpVelocity);
                 if (_controller.isGrounded) {
                     moveState = MoveState.Moving;
-                    _animator.SetTrigger(Land);
+               //     _animator.SetTrigger(Land);
                 }
             }
         }
