@@ -204,5 +204,15 @@ namespace aeric.rewind_plugin_demos {
             moveSpeedStart = Random.Range(0.4f, 1.0f);
             moveSpeedEnd = Random.Range(0.4f, 1.0f);
         }
+
+        public void UpdateTeamColor() {
+            if (Team != null) {
+                var renderers = GetComponentsInChildren<SkinnedMeshRenderer>();
+                foreach (var r in renderers) {
+                    foreach(var m in r.materials)
+                        m.color = Team.teamColor;
+                }
+            }
+        }
     }
 }

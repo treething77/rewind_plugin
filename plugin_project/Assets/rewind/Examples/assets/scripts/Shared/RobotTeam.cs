@@ -10,7 +10,10 @@ namespace aeric.rewind_plugin_demos {
         public int teamIndex;
 
         private void Start() {
-            foreach (var robot in _robots) robot.Team = this;
+            foreach (var robot in _robots) {
+                robot.Team = this;
+                robot.UpdateTeamColor();
+            }
         }
     }
 }
