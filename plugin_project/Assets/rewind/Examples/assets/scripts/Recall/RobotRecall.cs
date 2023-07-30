@@ -10,9 +10,6 @@ namespace aeric.rewind_plugin_demos {
     /// </summary>
     public class RobotRecall : MonoBehaviour {
         //animation state constants
-      //  private static readonly int Blend = Animator.StringToHash("Blend");
-      //  private static readonly int Jump = Animator.StringToHash("Jump");
-      //  private static readonly int Land = Animator.StringToHash("Land");
         private static readonly int _animIDMotionBlend = Animator.StringToHash("Speed");
         private static readonly int _animIDGrounded = Animator.StringToHash("Grounded");
         private static readonly int _animIDJump = Animator.StringToHash("Jump");
@@ -256,12 +253,14 @@ namespace aeric.rewind_plugin_demos {
 
                 var actualMove = moveDirection.normalized * movement.magnitude;
                 if (_playerSpeed < 0.0f) actualMove = -actualMove;
-                actualMove += platformMove;
+
+                actualMove *= (Time.deltaTime * 300.0f);
+                actualMove -= platformMove;
 
                 var gravity = Vector3.up * 5.0f;
                 bool groundedPlayer = _controller.isGrounded;
 
-                var moveAmount = actualMove - gravity * Time.deltaTime;
+                var moveAmount = actualMove - gravity;
                 
                 //Jumping
                 if (Input.GetKeyDown(KeyCode.Space) && groundedPlayer) {

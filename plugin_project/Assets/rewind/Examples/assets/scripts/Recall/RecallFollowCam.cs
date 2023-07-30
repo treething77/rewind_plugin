@@ -20,9 +20,13 @@ namespace aeric.rewind_plugin_demos {
             float minTargetHeight = player.transform.position.y + minHeight;
 
             if (Physics.Raycast(transform.position + Vector3.up * 10.0f, -Vector3.up, out var hit, 100.0f)) {
-                if (hit.point.y > (minTargetHeight-1.0f)) {
-                    minTargetHeight = hit.point.y + 1.0f;
-                }    
+                //You should use tags/layers for this. I'm trying not to do that since this will be imported into 
+                //another project
+                if (!hit.collider.gameObject.name.Contains("platform")) {
+                    if (hit.point.y > (minTargetHeight - 1.0f)) {
+                        minTargetHeight = hit.point.y + 1.0f;
+                    }
+                }
             }
             
             if (transform.position.y < minTargetHeight) transform.position = new Vector3(transform.position.x, minTargetHeight, transform.position.z);
