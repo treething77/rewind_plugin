@@ -1,13 +1,16 @@
 using UnityEngine;
 
 namespace aeric.rewind_plugin {
+    /// <summary>
+    /// Implementation of RewindComponentBase for handling the state of the Camera component
+    /// </summary>
     public class RewindCamera : RewindComponentBase {
         private Camera _camera;
 
-       public override RewindDataSchema makeDataSchema() => new RewindDataSchema().addFloat(5);
+        public override RewindDataSchema makeDataSchema() => new RewindDataSchema().addFloat(5);
 
-       public override uint HandlerTypeID => 8;
-
+        public override uint HandlerTypeID => 8;
+ 
         private void Awake() {
             _camera = GetComponent<Camera>();
         }

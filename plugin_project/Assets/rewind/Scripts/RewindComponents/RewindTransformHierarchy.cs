@@ -5,7 +5,7 @@ using Unity.Burst;
 
 namespace aeric.rewind_plugin {
     /// <summary>
-    /// Stores and restores all transforms in a hierarchy.
+    /// Stores and restores all transforms within a hierarchy.
     /// </summary>
     public class RewindTransformHierarchy : RewindComponentBase {
         private Transform[] _transforms;

@@ -1,16 +1,15 @@
 using UnityEngine;
 
 namespace aeric.rewind_plugin {
+    /// <summary>
+    /// Implementation of RewindComponentBase for handling the ParticleSystem component
+    /// </summary>
     public class RewindParticleSystem : RewindComponentBase {
         private ParticleSystem _particles;
         
         public override RewindDataSchema makeDataSchema() => new RewindDataSchema().addBool(4).addFloat();
 
         public override uint HandlerTypeID => 6;
-
-        private void Awake() {
-            TryGetComponent(out _particles);
-        }
 
         private float _simulationTime = 0.0f;
         
@@ -103,6 +102,10 @@ namespace aeric.rewind_plugin {
             if (!systemIsAliveA && !systemIsAliveB) {
                 _particles.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
             }
+        }
+        
+        private void Awake() {
+            TryGetComponent(out _particles);
         }
     }
 }

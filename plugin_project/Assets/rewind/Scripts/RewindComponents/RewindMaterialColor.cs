@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace aeric.rewind_plugin {
     /// <summary>
-    /// Stores material color changes for a Renderer component
+    /// Implementation of RewindComponentBase for handling material color changes
     /// </summary>
     public class RewindMaterialColor : RewindComponentBase {
         private Material _material;
@@ -14,11 +14,6 @@ namespace aeric.rewind_plugin {
 
         public override uint HandlerTypeID => 5;
 
-        private void Awake() {
-            _renderer = GetComponent<Renderer>();
-            _material = _renderer.material;
-        }
-
         public override void rewindStore(NativeByteArrayWriter writer) {
             writer.writeColor(_material.color);
         }
@@ -28,6 +23,11 @@ namespace aeric.rewind_plugin {
             var cB = frameReaderB.readColor();
 
             _material.color = Color.Lerp(cA, cB, frameT);
+        }
+        
+        private void Awake() {
+            _renderer = GetComponent<Renderer>();
+            _material = _renderer.material;
         }
     }
 }

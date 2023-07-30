@@ -1,6 +1,9 @@
 using UnityEngine;
 
 namespace aeric.rewind_plugin {
+    /// <summary>
+    /// Implementation of RewindComponentBase for handling the state of the Animator component
+    /// </summary>
     public class RewindAnimator : RewindComponentBase {
         private Animator _animator;
 
@@ -10,6 +13,40 @@ namespace aeric.rewind_plugin {
         private AnimatorControllerParameter[] _animParams;
         private int _animStateCount;
 
+        #region AnimatorStateStructs
+
+        /// <summary>
+        /// State data for an animator controller state
+        /// </summary>
+        public struct AnimationStateInfo {
+            public int stateHash;
+            public float stateTime;
+        }
+
+        /// <summary>
+        /// State data for an animator controller parameter
+        /// </summary>
+        public struct AnimationParameterInfo {
+            public int hash;
+            public AnimatorControllerParameterType type;
+
+            public int iValue;
+            public bool bValue;
+            public float fValue;
+        }
+
+        /// <summary>
+        /// State for an Animator controller, capturing all controller states and parameters
+        /// </summary>
+        public struct AnimationStoredState {
+            public int stateCount;
+            public int parameterCount;
+
+            public AnimationStateInfo[] stateInfos;
+            public AnimationParameterInfo[] parameterInfos;
+        }
+        #endregion
+        
         public override RewindDataSchema makeDataSchema() {
             RewindDataSchema schema = new RewindDataSchema();
 
@@ -106,58 +143,9 @@ namespace aeric.rewind_plugin {
                 }
             }
         }
-
-
-        private bool validateAnimationStates() {
-            if (_animStateA.stateCount != _animStateB.stateCount) {
-                Debug.LogError("We cannot interpolate between two frames that have different animation state counts");
-                return false;
-            }
-
-            if (_animStateA.parameterCount != _animStateB.parameterCount) {
-                Debug.LogError("We cannot interpolate between two frames that have different parameter count");
-                return false;
-            }
-
-            return true;
-        }
-
-        private static void ReadAnimationState(NativeByteArrayReader reader, ref AnimationStoredState animState) {
-            animState.stateCount = reader.readInt();
-            animState.parameterCount = reader.readInt();
-
-            for (var i = 0; i < animState.stateCount; i++) {
-                animState.stateInfos[i].stateHash = reader.readInt();
-                animState.stateInfos[i].stateTime = reader.readFloat();
-            }
-
-            for (var i = 0; i < animState.parameterCount; i++) {
-                animState.parameterInfos[i].hash = reader.readInt();
-                animState.parameterInfos[i].type = (AnimatorControllerParameterType)reader.readInt();
-
-                //interpolate the value
-                switch (animState.parameterInfos[i].type) {
-                case AnimatorControllerParameterType.Bool:
-                    animState.parameterInfos[i].bValue = reader.readBool();
-                    break;
-                case AnimatorControllerParameterType.Trigger:
-                    animState.parameterInfos[i].bValue = reader.readBool();
-                    break;
-                case AnimatorControllerParameterType.Int:
-                    animState.parameterInfos[i].iValue = reader.readInt();
-                    break;
-                case AnimatorControllerParameterType.Float:
-                    animState.parameterInfos[i].fValue = reader.readFloat();
-                    break;
-                default:
-                    Debug.LogError("Parameter Type unsupported: " + animState.parameterInfos[i].type);
-                    break;
-                }
-            }
-        }
-
+        
         public override bool shouldDisableComponent(Component component) {
-            //don't disable the Animator
+            //don't disable the Animator - we need it during replay
             if (component is Animator) return false;
             return true;
         }
@@ -213,27 +201,53 @@ namespace aeric.rewind_plugin {
                 }
             }
         }
+        
+        private bool validateAnimationStates() {
+            if (_animStateA.stateCount != _animStateB.stateCount) {
+                Debug.LogError("We cannot interpolate between two frames that have different animation state counts");
+                return false;
+            }
 
-        public struct AnimationStateInfo {
-            public int stateHash;
-            public float stateTime;
+            if (_animStateA.parameterCount != _animStateB.parameterCount) {
+                Debug.LogError("We cannot interpolate between two frames that have different parameter count");
+                return false;
+            }
+
+            return true;
         }
 
-        public struct AnimationParameterInfo {
-            public int hash;
-            public AnimatorControllerParameterType type;
+        private static void ReadAnimationState(NativeByteArrayReader reader, ref AnimationStoredState animState) {
+            animState.stateCount = reader.readInt();
+            animState.parameterCount = reader.readInt();
 
-            public int iValue;
-            public bool bValue;
-            public float fValue;
-        }
+            for (var i = 0; i < animState.stateCount; i++) {
+                animState.stateInfos[i].stateHash = reader.readInt();
+                animState.stateInfos[i].stateTime = reader.readFloat();
+            }
 
-        public struct AnimationStoredState {
-            public int stateCount;
-            public int parameterCount;
+            for (var i = 0; i < animState.parameterCount; i++) {
+                animState.parameterInfos[i].hash = reader.readInt();
+                animState.parameterInfos[i].type = (AnimatorControllerParameterType)reader.readInt();
 
-            public AnimationStateInfo[] stateInfos;
-            public AnimationParameterInfo[] parameterInfos;
+                //interpolate the value
+                switch (animState.parameterInfos[i].type) {
+                case AnimatorControllerParameterType.Bool:
+                    animState.parameterInfos[i].bValue = reader.readBool();
+                    break;
+                case AnimatorControllerParameterType.Trigger:
+                    animState.parameterInfos[i].bValue = reader.readBool();
+                    break;
+                case AnimatorControllerParameterType.Int:
+                    animState.parameterInfos[i].iValue = reader.readInt();
+                    break;
+                case AnimatorControllerParameterType.Float:
+                    animState.parameterInfos[i].fValue = reader.readFloat();
+                    break;
+                default:
+                    Debug.LogError("Parameter Type unsupported: " + animState.parameterInfos[i].type);
+                    break;
+                }
+            }
         }
     }
 }

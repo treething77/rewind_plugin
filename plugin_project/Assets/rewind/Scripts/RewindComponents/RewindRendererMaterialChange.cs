@@ -3,12 +3,11 @@ using UnityEngine;
 
 namespace aeric.rewind_plugin {
     /// <summary>
-    /// Stores material changes for a Renderer
+    ///  Implementation of RewindComponentBase for handling material changes for a Renderer.
+    /// Note that this implementation does not support baking/serialization
     /// </summary>
     public class RewindRendererMaterialChange : RewindComponentBase {
-        
-        //does not support baking
-        //make a list of material that we've seen and store indices into that list
+        //make a list of materials that we've seen and store indices into that list
         private List<Material> _materials = new();
         private Renderer _renderer;
         
