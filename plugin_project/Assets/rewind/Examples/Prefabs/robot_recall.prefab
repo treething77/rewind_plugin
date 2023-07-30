@@ -1474,7 +1474,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6096118043948858974}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 248.06891, y: 35.257687, z: 407.44186}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -1535,6 +1535,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   footStepSFX: {fileID: 8300000, guid: fda8f2d6242eed74a859ff6cf57cb227, type: 3}
+  scanningUI: {fileID: 0}
+  platforms: []
+  platformMaterials: []
+  scanningMaterial: {fileID: 0}
 --- !u!82 &6102696431773312223
 AudioSource:
   m_ObjectHideFlags: 0

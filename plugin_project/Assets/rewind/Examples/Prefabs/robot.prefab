@@ -1636,7 +1636,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6916107078435368040}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -7.270876, y: 1.6230929, z: 1.5965347}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -1712,6 +1712,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6314bec675b2adb4dbdbf24200eba6b2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  id: 0
+  _level: {fileID: 0}
+  playerControlled: 0
+  playerCamera: {fileID: 0}
+  footStepSFX: {fileID: 0}
+  footStepSFXBackwards: {fileID: 0}
+  playReversedSoundInPlayback: 0
+  moveStartPt: {x: 0, y: 0, z: 0}
+  moveTargetPt: {x: 0, y: 0, z: 0}
+  moveBlendStart: 0
+  moveBlendEnd: 0
+  moveTargetIndex: 0
 --- !u!114 &391120800878591316
 MonoBehaviour:
   m_ObjectHideFlags: 0
