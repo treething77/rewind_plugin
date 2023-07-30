@@ -99,11 +99,11 @@ namespace aeric.rewind_plugin_demos {
             else {
                 //Not moving, reduce speed
                 if (_playerSpeed > 0.0f) {
-                    _playerSpeed -= Time.deltaTime * 2.0f;
+                    _playerSpeed -= Time.deltaTime * 5.0f;
                     _playerSpeed = Mathf.Max(_playerSpeed, 0.0f);
                 }
                 else if (_playerSpeed < 0.0f) {
-                    _playerSpeed += Time.deltaTime * 2.0f;
+                    _playerSpeed += Time.deltaTime * 5.0f;
                     _playerSpeed = Mathf.Min(_playerSpeed, 0.0f);
                 }
             }
@@ -170,11 +170,13 @@ namespace aeric.rewind_plugin_demos {
             
             RaycastHit[] hits = Physics.RaycastAll(transform.position + Vector3.up * 2.0f, -Vector3.up, 4.0f);
             _controllerEnableTimer -= Time.deltaTime;
+            bool onPlatform = false;
             foreach (var hit in hits) {
-                if (_controller.isGrounded) {
-                    //You should use tags/layers for this. I'm trying not to do that since this will be imported into 
-                    //another project
-                    if (hit.collider.gameObject.name.Contains("platform")) {
+                //You should use tags/layers for this. I'm trying not to do that since this will be imported into 
+                //another project
+                if (hit.collider.gameObject.name.Contains("platform")) {
+                    onPlatform = true;
+                    if (_controller.isGrounded) {
                         _platformObject = hit.collider.gameObject;
                         this._transform.SetParent(_platformObject.transform, true);
                         Camera.main.transform.SetParent(_platformObject.transform, true);
@@ -184,7 +186,7 @@ namespace aeric.rewind_plugin_demos {
                 }
             }
 
-            if (!_controller.isGrounded && _platformObject != null) {
+            if (!onPlatform) {
                 _platformObject = null;
                 this._transform.SetParent(null, true);
                 Camera.main.transform.SetParent(null, true);
@@ -254,8 +256,8 @@ namespace aeric.rewind_plugin_demos {
                 var actualMove = moveDirection.normalized * movement.magnitude;
                 if (_playerSpeed < 0.0f) actualMove = -actualMove;
 
-                actualMove *= (Time.deltaTime * 300.0f);
-                actualMove -= platformMove;
+                actualMove *= (Time.deltaTime * 150.0f);
+                //actualMove += platformMove;
 
                 var gravity = Vector3.up * 5.0f;
                 bool groundedPlayer = _controller.isGrounded;
@@ -264,8 +266,8 @@ namespace aeric.rewind_plugin_demos {
                 
                 //Jumping
                 if (Input.GetKeyDown(KeyCode.Space) && groundedPlayer) {
-             //       _animator.SetTrigger(Jump);
-                    jumpVelocity = actualMove + Vector3.up*0.3f;
+                    _animator.SetBool(_animIDJump, true);
+                    jumpVelocity = actualMove + Vector3.up*0.4f;
                     moveState = MoveState.Jumping;
                     _controller.enabled = true;
                     _controllerEnableTimer = 0.5f;
@@ -279,7 +281,9 @@ namespace aeric.rewind_plugin_demos {
                 _controller.Move(jumpVelocity);
                 if (_controller.isGrounded) {
                     moveState = MoveState.Moving;
-               //     _animator.SetTrigger(Land);
+                    _animator.SetBool(_animIDGrounded, true);
+                    _animator.SetBool(_animIDJump, false);
+                    _animator.SetBool(_animIDFreeFall, false);
                 }
             }
         }
