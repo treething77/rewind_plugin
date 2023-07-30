@@ -685,7 +685,19 @@ PlayerSettings:
   ps4AllowPS5Detection: 0
   ps4GPU800MHz: 1
   ps4attribEyeToEyeDistanceSettingVR: 0
-  ps4IncludedModules: []
+  ps4IncludedModules:
+  - libc.prx
+  - libSceAudioLatencyEstimation.prx
+  - libSceFace.prx
+  - libSceFaceTracker.prx
+  - libSceFios2.prx
+  - libSceFontGsm.prx
+  - libSceHand.prx
+  - libSceHandTracker.prx
+  - libSceHeadTracker.prx
+  - libSceJobManager.prx
+  - libSceNpToolkit2.prx
+  - libSceS3DConversion.prx
   ps4attribVROutputEnabled: 0
   monoEnv: 
   splashScreenBackgroundSourceLandscape: {fileID: 0}
@@ -722,7 +734,8 @@ PlayerSettings:
     Windows Store Apps: UNITY_POST_PROCESSING_STACK_V2
     XboxOne: UNITY_POST_PROCESSING_STACK_V2
     tvOS: UNITY_POST_PROCESSING_STACK_V2
-  additionalCompilerArguments: {}
+  additionalCompilerArguments:
+    WebGL: []
   platformArchitecture: {}
   scriptingBackend:
     Standalone: 0
@@ -733,7 +746,7 @@ PlayerSettings:
   allowUnsafeCode: 0
   useDeterministicCompilation: 1
   enableRoslynAnalyzers: 1
-  selectedPlatform: 0
+  selectedPlatform: 8
   additionalIl2CppArgs: 
   scriptingRuntimeVersion: 1
   gcIncremental: 1
