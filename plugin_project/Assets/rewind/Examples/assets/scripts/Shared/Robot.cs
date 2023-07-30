@@ -93,10 +93,17 @@ namespace aeric.rewind_plugin_demos {
                 playerCamera.fieldOfView = Mathf.Lerp(playerCamera.fieldOfView, targetFOV, Time.deltaTime * 2.0f);
             }
 
-           // _animator.SetFloat(Blend, _playerSpeed);
-
             if (keyLeft) _transform.Rotate(Vector3.up, -100.0f * Time.deltaTime);
             if (keyRight) _transform.Rotate(Vector3.up, 100.0f * Time.deltaTime);
+            
+            //motion blend is 0-6 and controls blend between idle,walk,run
+            _animator.SetFloat(_animIDMotionBlend, _playerSpeed * 6.0f);
+            
+            //motion speed is an overall multiplier on the animation speed
+            _animator.SetFloat(_animIDMotionSpeed, 1.0f);
+
+            Vector3 movement = _transform.forward * (_movementCurve.Evaluate(_playerSpeed) * Time.deltaTime * 50.0f);
+            Move(movement);
         }
 
         private void UpdateAIControls() {
@@ -121,15 +128,14 @@ namespace aeric.rewind_plugin_demos {
             
             //motion speed is an overall multiplier on the animation speed
             _animator.SetFloat(_animIDMotionSpeed, 1.0f);
-
-            //TODO: dt
-            Vector3 movement = _transform.forward * _movementCurve.Evaluate(moveSpeed);
-            MoveAI(movement);
+            
+            Vector3 movement = _transform.forward * (_movementCurve.Evaluate(moveSpeed) * Time.deltaTime * 50.0f);
+            Move(movement);
         }
 
         public AnimationCurve _movementCurve;
 
-        private void MoveAI(Vector3 movement) {
+        private void Move(Vector3 movement) {
             //Called from Unity root motion system
             var gravity = Vector3.up * 5.0f;
             var animMove = movement;
@@ -156,36 +162,6 @@ namespace aeric.rewind_plugin_demos {
                 }
             }
         }
-    /*
-        private void OnAnimatorMove() {
-            //Called from Unity root motion system
-            var gravity = Vector3.up * 5.0f;
-            var animMove = _animator.deltaPosition;
-            animMove.y = 0.0f;//ignore vertical motion from animation
-
-            //move forward
-            var moveDirection = _transform.forward;
-            moveDirection.y = 0.0f;
-
-            var actualMove = moveDirection.normalized * animMove.magnitude;
-
-            //Move the character controller to match the animation movement
-            var moveAmount = actualMove - gravity * Time.deltaTime;
-            _controller.Move(moveAmount);
-
-            if (playerControlled) {
-                _level.CaptureTargetsWithinRange(_transform.position, 1.5f, this);
-            }
-            else {
-                if ((moveTargetPt - _transform.position).magnitude < 1.5f) {
-                    _level.CaptureTarget(moveTargetIndex, this);
-
-                    //choose new target
-                    ChooseTarget();
-                }
-            }
-        }
-        */
 
         public override void startPlayback() {
             _playbackActive = true;

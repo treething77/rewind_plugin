@@ -85,6 +85,10 @@ namespace aeric.rewind_plugin {
 
         private void Awake() {
             _animator = GetComponent<Animator>();
+            //If there is no Animator on this GO maybe it is on a child
+            if (_animator == null) {
+                _animator = GetComponentInChildren<Animator>();
+            }
 
             //Cache the AnimatorControllerParameter objects because the GetParameter calls
             //are actually VERY expensive

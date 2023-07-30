@@ -706,7 +706,25 @@ MonoBehaviour:
   moveTargetIndex: 0
   _movementCurve:
     serializedVersion: 2
-    m_Curve: []
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0.1192646
+      outSlope: 0.1192646
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0.1192646
+      inSlope: 0.1192646
+      outSlope: 0.1192646
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
@@ -2339,6 +2357,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7060648977782267533}
   - component: {fileID: 3971147938638464247}
+  - component: {fileID: 5673791319971406877}
   m_Layer: 8
   m_Name: PlayerArmature
   m_TagString: Player
@@ -2384,6 +2403,18 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
+--- !u!114 &5673791319971406877
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7689797933937427511}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8170fa6cec25419ba4ae0d3d6d64e883, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &7762963336021581540
 GameObject:
   m_ObjectHideFlags: 0
