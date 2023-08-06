@@ -8,7 +8,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/rewind/Examples/scenes/menu.unity
     guid: e4f0604db15cf9b4ebf572dcfe352553
-  - enabled: 0
+  - enabled: 1
     path: Assets/rewind/Examples/scenes/demos/baking/play_bake.unity
     guid: a846ac08935e8ec42812f0dcda908d30
   - enabled: 1

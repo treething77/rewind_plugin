@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.05808662, g: 0.06524649, b: 0.05133164, a: 1}
+  m_IndirectSpecularColor: {r: 0.05778356, g: 0.06521909, b: 0.051337294, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -227,7 +227,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b0d63b0a46496e54f83c9c52a5f4bab8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  player: {fileID: 543450652111147459}
+  player: {fileID: 1993849643}
   distance: 5
   smoothTime: 0.25
   minHeight: 2
@@ -419,6 +419,10 @@ PrefabInstance:
     - target: {fileID: 7276763079523913580, guid: 05c519253d45e7f4a803da2545e14cd0, type: 3}
       propertyPath: m_Name
       value: demo_canvas
+      objectReference: {fileID: 0}
+    - target: {fileID: 7276763079523913580, guid: 05c519253d45e7f4a803da2545e14cd0, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 05c519253d45e7f4a803da2545e14cd0, type: 3}
@@ -2812,6 +2816,37 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: cac00d35940ad8d42b733f53fc64c465, type: 3}
+--- !u!1 &1993849642
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1993849643}
+  m_Layer: 0
+  m_Name: camera target
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1993849643
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1993849642}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 1.8, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 543450652111147459}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &2040751802 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 2924883211727102441, guid: cac00d35940ad8d42b733f53fc64c465, type: 3}
